@@ -4,8 +4,11 @@ const adminSchema = new mongoose.Schema({
     name:{
         type:String,
     },
-  
+    age:{
+        type:Number,
+    }
 });
 
 
-module.exports = mongoose.model("AdminList", adminSchema);
+const AdminSchema = mongoose.model("AdminList", adminSchema);
+export default AdminSchema;
