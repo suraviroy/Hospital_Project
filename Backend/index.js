@@ -36,7 +36,7 @@ mongoose.connection.on("disconnected", () => {
 
 
 //listening port
-app.listen(3000, () => {
+app.listen(8080, () => {
   connect();
   console.log("Connected to backend");
 });
