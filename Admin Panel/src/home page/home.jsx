@@ -5,7 +5,7 @@ import { SIZES } from '../starting page/theme';
 import { MaterialIcons, Ionicons } from 'react-native-vector-icons';
 import SearchAdmin from './SearchAdmin';
 import ImageSlider from './ImageSlider';
-
+//This is a home page
 
 const Home =() => {
     return (
