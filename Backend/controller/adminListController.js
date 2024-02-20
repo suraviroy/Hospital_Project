@@ -1,11 +1,11 @@
 import AdminSchema from '../model/adminSchema.js'
 
 export const registration = async (req, res) => {
-  //console.log(req.body)
+  console.log(req.body)
+  const {name, age} = req.body;
   try {
     // const doctorName = req.body.doctorName
-    const name = req.body.name
-    const age = req.body.age
+   
     // const contactNumber = req.body.contactNumber
     // const email = req.body.email
     // const nagency = req.body.nagency
