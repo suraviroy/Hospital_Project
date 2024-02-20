@@ -49,6 +49,7 @@ function App() {
   if(!fontsLoaded){
     return null;
   }
+  // TIASHA
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -59,7 +60,7 @@ function App() {
         <Stack.Screen name="RegisterFirst" component={RegisterFirst} />
         <Stack.Screen name="ViewList" component={ViewList} />
         <Stack.Screen name="BottomNavigation" component={BottomNavigation}/>
-
+       
 
 
       </Stack.Navigator>
