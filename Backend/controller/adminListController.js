@@ -1,57 +1,28 @@
 import AdminSchema from '../model/adminSchema.js'
 
 export const registration = async (req, res) => {
-  console.log(req.body)
-  const {name, age} = req.body;
   try {
-    // const doctorName = req.body.doctorName
-   
-    // const contactNumber = req.body.contactNumber
-    // const email = req.body.email
-    // const nagency = req.body.nagency
-    // const idNumber = req.body.idNumber
-    // const aadharNumber = req.body.aadharNumber
-    // const pin = req.body.pin
-    // const address = req.body.address
-    // const guardianName = req.body.guardianName
-    // const guardianRelation = req.body.guardianRelation
-    // const storU = req.body.storU
-    // const storP = req.body.storP
-    // const lat = req.body.lat
-    // const lon = req.body.lon
-    // const imageC = req.body.imageC
-    // const imageP = req.body.imageP
-    // const state = req.body.state
-    // const statuss = req.body.statuss
-    //   //const finduser = await Student.findOne({ studentid: studentid });
+    // Ensure that request body contains the required fields
+    console.log('Request Body:', req.body)
 
-    const newuser = await AdminSchema.create({
-    //   doctorName,
-      name,
-      age
-    //   contactNumber,
-    //   email,
-    //   nagency,
-    //   idNumber,
-    //   aadharNumber,
-    //   pin,
-    //   address,
-    //   guardianName,
-    //   guardianRelation,
-    //   storU,
-    //   storP,
-    //   lat,
-    //   lon,
-    //   imageC,
-    //   imageP,
-    //   state,
-    //   statuss
-    })
-    //   //console.log(req.body);
-    console.log(newuser)
-    //   //res.json(req.body)
-    res.status(200).json({ message: 'fetch', data: newuser })
+    // Extract data from request body
+    const { name, age } = req.body
+
+    // Create a new user using Mongoose model
+    const newUser = await AdminSchema.create({ name, age })
+
+    // Log the newly created user
+    console.log('New User:', newUser)
+
+    // Respond with success message and data
+    res
+      .status(200)
+      .json({ message: 'User created successfully', data: newUser })
   } catch (error) {
-    console.log(error)
+    // Log any errors that occur during user creation
+    console.error('Error creating user:', error)
+
+    // Respond with an error message
+    res.status(500).json({ error: 'An error occurred while creating user' })
   }
 }
