@@ -50,7 +50,7 @@ function App() {
     return null;
   }
   // TIASHA
-  //Suraviiiiiiii
+  //Suraviii
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
