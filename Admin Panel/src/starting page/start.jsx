@@ -9,7 +9,7 @@ const Start = (props) => {
 
   const handleGetStarted = () => {
   
-    navigation.navigate('BottomNavigation');
+    navigation.navigate('Login');
   };
     return (
         <View style={styles.startingPage}>

@@ -4,12 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { SIZES } from '../starting page/theme';
 import { MaterialIcons, Ionicons } from 'react-native-vector-icons';
 import SearchAdmin from './SearchAdmin';
+import { useNavigation } from '@react-navigation/native';
 import ImageSlider from './ImageSlider';
-//This is a home page
+
 
 const Home =() => {
+    const navigation = useNavigation();
     return (
-        <SafeAreaView>
+        <SafeAreaView style= {styles.appbar033}>
             <View style = {styles.appBarWrapper012}>
                 <View style = {styles.appBar012}>
                 <MaterialIcons name = 'local-hospital' size= {40} color = {'#730404'}/>
@@ -25,11 +27,23 @@ const Home =() => {
                    
                 </View>
                 </View>
+               
             
             </View>
             <ScrollView>
             <SearchAdmin/>
             </ScrollView>
+            <View style = {styles.adminRow012}>
+               
+               <Text style = {styles.text013}>Coordinators</Text>
+               <View styles= {{alignItems: "flex-end"}}>
+               <TouchableOpacity onPress={() => navigation.navigate('RegisterPatient')}>
+                           <Ionicons name='add' size={30} color='#011411'
+                         />
+               </TouchableOpacity>
+                  
+               </View>
+               </View>
             {/* <ScrollView>
             <ImageSlider/>
             </ScrollView> */}
@@ -45,15 +59,28 @@ const styles = StyleSheet.create({
     appBarWrapper012:{
     marginHorizontal: 22,
     marginTop: 12,
+    
+    
     },
     appBar012:{
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center"
+        alignItems: "center",
+        
+    },
+    adminRow012:{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     text012:{
         fontFamily: "regular01",
         fontSize: 16,
+    },
+    text013:{
+        fontFamily: "bold01",
+        fontSize: 20,
+        marginLeft: 12
     },
     ChatCount012:{
         position: "absolute",

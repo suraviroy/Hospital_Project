@@ -92,7 +92,7 @@ const BottomNavigation = () => {
                 name="ViewList"
                 component={ViewList}
                 options={{
-                    tabBarLabel: 'ViewList',
+                    tabBarLabel: 'Patient-List',
                     headerShown: false,
                 }}
             />
