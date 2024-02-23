@@ -21,6 +21,9 @@ const adminSchema = new mongoose.Schema({
     },
     time:{
         type: String
+    },
+    picture:{
+        type : String
     }
 });
 

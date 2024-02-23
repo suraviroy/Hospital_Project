@@ -3,7 +3,7 @@ import AdminSchema from '../model/adminSchema.js'
 export const adminregistration = async (req, res) => {
   try {
     //console.log('Request Body:', req.body)
-    const { name, phNumber, educationQualification, gender, idNumber, date, time } = req.body
+    const { name, phNumber, educationQualification, gender, idNumber, date, time,picture } = req.body
     const newUser = await AdminSchema.create({
       name,
       phNumber,
@@ -11,7 +11,8 @@ export const adminregistration = async (req, res) => {
       gender,
       idNumber,
       date,
-      time
+      time,
+      picture
     })
 
     //console.log('New User:', newUser)
