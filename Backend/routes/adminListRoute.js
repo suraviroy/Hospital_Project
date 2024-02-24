@@ -1,9 +1,11 @@
 import express from 'express'
-import {adminregistration} from '../controller/adminListController.js'
-//const auth=require('../middleware/auth');
+import {
+  adminList,
+  adminregistration
+} from '../controller/adminListController.js'
 const adminListRouter = express.Router()
 
-adminListRouter.post("/adminregistration",adminregistration);
+adminListRouter.post('/adminregistration', adminregistration)
+adminListRouter.get('/adminlist', adminList)
 
-// module.exports={adminListRouter};
 export default adminListRouter
