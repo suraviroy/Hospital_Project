@@ -63,6 +63,7 @@ export const Color = {
   colorMediumturquoise_100: "#85dbce",
   colorMediumturquoise_200: "#85dbcd",
   colorMediumturquoise_300: "rgba(133, 219, 206, 0.9)",
+  colorRed: "#B61F1F",
 };
 /* border radiuses */
 export const Border = {
