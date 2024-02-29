@@ -1,28 +1,59 @@
 import AdminSchema from '../model/adminSchema.js'
 
-export const registration = async (req, res) => {
+//single admin registeration controller
+export const adminregistration = async (req, res) => {
   try {
-    // Ensure that request body contains the required fields
-    console.log('Request Body:', req.body)
+    const {
+      name,
+      phNumber,
+      educationQualification,
+      gender,
+      idNumber,
+      picture
+    } = req.body
 
-    // Extract data from request body
-    const { name, age } = req.body
+    // Get current date in the specified format
+    const currentDate = new Date().toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    })
 
-    // Create a new user using Mongoose model
-    const newUser = await AdminSchema.create({ name, age })
+    // Get current time in the specified format
+    const currentTime = new Date().toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })
 
-    // Log the newly created user
-    console.log('New User:', newUser)
+    const newUser = await AdminSchema.create({
+      name,
+      phNumber,
+      educationQualification,
+      gender,
+      idNumber,
+      date: currentDate,
+      time: currentTime,
+      picture
+    })
 
-    // Respond with success message and data
     res
       .status(200)
       .json({ message: 'User created successfully', data: newUser })
   } catch (error) {
-    // Log any errors that occur during user creation
     console.error('Error creating user:', error)
-
-    // Respond with an error message
     res.status(500).json({ error: 'An error occurred while creating user' })
+  }
+}
+
+//admin list fetch controller
+export const adminList = async (req, res) => {
+  try {
+    const adminsArray = await AdminSchema.find()
+
+    res.status(200).json(adminsArray)
+  } catch (err) {
+    console.log(err)
+    res.status(500).json(err)
   }
 }

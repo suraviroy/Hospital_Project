@@ -4,8 +4,26 @@ const adminSchema = new mongoose.Schema({
     name:{
         type:String,
     },
-    age:{
+    phNumber:{
         type:Number,
+    },
+    educationQualification:{
+        type:String,
+    },
+    gender:{
+        type: String,
+    },
+    idNumber:{
+        type: String,
+    },
+    date:{
+        type : String
+    },
+    time:{
+        type: String
+    },
+    picture:{
+        type : String
     }
 });
 
