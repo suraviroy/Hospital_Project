@@ -4,6 +4,39 @@ const patientSchema = new mongoose.Schema({
   name: {
     type: String,
   },
+  age:{
+    type: Number,
+  },
+  gender:{
+    type: String,
+  },
+  patientId:{
+    type: String,
+  },
+  contactNumber:{
+    type: Number,
+  },
+  email:{
+    type: String,
+  },
+  bloodGroup:{
+    type: String,
+  },
+  address:{
+    type: String,
+  },
+  state:{
+    type: String,
+  },
+  country:{
+    type: String,
+  },
+  date:{
+    type: String,
+  },
+  time:{
+    type: String,
+  },
   consultingDoctor: {
     type: String,
   },
@@ -13,11 +46,17 @@ const patientSchema = new mongoose.Schema({
   extistingPatientDiagnosis: {
     type: String,
   },
+  status:{
+    type: String,
+  },
+  password:{
+    type: String,
+  },
   existingDeseases: {
     type: [
       {
         disease: {
-          type: String,
+          type: [String],
         },
         duration: {
           type: Number,
