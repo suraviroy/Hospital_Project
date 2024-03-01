@@ -40,8 +40,14 @@ const patientSchema = new mongoose.Schema({
   consultingDoctor: {
     type: String,
   },
-  localContacts: {
+  localContactName: {
     type: String,
+  },
+  localContactRelation: {
+    type: String,
+  },
+  localContactNumber: {
+    type: Number,
   },
   extistingPatientDiagnosis: {
     type: String,
