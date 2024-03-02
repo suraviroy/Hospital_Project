@@ -4,9 +4,6 @@ const patientSchema = new mongoose.Schema({
   name: {
     type: String,
   },
-  age: {
-    type: Number,
-  },
   gender: {
     type: String,
   },
@@ -28,6 +25,9 @@ const patientSchema = new mongoose.Schema({
   visitCount: {
     type: [
       {
+        age: {
+          type: Number,
+        },
         state: {
           type: String,
         },
