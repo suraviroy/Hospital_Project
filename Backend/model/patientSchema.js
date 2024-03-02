@@ -4,80 +4,137 @@ const patientSchema = new mongoose.Schema({
   name: {
     type: String,
   },
+  gender: {
+    type: String,
+  },
+  age: {
+    type: Number,
+  },
+  patientId: {
+    type: String,
+  },
+  contactNumber: {
+    type: Number,
+  },
+  email: {
+    type: String,
+  },
+  bloodGroup: {
+    type: String,
+  },
+  state: {
+    type: String,
+  },
+  country: {
+    type: String,
+  },
+  date: {
+    type: String,
+  },
+  time: {
+    type: String,
+  },
   consultingDoctor: {
     type: String,
   },
-  localContacts: {
+  localContactName: {
     type: String,
+  },
+  localContactRelation: {
+    type: String,
+  },
+  localContactNumber: {
+    type: Number,
   },
   extistingPatientDiagnosis: {
     type: String,
   },
-  existingDeseases: {
-    type: [
-      {
-        disease: {
-          type: String,
-        },
-        duration: {
-          type: Number,
-        },
-        status: {
-          type: String,
-        },
-      },
-    ],
-  },
-  problemForCondultation: {
-    type: [
-      {
-        problems: {
-          type: [String],
-        },
-        duration: {
-          type: Number,
-        },
-        severity: {
-          type: String,
-        },
-      },
-    ],
-  },
-  importantHistory: {
-    type: [
-      {
-        history: {
-          type: [String],
-        },
-        duration: {
-          type: Number,
-        },
-      },
-    ],
-  },
-  postHospitalization: {
-    type: [
-      {
-        year: {
-          type: String,
-        },
-        month: {
-          type: Number,
-        },
-        reason: {
-          type: String,
-        },
-        dischargeCertificate: {
-          type: String,
-        },
-      },
-    ],
-  },
-  statusOfSickness: {
+  status: {
     type: String,
   },
-  catScore: {
-    type: Number,
+  address: {
+    type: String,
+  },
+  password: {
+    type: String,
+  },
+  visitCount: {
+    type: [
+      {
+        visitDate: {
+          type: String,
+        },
+        visitTime: {
+          type: String,
+        },
+        existingDeseases: {
+          type: [
+            {
+              disease: {
+                type: [String],
+              },
+              duration: {
+                type: Number,
+              },
+              status: {
+                type: String,
+              },
+            },
+          ],
+        },
+        problemForCondultation: {
+          type: [
+            {
+              problems: {
+                type: [String],
+              },
+              duration: {
+                type: Number,
+              },
+              severity: {
+                type: String,
+              },
+            },
+          ],
+        },
+        importantHistory: {
+          type: [
+            {
+              history: {
+                type: [String],
+              },
+              duration: {
+                type: Number,
+              },
+            },
+          ],
+        },
+        postHospitalization: {
+          type: [
+            {
+              year: {
+                type: String,
+              },
+              month: {
+                type: Number,
+              },
+              reason: {
+                type: String,
+              },
+              dischargeCertificate: {
+                type: String,
+              },
+            },
+          ],
+        },
+        statusOfSickness: {
+          type: String,
+        },
+        catScore: {
+          type: Number,
+        },
+      },
+    ],
   },
 });
 
