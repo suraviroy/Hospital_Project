@@ -4,125 +4,131 @@ const patientSchema = new mongoose.Schema({
   name: {
     type: String,
   },
-  age:{
+  age: {
     type: Number,
   },
-  gender:{
+  gender: {
     type: String,
   },
-  patientId:{
+  patientId: {
     type: String,
   },
-  contactNumber:{
+  contactNumber: {
     type: Number,
   },
-  email:{
+  email: {
     type: String,
   },
-  bloodGroup:{
+  bloodGroup: {
     type: String,
   },
-  address:{
+  password: {
     type: String,
   },
-  state:{
-    type: String,
-  },
-  country:{
-    type: String,
-  },
-  date:{
-    type: String,
-  },
-  time:{
-    type: String,
-  },
-  consultingDoctor: {
-    type: String,
-  },
-  localContactName: {
-    type: String,
-  },
-  localContactRelation: {
-    type: String,
-  },
-  localContactNumber: {
-    type: Number,
-  },
-  extistingPatientDiagnosis: {
-    type: String,
-  },
-  status:{
-    type: String,
-  },
-  password:{
-    type: String,
-  },
-  existingDeseases: {
+  visitCount: {
     type: [
       {
-        disease: {
-          type: [String],
+        state: {
+          type: String,
         },
-        duration: {
+        country: {
+          type: String,
+        },
+        date: {
+          type: String,
+        },
+        time: {
+          type: String,
+        },
+        consultingDoctor: {
+          type: String,
+        },
+        localContactName: {
+          type: String,
+        },
+        localContactRelation: {
+          type: String,
+        },
+        localContactNumber: {
           type: Number,
+        },
+        extistingPatientDiagnosis: {
+          type: String,
         },
         status: {
           type: String,
         },
-      },
-    ],
-  },
-  problemForCondultation: {
-    type: [
-      {
-        problems: {
-          type: [String],
+        address: {
+          type: String,
         },
-        duration: {
+        existingDeseases: {
+          type: [
+            {
+              disease: {
+                type: [String],
+              },
+              duration: {
+                type: Number,
+              },
+              status: {
+                type: String,
+              },
+            },
+          ],
+        },
+        problemForCondultation: {
+          type: [
+            {
+              problems: {
+                type: [String],
+              },
+              duration: {
+                type: Number,
+              },
+              severity: {
+                type: String,
+              },
+            },
+          ],
+        },
+        importantHistory: {
+          type: [
+            {
+              history: {
+                type: [String],
+              },
+              duration: {
+                type: Number,
+              },
+            },
+          ],
+        },
+        postHospitalization: {
+          type: [
+            {
+              year: {
+                type: String,
+              },
+              month: {
+                type: Number,
+              },
+              reason: {
+                type: String,
+              },
+              dischargeCertificate: {
+                type: String,
+              },
+            },
+          ],
+        },
+        statusOfSickness: {
+          type: String,
+        },
+        catScore: {
           type: Number,
         },
-        severity: {
-          type: String,
-        },
       },
     ],
-  },
-  importantHistory: {
-    type: [
-      {
-        history: {
-          type: [String],
-        },
-        duration: {
-          type: Number,
-        },
-      },
-    ],
-  },
-  postHospitalization: {
-    type: [
-      {
-        year: {
-          type: String,
-        },
-        month: {
-          type: Number,
-        },
-        reason: {
-          type: String,
-        },
-        dischargeCertificate: {
-          type: String,
-        },
-      },
-    ],
-  },
-  statusOfSickness: {
-    type: String,
-  },
-  catScore: {
-    type: Number,
   },
 });
 
