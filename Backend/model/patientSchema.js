@@ -7,6 +7,9 @@ const patientSchema = new mongoose.Schema({
   gender: {
     type: String,
   },
+  age: {
+    type: Number,
+  },
   patientId: {
     type: String,
   },
@@ -19,46 +22,49 @@ const patientSchema = new mongoose.Schema({
   bloodGroup: {
     type: String,
   },
+  state: {
+    type: String,
+  },
+  country: {
+    type: String,
+  },
+  date: {
+    type: String,
+  },
+  time: {
+    type: String,
+  },
+  consultingDoctor: {
+    type: String,
+  },
+  localContactName: {
+    type: String,
+  },
+  localContactRelation: {
+    type: String,
+  },
+  localContactNumber: {
+    type: Number,
+  },
+  extistingPatientDiagnosis: {
+    type: String,
+  },
+  status: {
+    type: String,
+  },
+  address: {
+    type: String,
+  },
   password: {
     type: String,
   },
   visitCount: {
     type: [
       {
-        age: {
-          type: Number,
-        },
-        state: {
+        visitDate: {
           type: String,
         },
-        country: {
-          type: String,
-        },
-        date: {
-          type: String,
-        },
-        time: {
-          type: String,
-        },
-        consultingDoctor: {
-          type: String,
-        },
-        localContactName: {
-          type: String,
-        },
-        localContactRelation: {
-          type: String,
-        },
-        localContactNumber: {
-          type: Number,
-        },
-        extistingPatientDiagnosis: {
-          type: String,
-        },
-        status: {
-          type: String,
-        },
-        address: {
+        visitTime: {
           type: String,
         },
         existingDeseases: {
