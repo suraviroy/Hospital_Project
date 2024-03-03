@@ -1,4 +1,4 @@
-import PatientSchema from '../model/patientSchema.js'
+import PatientSchema from '../model/patientSchema.js';
 
 export const patientregistration = async (req, res) => {
   try {
@@ -87,7 +87,39 @@ export const registeredPatientList = async (req, res) => {
         _id: 0 } 
     );
     res.status(200).json(registedPatients);
-    
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+
+export const sectionAtodaysPatient = async (req, res) => {
+  try {
+        
+    const currentDate = new Date().toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    })
+   
+    const registeredPatients = await PatientSchema.find(
+      { 
+        status: "Registered",
+        date: currentDate 
+      }, 
+      { 
+        name: 1, 
+        patientId: 1, 
+        image: 1, 
+        gender:1,
+        age: 1,
+        time: 1,
+        _id: 0 
+      }
+    );
+
+    res.status(200).json(registeredPatients);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
