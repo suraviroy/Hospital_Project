@@ -76,58 +76,72 @@ const patientSchema = new mongoose.Schema({
               duration: {
                 numericValue: {
                   type: Number,
+                  default: 0,
                 },
                 unit: {
                   type: String,
+                  default: "NA",
                 },
               },
               statusOfDisease: {
                 type: String,
+                default: "NA",
               },
             },
             diabetes: {
               duration: {
                 numericValue: {
                   type: Number,
+                  default: 0,
                 },
                 unit: {
                   type: String,
+                  default: "NA",
                 },
               },
               statusOfDisease: {
                 type: String,
+                default: "NA",
               },
             },
             malignancy: {
               organ: {
                 type: String,
+                default: "NA",
               },
               duration: {
                 numericValue: {
                   type: Number,
+                  default: 0,
                 },
                 unit: {
                   type: String,
+                  default: "NA",
                 },
               },
               statusOfDisease: {
                 type: String,
+                default: "NA",
               },
             },
             others: {
               disease: {
                 type: String,
+                default: "NA",
               },
               duration: {
                 numericValue: {
                   type: Number,
+                  default: 0,
                 },
                 unit: {
                   type: String,
+                  default: "NA",
                 },
               },
               statusOfDisease: {
                 type: String,
+                default: "NA",
               },
             },
           },
@@ -138,45 +152,56 @@ const patientSchema = new mongoose.Schema({
               duration: {
                 numericValue: {
                   type: Number,
+                  default: 0,
                 },
                 unit: {
                   type: String,
+                  default: "NA",
                 },
               },
               statusOfDisease: {
                 type: String,
+                default: "NA",
               },
             },
             uncontrolledDisease: {
               type: {
                 type: String,
+                default: "NA",
               },
               duration: {
                 numericValue: {
                   type: Number,
+                  default: 0,
                 },
                 unit: {
                   type: String,
+                  default: "NA",
                 },
               },
               statusOfDisease: {
                 type: String,
+                default: "NA",
               },
             },
             others: {
               disease: {
                 type: String,
+                default: "NA",
               },
               duration: {
                 numericValue: {
                   type: Number,
+                  default: 0,
                 },
                 unit: {
                   type: String,
+                  default: "NA",
                 },
               },
               statusOfDisease: {
                 type: String,
+                default: "NA",
               },
             },
           },
@@ -185,64 +210,77 @@ const patientSchema = new mongoose.Schema({
           allergy: {
             typeOfAllergy: {
               type: String,
+              default: "NA",
             },
             duration: {
               numericValue: {
                 type: Number,
+                default: 0,
               },
               unit: {
                 type: String,
+                default: "NA",
               },
             },
           },
           drugReaction: {
             typeOfDrug: {
               type: String,
+              default: "NA",
             },
             typeOfReaction: {
               type: String,
+              default: "NA",
             },
           },
           pastSurgery: {
             typeOfSurgery: {
               type: String,
+              default: "NA",
             },
             year: {
               type: Number,
+              default: 0,
             },
           },
           pastDisease: {
             typeOfDisease: {
               type: String,
+              default: "NA",
             },
           },
           familyHistory: {
-            type: {
-              String,
-            },
+            type: String,
+            default: "NA",
           },
           occupation: {
             type: String,
+            default: "NA",
           },
           exposure: {
             dust: {
               duration: {
                 numericValue: {
                   type: Number,
+                  default: 0,
                 },
                 unit: {
                   type: String,
+                  default: "NA",
                 },
               },
             },
             others: {
               type: String,
+              default: "NA",
               duration: {
                 numericValue: {
                   type: Number,
+                  default: 0,
                 },
                 unit: {
                   type: String,
+                  default: "NA",
                 },
               },
             },
@@ -253,24 +291,30 @@ const patientSchema = new mongoose.Schema({
             {
               yearOfHospitalization: {
                 type: Number,
+                default: 0,
               },
               days: {
                 type: Number,
+                default: 0,
               },
               reason: {
                 type: String,
+                default: "NA",
               },
               dischargeCertificate: {
                 type: String,
+                default: "NA",
               },
             },
           ],
         },
         statusOfSickness: {
           type: String,
+          default: "NA",
         },
         catScore: {
           type: Number,
+          default: 0,
         },
       },
     ],
