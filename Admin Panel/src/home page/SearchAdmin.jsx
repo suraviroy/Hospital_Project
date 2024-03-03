@@ -4,11 +4,16 @@ import { View, StyleSheet, TouchableOpacity, TextInput, Platform, Dimensions } f
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Octicons } from 'react-native-vector-icons';
 
-const SearchAdmin = () => {
+const SearchAdmin = ({ onSearch }) => {
     const [searchText, setSearchText] = useState('');
 
+    const handleSearch = (text) => {
+        setSearchText(text);
+        onSearch(text);
+    };
+
     return (
-        <View style={styles.searchContainer} nestedScrollEnabled>
+        <View style={styles.searchContainer}>
             <TouchableOpacity>
                 <Octicons name="search" size={24} style={styles.searchIcon} />
             </TouchableOpacity>
@@ -16,15 +21,13 @@ const SearchAdmin = () => {
                 <TextInput
                     style={styles.input}
                     value={searchText}
-                    onChangeText={setSearchText}
+                    onChangeText={handleSearch}
                     placeholder="Search Coordinator"
                 />
             </View>
         </View>
-        
     );
-}
-
+};
 const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
     searchContainer: {

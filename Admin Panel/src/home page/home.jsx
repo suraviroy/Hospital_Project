@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons, Ionicons } from 'react-native-vector-icons';
 import SearchAdmin from './SearchAdmin';
 import { useNavigation } from '@react-navigation/native';
-import ImageSlider from './ImageSlider';
 import HomeAdmin from './HomeAdmin';
 
 
 const Home = () => {
     const navigation = useNavigation();
+    const [searchText, setSearchText] = useState('');
+    const handleAddAdmin = () => {
+        navigation.navigate('AddAdmin');
+    };
+    const handleSearch = (text) => {
+        setSearchText(text);
+    };
+
 
     const renderHeader = () => (
         <View>
@@ -29,37 +36,49 @@ const Home = () => {
             </View>
             <View style={styles.adminRow012}>
                 <Text style={styles.text013}>Admins List</Text>
-                <TouchableOpacity style={styles.button456} onPress={() => navigation.navigate('RegisterPatient')}>
+                <TouchableOpacity style={styles.button456} onPress={handleAddAdmin}>
                     <Text style={styles.text567}> Add Admin</Text>
                 </TouchableOpacity>
                 <View styles={{ alignItems: "flex-end" }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('RegisterPatient')}>
+                    <TouchableOpacity >
                         <Ionicons name='settings-sharp' size={30} color='#5B5151' marginRight={20} />
                     </TouchableOpacity>
                 </View>
             </View>
-            <SearchAdmin />
+            <SearchAdmin onSearch={handleSearch} />
         </View>
     );
 
     return (
         <SafeAreaView style={styles.appbar033}>
-            
-                <FlatList nestedScrollEnabled
-                    ListHeaderComponent={renderHeader}
-                    data={[]}
-                    renderItem={({ item }) => null}
-                    keyExtractor={(item, index) => index.toString()}
-                    ListFooterComponent={<HomeAdmin />}
-                    style={styles.flatList}
-                />
-
-        </SafeAreaView>
+        <View style={styles.container}>
+            <View style={styles.headerContainer}>
+                {renderHeader()}
+            </View>
+            <FlatList
+                data={[]}
+                renderItem={({ item }) => null}
+                keyExtractor={(item, index) => index.toString()}
+                ListFooterComponent={<HomeAdmin searchText={searchText} />}
+                style={styles.flatList}
+            />
+        </View>
+    </SafeAreaView>
     );
 }
 
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+    headerContainer: {
+        paddingHorizontal: 3,
+    },
+    flatListContainer: {
+        flex: 1,
+    },
     appBarWrapper012: {
         marginHorizontal: 22,
         marginTop: 12,
@@ -121,9 +140,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff'
     },
-    flatList: {
-        paddingHorizontal: 3
-    }
 });
 
 export default Home;
