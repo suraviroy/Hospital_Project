@@ -68,54 +68,190 @@ const patientSchema = new mongoose.Schema({
           type: String,
         },
         existingDeseases: {
-          type: [
-            {
+          type: {
+            hypothyroidism: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                },
+                unit: {
+                  type: String,
+                },
+              },
+              statusOfDisease: {
+                type: String,
+              },
+            },
+            diabetes: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                },
+                unit: {
+                  type: String,
+                },
+              },
+              statusOfDisease: {
+                type: String,
+              },
+            },
+            malignancy: {
+              organ: {
+                type: String,
+              },
+              duration: {
+                numericValue: {
+                  type: Number,
+                },
+                unit: {
+                  type: String,
+                },
+              },
+              statusOfDisease: {
+                type: String,
+              },
+            },
+            others: {
               disease: {
-                type: [String],
+                type: String,
               },
               duration: {
-                type: Number,
+                numericValue: {
+                  type: Number,
+                },
+                unit: {
+                  type: String,
+                },
               },
-              status: {
+              statusOfDisease: {
                 type: String,
               },
             },
-          ],
+          },
         },
-        problemForCondultation: {
-          type: [
-            {
-              problems: {
-                type: [String],
-              },
+        problemForConsultation: {
+          type: {
+            cough: {
               duration: {
-                type: Number,
+                numericValue: {
+                  type: Number,
+                },
+                unit: {
+                  type: String,
+                },
               },
-              severity: {
+              statusOfDisease: {
                 type: String,
               },
             },
-          ],
+            uncontrolledDisease: {
+              type: {
+                type: String,
+              },
+              duration: {
+                numericValue: {
+                  type: Number,
+                },
+                unit: {
+                  type: String,
+                },
+              },
+              statusOfDisease: {
+                type: String,
+              },
+            },
+            others: {
+              disease: {
+                type: String,
+              },
+              duration: {
+                numericValue: {
+                  type: Number,
+                },
+                unit: {
+                  type: String,
+                },
+              },
+              statusOfDisease: {
+                type: String,
+              },
+            },
+          },
         },
         importantHistory: {
-          type: [
-            {
-              history: {
-                type: [String],
-              },
-              duration: {
+          allergy: {
+            typeOfAllergy: {
+              type: String,
+            },
+            duration: {
+              numericValue: {
                 type: Number,
               },
+              unit: {
+                type: String,
+              },
             },
-          ],
+          },
+          drugReaction: {
+            typeOfDrug: {
+              type: String,
+            },
+            typeOfReaction: {
+              type: String,
+            },
+          },
+          pastSurgery: {
+            typeOfSurgery: {
+              type: String,
+            },
+            year: {
+              type: Number,
+            },
+          },
+          pastDisease: {
+            typeOfDisease: {
+              type: String,
+            },
+          },
+          familyHistory: {
+            type: {
+              String,
+            },
+          },
+          occupation: {
+            type: String,
+          },
+          exposure: {
+            dust: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                },
+                unit: {
+                  type: String,
+                },
+              },
+            },
+            others: {
+              type: String,
+              duration: {
+                numericValue: {
+                  type: Number,
+                },
+                unit: {
+                  type: String,
+                },
+              },
+            },
+          },
         },
         postHospitalization: {
           type: [
             {
-              year: {
-                type: String,
+              yearOfHospitalization: {
+                type: Number,
               },
-              month: {
+              days: {
                 type: Number,
               },
               reason: {
