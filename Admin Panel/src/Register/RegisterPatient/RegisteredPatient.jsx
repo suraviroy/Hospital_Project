@@ -6,14 +6,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily } from '../../../GlobalStyles';
 import { backendURL } from "../../backendapi";
 
-const PatientListURL =  `${backendURL}/adminListRouter/adminlist`;
+const PatientListURL =  `${backendURL}/adminRouter/registeredPatientList`;
 
-const Item = ({ name, idNumber, picture, handleUpdate }) => (
+const Item = ({ name,patientId,image,handleUpdate }) => (
     <View style={styles.regpatView13}>
-        <Image source={{ uri: picture }} style={styles.regpatImage13} />
+        <Image source={{ uri: image }} style={styles.regpatImage13} />
         <View style={styles.regpatDetails13}>
             <Text style={styles.regpatDetails14}>{name}</Text>
-            <Text style={styles.regpatDetails15}>ID: {idNumber}</Text>
+            <Text style={styles.regpatDetails15}>ID: {patientId}</Text>
         </View>
         <TouchableOpacity
             style={styles.updateButton13}
@@ -36,14 +36,17 @@ const RegisteredPatient = ({ searchText }) => {
                 setFilteredPatients(data); 
             })
             .catch(error => {
-                console.error('Error fetching admin list:', error);
+                console.error('Error fetching Patient list:', error);
             });
     }, []);
 
     useEffect(() => {
-        const filtered = searchText ? patients.filter(patient => patient.name.toLowerCase().startsWith(searchText.toLowerCase())) : patients;
+        const filtered = patients.filter(patient =>
+            patient.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            patient.patientId.toLowerCase().includes(searchText.toLowerCase())
+        );
         setFilteredPatients(filtered);
-    }, [searchText, patients]);
+    }, [patients, searchText]);
 
     const handleUpdate = () => {
         navigation.navigate('');
@@ -56,12 +59,12 @@ const RegisteredPatient = ({ searchText }) => {
                 renderItem={({ item }) => (
                     <Item
                         name={item.name}
-                        idNumber={item.idNumber}
-                        picture={item.picture}
+                        patientId={item.patientId}
+                        image={item.image}
                         handleUpdate={handleUpdate}
                     />
                 )}
-                keyExtractor={item => item._id}
+                keyExtractor={item => item.patientId}
             />
         </SafeAreaView>
     );
