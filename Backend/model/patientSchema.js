@@ -58,6 +58,9 @@ const patientSchema = new mongoose.Schema({
   password: {
     type: String,
   },
+  image :{
+    type: String,
+  },
   visitCount: {
     type: [
       {
