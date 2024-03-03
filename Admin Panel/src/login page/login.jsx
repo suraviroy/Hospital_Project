@@ -15,7 +15,10 @@ const Login = () => {
         if (username === "pulmocare2024" && password === "Pulmocare@1234") {
             
             navigation.navigate('BottomNavigation');
-        } else {
+        }else if (username === "register2024" && password === "register@1234"){
+            navigation.navigate('BottomNavigation');
+        }
+        else {
           
             alert('Invalid username or password');
         }

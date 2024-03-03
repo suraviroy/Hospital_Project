@@ -11,8 +11,8 @@ import Notification from './src/Notification/Notification';
 import RegisterFirst from './src/Register/RegisterFirst';
 import ViewList from './src/ViewList/ViewList';
 import BottomNavigation from './src/navigation/BottomNavigation';
-import RegisterPatient from './src/Register/RegisterPatient/RegisterPatient';
 import HomeAdmin from './src/home page/HomeAdmin';
+import AddAdmin from './src/AddAdmin/AddAdmin';
 
 
 const Stack = createNativeStackNavigator();
@@ -51,11 +51,7 @@ function App() {
   if(!fontsLoaded){
     return null;
   }
-  // TIASHA
 
-  //Suraviiiiiiiiiiiiiiii
-  //Suravi
-  //Me again
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -66,8 +62,8 @@ function App() {
         <Stack.Screen name="RegisterFirst" component={RegisterFirst} />
         <Stack.Screen name="ViewList" component={ViewList} />
         <Stack.Screen name="BottomNavigation" component={BottomNavigation}/>
-        <Stack.Screen name="RegisterPatient" component={RegisterPatient}/>
         <Stack.Screen name="HomeAdmin" component={HomeAdmin}/>
+        <Stack.Screen name="AddAdmin" component={AddAdmin}/>
        
 
 
