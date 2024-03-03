@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import cors from 'cors'
 import adminListRouter from './routes/adminListRoute.js'
+import adminRouter from './routes/adminRoute.js'
 const app = express()
 dotenv.config()
 
@@ -32,6 +33,7 @@ mongoose.connection.on('disconnected', () => {
 
 //define middleware below
 app.use('/adminListRouter', adminListRouter)
+app.use('/adminRouter', adminRouter)
 
 //listening port
 app.listen(8080, () => {
