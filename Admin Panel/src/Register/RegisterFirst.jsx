@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, Button, SafeAreaView, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, Button, SafeAreaView, TextInput, TouchableOpacity, Image, Dimensions, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
@@ -10,15 +10,19 @@ import { backendURL } from "../backendapi";
 import * as FileSystem from 'expo-file-system';
 const adminRegistrationURL = `${backendURL}/adminListRouter/adminregistration`;
 
-
 const RegisterFirst = () => {
-    const [image, setImage] = useState(null);
     const navigation = useNavigation();
+    const [image, setImage] = useState(null);
     const [name, setName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [education, setEducation] = useState('');
     const [gender, setGender] = useState('');
     const [idNumber, setIdNumber] = useState('');
+
+    const [nameError, setNameError] = useState(false);
+    const [phoneError, setPhoneError] = useState(false);
+    const [educationError, setEducationError] = useState(false);
+    const [genderError, setGenderError] = useState(false);
 
     const handleRegister = () => {
         console.log('Name:', name);
@@ -38,9 +42,8 @@ const RegisterFirst = () => {
             base64: true,
         });
 
-        if (!result.canceled && result.assets.length > 0) {
+        if (!result.cancelled && result.assets.length > 0) {
             setImage(result.assets[0].uri);
-
         }
     };
 
@@ -49,6 +52,35 @@ const RegisterFirst = () => {
     };
 
     const handleSave = async () => {
+        if (name === '') {
+            setNameError(true);
+        } else {
+            setNameError(false);
+        }
+
+        if (phoneNumber === '') {
+            setPhoneError(true);
+        } else {
+            setPhoneError(false);
+        }
+
+        if (education === '') {
+            setEducationError(true);
+        } else {
+            setEducationError(false);
+        }
+
+        if (gender === '') {
+            setGenderError(true);
+        } else {
+            setGenderError(false);
+        }
+
+        if (name === '' || phoneNumber === '' || education === '' || gender === '') {
+            return;
+        }
+
+        
         if (phoneNumber.length !== 10) {
             alert('Phone number must be 10 digits long');
             return;
@@ -101,77 +133,83 @@ const RegisterFirst = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.innerContainer}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-                        <Text><Icon name="angle-left" size={34} color={Color.colorBlack} /></Text>
-                    </TouchableOpacity>
-                    <View>
-                        <Text style={styles.headerText}>Register Admin</Text>
-                        <View style={styles.subHeader}>
-                            <Text style={styles.subHeaderText}>Add Details</Text>
-                        </View>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                    <Text><Icon name="angle-left" size={34} color={Color.colorBlack} /></Text>
+                </TouchableOpacity>
+                <View>
+                    <Text style={styles.headerText}>Register Admin</Text>
+                    <View style={styles.subHeader}>
+                        <Text style={styles.subHeaderText}>Add Details</Text>
                     </View>
-
-                </View>
-                <View style={styles.imagePickerContainer}>
-                    {!image && <Image source={require("../../assets/images/user.png")} style={styles.backgroundImage} />}
-                    {image && <Image source={{ uri: image, base64: true }} style={styles.selectedImage} />}
-                    <TouchableOpacity onPress={pickImage}>
-                        <Text style={styles.buttonText}>Add Picture</Text>
-                    </TouchableOpacity>
-                </View>
-                <Text style={styles.label}>Your Name*</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter here"
-                    value={name}
-                    onChangeText={setName}
-                />
-                <Text style={styles.label}>Your Phone Number*</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter here"
-                    value={phoneNumber}
-                    onChangeText={setPhoneNumber}
-                    keyboardType="phone-pad"
-                />
-                <Text style={styles.label}>Educational Qualification*</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter here"
-                    value={education}
-                    onChangeText={setEducation}
-                />
-                <Text style={styles.label}>Gender*</Text>
-                <Picker
-                    selectedValue={gender}
-                    style={styles.picker}
-                    onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
-                >
-                    <Picker.Item label="Select" value="" />
-                    <Picker.Item label="Male" value="male" />
-                    <Picker.Item label="Female" value="female" />
-                    <Picker.Item label="Other" value="other" />
-                </Picker>
-                <Text style={styles.label}>ID Number*</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Enter here"
-                    value={idNumber}
-                    onChangeText={setIdNumber}
-                    keyboardType="numeric"
-                />
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
-                        <Text style={[styles.buttonText, styles.cancelText]}>Cancel</Text>
-                    </TouchableOpacity>
-                    {/* <View style={{ width: 80 }} /> */}
-                    <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
-                        <Text style={[styles.buttonText, styles.saveText]}>Save</Text>
-                    </TouchableOpacity>
                 </View>
             </View>
+            <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                <View style={styles.innerContainer}>
+                    <View style={styles.imagePickerContainer}>
+                        {!image && <Image source={require("../../assets/images/user.png")} style={styles.backgroundImage} />}
+                        {image && <Image source={{ uri: image, base64: true }} style={styles.selectedImage} />}
+                        <TouchableOpacity onPress={pickImage}>
+                            <Text style={styles.buttonText}>Add Picture</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.label}>Your Name*</Text>
+                    <TextInput
+                        style={[styles.input, nameError && styles.inputError]}
+                        placeholder="Enter here"
+                        value={name}
+                        onChangeText={setName}
+                    />
+                    {nameError && <Text style={styles.errorText}>*Required field</Text>}
+                    <Text style={styles.label}>Your Phone Number*</Text>
+                    <TextInput
+                        style={[styles.input, phoneError && styles.inputError]}
+                        placeholder="Enter here"
+                        value={phoneNumber}
+                        onChangeText={setPhoneNumber}
+                        keyboardType="phone-pad"
+                    />
+                    {phoneError && <Text style={styles.errorText}>*Required field</Text>}
+                    <Text style={styles.label}>Educational Qualification*</Text>
+                    <TextInput
+                        style={[styles.input, educationError && styles.inputError]}
+                        placeholder="Enter here"
+                        value={education}
+                        onChangeText={setEducation}
+                    />
+                    {educationError && <Text style={styles.errorText}>*Required field</Text>}
+                    <Text style={styles.label}>Gender*</Text>
+                    <View style={[styles.inputContainer, genderError && styles.inputError]}>
+                        <Picker
+                            selectedValue={gender}
+                            style={styles.picker}
+                            onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
+                        >
+                            <Picker.Item label="Select" value="" />
+                            <Picker.Item label="Male" value="male" />
+                            <Picker.Item label="Female" value="female" />
+                            <Picker.Item label="Other" value="other" />
+                        </Picker>
+                    </View>
+                    {genderError && <Text style={styles.errorText}>*Required field</Text>}
+                    <Text style={styles.label}>ID Number</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter here"
+                        value={idNumber}
+                        onChangeText={setIdNumber}
+                        keyboardType="numeric"
+                    />
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
+                            <Text style={[styles.buttonText, styles.cancelText]}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
+                            <Text style={[styles.buttonText, styles.saveText]}>Save</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 };
@@ -181,34 +219,20 @@ const windowWidth = Dimensions.get('window').width;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-
-    },
-    innerContainer: {
-        //flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 10,
-        height: '100%',
-        width: '100%',
-        margin: 0,
-        padding: 0,
-        marginTop: -40,
         backgroundColor: '#FFFFFF',
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 20,
-        width: '100%',
-
+        paddingHorizontal: 10,
+        paddingTop: 40,
     },
     backButton: {
         marginRight: 10,
         position: 'absolute',
         left: 0,
+        paddingTop: 40,
     },
     headerText: {
         fontSize: 24,
@@ -225,31 +249,60 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-
+    },
+    scrollViewContent: {
+        flexGrow: 1,
+        paddingBottom: 20,
     },
     label: {
         color: Color.colorBlack,
         alignSelf: 'flex-start',
         marginBottom: 5,
+        marginLeft: 10,
     },
     input: {
-        width: '100%',
+        width: '95%',
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
         borderRadius: Border.br_5xs,
-        marginBottom: 10,
+        marginBottom: 5,
         paddingHorizontal: 10,
         color: Color.colorBlack,
+        marginLeft: 10,
+    },
+    inputContainer: {
+        width: '95%',
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: Border.br_5xs,
+        marginBottom: 10,
+        justifyContent: 'center',
+        marginLeft: 10,
+        paddingRight: 10,
+    },
+    picker: {
+        width: '100%',
+        height: 40,
+        paddingHorizontal: 10,
+        color: Color.colorGray_200,
+    },
+    inputError: {
+        borderColor: Color.colorRed,
+    },
+    errorText: {
+        color: Color.colorRed,
+        fontSize: FontSize.size_xs,
+        marginLeft: 10,
     },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 20,
         width: '100%',
+        paddingHorizontal: 10,
     },
     button: {
-        // flex: 1,
         height: 52,
         justifyContent: 'center',
         alignItems: 'center',
@@ -276,9 +329,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontFamily: FontFamily.font_bold,
     },
-    icon: {
-        marginLeft: 10,
-    },
     backgroundImage: {
         width: 100,
         height: 100,
@@ -287,20 +337,12 @@ const styles = StyleSheet.create({
     },
     imagePickerContainer: {
         alignItems: 'center',
+        marginTop: 10,
     },
     selectedImage: {
         width: 100,
         height: 100,
         marginVertical: 10,
-    },
-    picker: {
-        width: '100%',
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        borderRadius: Border.br_5xs,
-        marginBottom: 10,
-        color: Color.colorBlack,
     },
 });
 
