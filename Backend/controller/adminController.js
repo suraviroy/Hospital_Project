@@ -87,6 +87,7 @@ export const registeredPatientList = async (req, res) => {
         _id: 0 } 
     );
     res.status(200).json(registedPatients);
+    
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
