@@ -69,33 +69,6 @@ export const patientregistration = async (req, res) => {
         .status(200)
         .json({ message: 'User created successfully', data: newUser })
     }
-
-    // const newUser = await PatientSchema.create({
-    //   name,
-    //   gender,
-    //   patientId,
-    //   contactNumber,
-    //   email,
-    //   bloodGroup,
-    //   password,
-    //   age,
-    //   address,
-    //   state,
-    //   country,
-    //   image,
-    //   consultingDoctor,
-    //   localContactName,
-    //   localContactRelation,
-    //   localContactNumber,
-    //   extistingPatientDiagnosis,
-    //   date: currentDate,
-    //   time: currentTime,
-    //   status: "Registered"
-    // })
-
-    // res
-    //   .status(200)
-    //   .json({ message: 'User created successfully', data: newUser })
   }
   catch (error) {
     console.error('Error creating user:', error)
@@ -104,3 +77,17 @@ export const patientregistration = async (req, res) => {
 }
 
 
+export const registeredPatientList = async (req, res) => {
+  try {
+    const registedPatients = await PatientSchema.find(
+      { status: "Registered" }, 
+      { name: 1, 
+        patientId: 1, 
+        image: 1, 
+        _id: 0 } 
+    );
+    res.status(200).json(registedPatients);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
