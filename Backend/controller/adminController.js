@@ -105,7 +105,6 @@ export const sectionAtodaysPatient = async (req, res) => {
         image: 1,
         gender: 1,
         age: 1,
-        time: 1,
         _id: 0,
       }
     );

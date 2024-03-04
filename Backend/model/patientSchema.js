@@ -61,6 +61,9 @@ const patientSchema = new mongoose.Schema({
   image :{
     type: String,
   },
+  coordinator :{
+    type: String,
+  },
   visitCount: {
     type: [
       {
