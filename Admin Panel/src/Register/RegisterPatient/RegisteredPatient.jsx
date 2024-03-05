@@ -74,7 +74,8 @@ const styles = StyleSheet.create({
     regPatCon13: {
         flex: 1,
         marginBottom: 70,
-        marginTop: -windowWidth * 0.20,
+        marginTop: -windowWidth*0.10,
+        
     },
     regpatView13: {
         width: windowWidth * 1,

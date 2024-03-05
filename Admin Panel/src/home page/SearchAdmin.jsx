@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, TextInput, Platform, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Octicons } from 'react-native-vector-icons';
+const windowWidth = Dimensions.get('window').width;
 
 const SearchAdmin = ({ onSearch }) => {
     const [searchText, setSearchText] = useState('');
@@ -39,6 +40,7 @@ const styles = StyleSheet.create({
         marginHorizontal: width * 0.04,
         borderWidth: 1.5,
         borderColor: "#2A9988",
+        marginTop: windowWidth*0.08,
     },
     searchIcon: {
         marginLeft: 15,

@@ -1,26 +1,28 @@
+
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList,Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily } from '../../GlobalStyles';
 import { backendURL } from "../backendapi";
 
+const TodayListURL = `${backendURL}/adminRouter/sectionAtodaysPatient`;
 
-const ViewListURL = `${backendURL}/adminListRouter/adminlist`;
-
-const PatientList = ({ searchText }) => {
+const TodayList = ({ searchText }) => {
     const navigation = useNavigation();
     const [patients, setPatients] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(ViewListURL);
+                const response = await fetch(TodayListURL);
                 const data = await response.json();
                 setPatients(data);
                 setFilteredPatients(data);
+                setLoading(false);
             } catch (error) {
                 console.error('Error fetching patient data:', error);
             }
@@ -32,28 +34,29 @@ const PatientList = ({ searchText }) => {
     useEffect(() => {
         const filtered = patients.filter(patient =>
             patient.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            patient.idNumber.toLowerCase().includes(searchText.toLowerCase())
+            patient.patientId.toLowerCase().includes(searchText.toLowerCase())
         );
         setFilteredPatients(filtered);
     }, [searchText, patients]);
 
-    const handleViewDetails = (id) => {
+    const handleViewDetails = (patientId) => {
         navigation.navigate('#');
     };
 
     const renderPatientItem = ({ item }) => (
         <View style={styles.patientView2451}>
-            <Image source={{ uri: item.picture }} style={styles.patientImage2451} />
+            <Image source={{ uri: item.image }} style={styles.patientImage2451} />
             <View style={styles.patientDetails13}>
                 <Text style={styles.patientDetails2451}>{item.name}</Text>
                 <Text style={styles.patientDetails2450}>{item.gender}</Text>
+                <Text style={styles.patientDetails2450}>{item.age}</Text>
             </View>
             <View style={styles.patientId2451}>
-                <Text style={styles.patientId13}>{item.idNumber}</Text>
+                <Text style={styles.patientId13}>{item.patientId}</Text>
             </View>
             <TouchableOpacity
                 style={styles.viewButton2451}
-                onPress={() => handleViewDetails(item.id)}
+                onPress={() => handleViewDetails(item.patientId)}
             >
                 <Text style={styles.viewDetails}>View Details</Text>
             </TouchableOpacity>
@@ -63,26 +66,41 @@ const PatientList = ({ searchText }) => {
         </View>
     );
 
+    if (loading) {
+        return <Text>Loading...</Text>;
+    }
+    
+    if (filteredPatients.length === 0) {
+        return <Text style={styles.text45}>No patients registered today!!</Text>;
+    }
+    
     return (
         <SafeAreaView style={styles.patientContainer2451}>
             <FlatList
                 nestedScrollEnabled
                 data={filteredPatients}
                 renderItem={renderPatientItem}
-                keyExtractor={item => item._id}
+                keyExtractor={item => item.patientId}
             />
         </SafeAreaView>
     );
 };
 
-export default PatientList;
+export default TodayList;
 
 
 const styles = StyleSheet.create({
     patientContainer2451:{
         flex: 1, 
         marginBottom: 85,
-        marginTop: -windowWidth*0.10,
+        marginTop: windowWidth*-0.08,
+        
+    },
+    text45:{
+        marginTop: windowWidth*0.10,
+        fontSize:18,
+        fontFamily: 'bold01',
+        marginLeft: 20,
     },
     patientView2451: {
         width: windowWidth - 15, 
@@ -153,8 +171,10 @@ const styles = StyleSheet.create({
         // marginTop: 55,
         marginLeft: 10,
         alignItems: 'center',
-        color: 'grey',
+        color: '#011411',
         fontSize: 12,
+        fontFamily: 'regular89',
+        padding: 3,
     },
     patientDetails2452: {
         marginTop: 15,

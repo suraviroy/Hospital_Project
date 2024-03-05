@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, TextInput,Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, TextInput, Dimensions } from 'react-native';
 import { Octicons } from 'react-native-vector-icons';
 const windowWidth = Dimensions.get('window').width;
-
-const SearchList = ({ setSearchText }) => {
+const SearchRegister = ({ setSearchText }) => {
     const [searchTextLocal, setSearchTextLocal] = useState('');
 
     const handleSearchChange = (text) => {
@@ -42,10 +41,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#2A9988',
         marginVertical: 16,
+        marginTop: 60,
         height: 50,
         width: 380,
         backgroundColor: "#FFFFFF",
-        marginTop: windowWidth*0.08,
+        marginTop: windowWidth*0.40,
+
     },
     searchWrapper012: {
         flex: 1,
@@ -55,4 +56,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default SearchList;
+export default SearchRegister;

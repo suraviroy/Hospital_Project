@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, TextInput, Dimensions } from 'react-native';
 import { Octicons } from 'react-native-vector-icons';
-
+const windowWidth = Dimensions.get('window').width;
 const SearchPatient = ({ setSearchText }) => {
     const [searchTextLocal, setSearchTextLocal] = useState('');
 
@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
         height: 50,
         width: 380,
         backgroundColor: "#FFFFFF",
+        marginTop: windowWidth*0.08,
 
     },
     searchWrapper012: {

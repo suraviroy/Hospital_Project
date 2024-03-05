@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     container: {
         marginBottom: 70,
         flex: 1,
-        marginTop: windowWidth*0.01,
+        marginTop: windowWidth*0.04,
     },
     item: {
         backgroundColor: '#fff',

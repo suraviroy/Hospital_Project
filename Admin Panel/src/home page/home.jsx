@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList,Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons, Ionicons } from 'react-native-vector-icons';
 import SearchAdmin from './SearchAdmin';
 import { useNavigation } from '@react-navigation/native';
 import HomeAdmin from './HomeAdmin';
-
+const windowWidth = Dimensions.get('window').width;
 
 const Home = () => {
     const navigation = useNavigation();
@@ -71,7 +71,8 @@ const Home = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#FFFFFF',
+        paddingTop: windowWidth*0.10,
     },
     headerContainer: {
         paddingHorizontal: 3,

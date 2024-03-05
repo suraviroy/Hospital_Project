@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity,Dimensions } from 'react-native';
 import SearchList from './SearchList';
 import PatientList from './PatientList';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 import { useNavigation } from '@react-navigation/native';
+const windowWidth = Dimensions.get('window').width;
 
 const ViewList = () => {
     const navigation = useNavigation();
@@ -49,6 +50,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+        paddingTop: windowWidth*0.10,
     },
     headerContainer: {
         paddingHorizontal: 3,

@@ -13,6 +13,7 @@ import ViewList from './src/ViewList/ViewList';
 import BottomNavigation from './src/navigation/BottomNavigation';
 import HomeAdmin from './src/home page/HomeAdmin';
 import AddAdmin from './src/AddAdmin/AddAdmin';
+import RegisterNavbar from './src/Registration Panel/RegisterNavbar';
 
 
 const Stack = createNativeStackNavigator();
@@ -64,7 +65,7 @@ function App() {
         <Stack.Screen name="BottomNavigation" component={BottomNavigation}/>
         <Stack.Screen name="HomeAdmin" component={HomeAdmin}/>
         <Stack.Screen name="AddAdmin" component={AddAdmin}/>
-       
+        <Stack.Screen name="RegisterNavbar" component={RegisterNavbar}/>
 
 
       </Stack.Navigator>

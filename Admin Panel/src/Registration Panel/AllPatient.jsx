@@ -3,28 +3,26 @@ import {View, StyleSheet, Text, TouchableOpacity, FlatList, Dimensions} from 're
 const windowWidth = Dimensions.get('window').width;
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { FontFamily, Color, Border, FontSize } from "../../../GlobalStyles";
+import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 import { useNavigation } from '@react-navigation/native';
-import RegisteredPatient from './RegisteredPatient';
-import SearchPatient from './SearchPatient';
+import AllList from './AllList';
+import { Ionicons } from 'react-native-vector-icons';
+import SearchRegister from './SearchRegister';
 
-const RegisterNotifications =() => {
+const AllPatient =() => {
     const navigation = useNavigation();
     const [searchText, setSearchText] = useState('');
-
-    const handleBack = () => {
-    navigation.goBack();
-    };
-
     const headerRegPatients = () => (
         <View style = {styles.regPatients2451}>
-            <View style = {styles.headerreg2451}>
-                <TouchableOpacity onPress={handleBack} style={styles.backButton24}>
-                    <Text><Icon name="angle-left" size={30} color={Color.colorBlack} /></Text>
-                </TouchableOpacity>
-                <Text style = {styles.text24}>Registered Patients</Text>
-            </View>
-        <SearchPatient setSearchText={setSearchText}/>
+         <View style={styles.adminRow012}>
+                <Text style={styles.text013}>All Patients</Text>
+                <View styles={{ alignItems: "flex-end" }}>
+                    <TouchableOpacity >
+                        <Ionicons name='add-outline' size={30} color='#5B5151' marginRight={20} />
+                    </TouchableOpacity>
+                </View>
+                </View>
+        <SearchRegister setSearchText={setSearchText}/>
         </View>
     );
     return (
@@ -33,11 +31,11 @@ const RegisterNotifications =() => {
             <View style={styles.headerContainer}>
                 {headerRegPatients()}
             </View>
-            <FlatList
+            <FlatList nestedScrollEnabled
                 data={[]}
                 renderItem={({ item }) => null}
                 keyExtractor={(item, index) => index.toString()}
-                ListFooterComponent={<RegisteredPatient searchText={searchText} />}
+                ListFooterComponent={<AllList searchText={searchText} />}
                 style={styles.flatList}
             />
         </View>
@@ -46,11 +44,23 @@ const RegisterNotifications =() => {
     );
 }
 const styles = StyleSheet.create({
+    adminRow012: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginLeft: 10,
+        alignItems: "center",
+        position: 'absolute',
+        marginTop: windowWidth*0.25,
+    },
+    text013: {
+        fontFamily: "bold01",
+        fontSize: 20,
+        marginLeft: 12,
+        marginRight: windowWidth*0.53,
+    },
     container: {
+        marginTop: 0,
         flex: 1,
-        backgroundColor: '#fff',
-        backgroundColor: '#FFFFFF',
-        paddingTop: windowWidth*0.10,
     },
     headerContainer: {
         paddingHorizontal: 3,
@@ -60,7 +70,7 @@ const styles = StyleSheet.create({
     },
     regPatients2451: {
         marginHorizontal: 10,
-        marginTop: windowWidth*0.03,
+        marginTop: windowWidth*-0.16,
     },
     headerreg2451: {
         flexDirection: 'row',
@@ -83,4 +93,4 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     }
 })
-export default RegisterNotifications;
+export default AllPatient;
