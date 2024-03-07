@@ -33,7 +33,7 @@ const Home = () => {
                     <Text style={styles.text567}> Add Admin</Text>
                 </TouchableOpacity>
                 <View styles={{ alignItems: "flex-end" }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('RegisterPatient')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('RegisterPanel')}>
                         <Ionicons name='settings-sharp' size={30} color='#5B5151' marginRight={20} />
                     </TouchableOpacity>
                 </View>

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import Start from './src/starting page/start';
 import Login from './src/login page/login';
 import { useFonts } from 'expo-font';
@@ -13,7 +14,7 @@ import ViewList from './src/ViewList/ViewList';
 import BottomNavigation from './src/navigation/BottomNavigation';
 import RegisterPatient from './src/Register/RegisterPatient/RegisterPatient';
 import HomeAdmin from './src/home page/HomeAdmin';
-
+import RegisterPanelStack from './src/RegisterPanel/RegisterPanelStack';
 
 const Stack = createNativeStackNavigator();
 
@@ -68,6 +69,7 @@ function App() {
         <Stack.Screen name="BottomNavigation" component={BottomNavigation}/>
         <Stack.Screen name="RegisterPatient" component={RegisterPatient}/>
         <Stack.Screen name="HomeAdmin" component={HomeAdmin}/>
+        <Stack.Screen name="RegisterPanel" component={RegisterPanelStack} />
        
 
 
