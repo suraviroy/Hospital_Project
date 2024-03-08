@@ -19,7 +19,6 @@ export const patientregistration = async (req, res) => {
       localContactName,
       localContactRelation,
       localContactNumber,
-      extistingPatientDiagnosis,
     } = req.body;
 
     // Get current date in the specified format
@@ -58,7 +57,6 @@ export const patientregistration = async (req, res) => {
         localContactName,
         localContactRelation,
         localContactNumber,
-        extistingPatientDiagnosis,
         date: currentDate,
         time: currentTime,
         status: "Registered",
@@ -137,7 +135,7 @@ export const sectionAallPatient = async (req, res) => {
       },
       {
         name: 1,
-        date:1,
+        date: 1,
         patientId: 1,
         image: 1,
         gender: 1,
@@ -161,6 +159,70 @@ export const sectionAallPatient = async (req, res) => {
     });
 
     res.status(200).json(registeredPatients);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const UpdateProfileNameId = async (req, res) => {
+  try {
+    const id = req.params.id;
+    
+    const patientExists = await PatientSchema.exists({ patientId: id });
+    if (!patientExists) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const registeredPatientsName = await PatientSchema.find(
+      {
+        patientId: id
+      },
+      {
+        name: 1,
+        patientId: 1,
+        _id: 0,
+      }
+    );
+    res.status(200).json(registeredPatientsName);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const PatientBasicDetails = async (req, res) => {
+  try {
+    const id = req.params.id;
+ 
+    const patientExists = await PatientSchema.exists({ patientId: id });
+    if (!patientExists) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const registeredPatientsName = await PatientSchema.find(
+      {
+        patientId: id
+      },
+      {
+        name: 1,
+        gender: 1,
+        patientId: 1,
+        contactNumber: 1,
+        email: 1,
+        bloodGroup: 1,
+        password: 1,
+        age: 1,
+        address: 1,
+        state: 1,
+        country: 1,
+        image: 1,
+        consultingDoctor: 1,
+        localContactName: 1,
+        localContactRelation: 1,
+        localContactNumber: 1,
+        _id: 0,
+      }
+    );
+    res.status(200).json(registeredPatientsName);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -46,9 +46,6 @@ const patientSchema = new mongoose.Schema({
   localContactNumber: {
     type: Number,
   },
-  extistingPatientDiagnosis: {
-    type: String,
-  },
   status: {
     type: String,
   },
