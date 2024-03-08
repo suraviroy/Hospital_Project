@@ -5,6 +5,8 @@ import { Ionicons,FontAwesome5,MaterialCommunityIcons } from 'react-native-vecto
 import RegisterPatient from './RegisterPatient';
 import AllPatient from './AllPatient';
 import TodayPatient from './TodayPatient';
+import RegisterPopup from './RegisterPopup';
+
 const Tab = createBottomTabNavigator();
 
 const tabBarStyle = {

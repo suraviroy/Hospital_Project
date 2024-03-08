@@ -31,7 +31,7 @@ function App() {
     regular: require('./assets/fonts/JuliusSansOne-Regular.ttf'),
     medium01: require('./assets/fonts/Inter-Medium.ttf'),
     medium: require('./assets/fonts/Rubik-Medium.ttf'),
-    bold: require('./assets/fonts/Content-Bold.ttf'),
+    bold09: require('./assets/fonts/Content-Bold.ttf'),
     bold: require('./assets/fonts/Dongle-Bold.ttf'),
     bold: require('./assets/fonts/InknutAntiqua-Bold.ttf'),
     bold02: require('./assets/fonts/InriaSerif-Bold.ttf'),

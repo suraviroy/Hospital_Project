@@ -58,7 +58,7 @@ const AllList = ({ searchText }) => {
                 <Text style={styles.viewDetails}>View Details</Text>
             </TouchableOpacity>
             <View style={styles.appointmentdet13}>
-                <Text style={styles.appointment2451}>Last Appointment On: <Text style={styles.time2451}>{item.date},  {item.time}</Text></Text>
+                <Text style={styles.appointment2451}>Last Appointment On: <Text style={styles.time2451}>{item.date}, {item.time}</Text></Text>
             </View>
         </View>
     );
@@ -99,12 +99,12 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     patientId2451: {
-        width: 80,
+        width: windowWidth*0.29,
         height: 30,
         backgroundColor: '#85DBCD',
         borderTopLeftRadius: 12,
         borderBottomLeftRadius: 12,
-        marginLeft: 33,
+        marginLeft: 0,
         marginTop: 7,
         alignContent: 'center',
         textAlignVertical: 'center',
