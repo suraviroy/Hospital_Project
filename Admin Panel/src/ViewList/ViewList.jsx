@@ -50,7 +50,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        paddingTop: windowWidth*0.10,
+        // paddingTop: 35,
+        paddingTop: windowWidth*0.08,
     },
     headerContainer: {
         paddingHorizontal: 3,
@@ -65,10 +66,9 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     text2451: {
-        fontWeight: "bold",
         fontSize: 25,
         marginLeft: 30,
-        fontFamily: FontFamily.font_bold,
+        fontFamily: "bold01",
     },
     appbar2451: {
         flex: 1,

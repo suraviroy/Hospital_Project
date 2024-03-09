@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     patientContainer2451:{
         flex: 1, 
         marginBottom: 85,
-        marginTop: -windowWidth*0.10,
+        paddingTop: -windowWidth*0.11,
     },
     patientView2451: {
         width: windowWidth - 15, 

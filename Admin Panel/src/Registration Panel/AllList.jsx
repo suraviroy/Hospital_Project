@@ -7,6 +7,7 @@ import { FontFamily } from '../../GlobalStyles';
 import { backendURL } from "../backendapi";
 
 const AllListURL = `${backendURL}/adminRouter/sectionAallPatient`;
+const BasicDetailsURL = `${backendURL}/adminRouter/PatientBasicDetails`;
 
 const AllList = ({ searchText }) => {
     const navigation = useNavigation();
@@ -37,7 +38,14 @@ const AllList = ({ searchText }) => {
     }, [searchText, patients]);
 
     const handleViewDetails = (patientId) => {
-        navigation.navigate('#');
+        fetch(`${BasicDetailsURL}/${patientId}`)
+            .then(response => response.json())
+            .then(data => {
+                navigation.navigate('PatientBasicDetails', { details: data[0] });
+            })
+            .catch(error => {
+                console.error('Error fetching patient details:', error);
+            });
     };
 
     const renderPatientItem = ({ item }) => (

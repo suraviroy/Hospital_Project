@@ -1085,7 +1085,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#FFFFFF',
         paddingBottom: 80,
-        paddingTop: windowWidth*0.15,
+        paddingTop: windowWidth*0.10,
     },
     scrollViewContent: {
         flexGrow: 1,
@@ -1097,7 +1097,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     registerText: {
-        fontSize: 26,
+        fontSize: 24,
         fontWeight: 'bold',
     },
     imagePickerContainer: {

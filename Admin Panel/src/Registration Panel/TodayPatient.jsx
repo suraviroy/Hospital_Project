@@ -11,12 +11,15 @@ import { Ionicons } from 'react-native-vector-icons';
 const TodayPatient =() => {
     const navigation = useNavigation();
     const [searchText, setSearchText] = useState('');
+    const handleAdd = () => {
+        navigation.navigate('RegisterPatient');
+    };
     const headerRegPatients = () => (
         <View style = {styles.regPatients2451}>
              <View style={styles.adminRow012}>
                 <Text style={styles.text013}>Today's Patients</Text>
                 <View styles={{ alignItems: "flex-end" }}>
-                    <TouchableOpacity >
+                    <TouchableOpacity onPress={() => handleAdd()}>
                         <Ionicons name='add-outline' size={30} color='#5B5151' marginRight={20} />
                     </TouchableOpacity>
                 </View>

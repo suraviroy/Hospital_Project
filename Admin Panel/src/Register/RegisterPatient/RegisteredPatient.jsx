@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
@@ -7,8 +9,9 @@ import { FontFamily } from '../../../GlobalStyles';
 import { backendURL } from "../../backendapi";
 
 const PatientListURL =  `${backendURL}/adminRouter/registeredPatientList`;
+const BasicDetailsURL = `${backendURL}/adminRouter/PatientBasicDetails`;
 
-const Item = ({ name,patientId,image,handleUpdate }) => (
+const Item = ({ name, patientId, image, handleUpdate }) => (
     <View style={styles.regpatView13}>
         <Image source={{ uri: image }} style={styles.regpatImage13} />
         <View style={styles.regpatDetails13}>
@@ -17,7 +20,7 @@ const Item = ({ name,patientId,image,handleUpdate }) => (
         </View>
         <TouchableOpacity
             style={styles.updateButton13}
-            onPress={handleUpdate}>
+            onPress={() => handleUpdate(patientId)}> 
             <Text style={styles.update13}>Update Details</Text>
         </TouchableOpacity>
     </View>
@@ -48,8 +51,15 @@ const RegisteredPatient = ({ searchText }) => {
         setFilteredPatients(filtered);
     }, [patients, searchText]);
 
-    const handleUpdate = () => {
-        navigation.navigate('');
+    const handleUpdate = (patientId) => {
+        fetch(`${BasicDetailsURL}/${patientId}`)
+            .then(response => response.json())
+            .then(data => {
+                navigation.navigate('BasicDetails', { details: data[0] });
+            })
+            .catch(error => {
+                console.error('Error fetching patient details:', error);
+            });
     };
 
     return (
@@ -74,7 +84,7 @@ const styles = StyleSheet.create({
     regPatCon13: {
         flex: 1,
         marginBottom: 70,
-        marginTop: -windowWidth*0.10,
+        paddingTop: -windowWidth*0.13,
         
     },
     regpatView13: {
@@ -134,4 +144,3 @@ const styles = StyleSheet.create({
 });
 
 export default RegisteredPatient;
-

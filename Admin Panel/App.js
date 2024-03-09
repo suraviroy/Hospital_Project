@@ -14,6 +14,9 @@ import BottomNavigation from './src/navigation/BottomNavigation';
 import HomeAdmin from './src/home page/HomeAdmin';
 import AddAdmin from './src/AddAdmin/AddAdmin';
 import RegisterNavbar from './src/Registration Panel/RegisterNavbar';
+import BasicDetails from './src/Register/RegisterPatient/BasicDetails';
+import PatientBasicDetails from './src/Registration Panel/PatientBasicDetails';
+import RegisteredPatient from './src/Register/RegisterPatient/RegisteredPatient';
 
 
 const Stack = createNativeStackNavigator();
@@ -66,6 +69,10 @@ function App() {
         <Stack.Screen name="HomeAdmin" component={HomeAdmin}/>
         <Stack.Screen name="AddAdmin" component={AddAdmin}/>
         <Stack.Screen name="RegisterNavbar" component={RegisterNavbar}/>
+        <Stack.Screen name="BasicDetails" component={BasicDetails}/>
+        <Stack.Screen name="PatientBasicDetails" component={PatientBasicDetails}/>
+        <Stack.Screen name="RegisterPatient" component={RegisteredPatient}/>
+
 
 
       </Stack.Navigator>

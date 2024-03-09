@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         backgroundColor: '#FFFFFF',
-        paddingTop: windowWidth*0.10,
+        paddingTop: windowWidth*0.08,
     },
     headerContainer: {
         paddingHorizontal: 3,
@@ -73,10 +73,9 @@ const styles = StyleSheet.create({
         left: 0,
     },
     text24: {
-        fontWeight: "bold",
         fontSize: 25,
         marginLeft: 30,
-        fontFamily: FontFamily.font_bold,
+        fontFamily: "bold01",
     },
     appbar13: {
         flex: 1,

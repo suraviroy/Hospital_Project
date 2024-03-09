@@ -48,7 +48,7 @@ const AddAdmin = () => {
     };
 
     const handleCancel = () => {
-        console.log('Cancelled');
+        navigation.goBack();
     };
 
     const handleSave = async () => {
@@ -75,19 +75,18 @@ const AddAdmin = () => {
         } else {
             setGenderError(false);
         }
-
         if (name === '' || phoneNumber === '' || education === '' || gender === '') {
+            alert('Please fill in all required fields');
             return;
         }
-
-        
+    
         if (phoneNumber.length !== 10) {
             alert('Phone number must be 10 digits long');
             return;
         }
-
+    
         let base64Image = '';
-
+    
         try {
             if (image) {
                 let imageUri = image;
@@ -104,7 +103,8 @@ const AddAdmin = () => {
             console.error('Error reading image:', error);
             return;
         }
-
+    
+        
         const data = {
             name: name,
             phNumber: phoneNumber,
@@ -113,20 +113,31 @@ const AddAdmin = () => {
             idNumber: idNumber,
             picture: image,
         };
-        const res = await axios.post(adminRegistrationURL, data,
-            {
+    
+    
+        try {
+            const res = await axios.post(adminRegistrationURL, data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            })
-            .then((res) => {
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+            });
+    
+           
+            if (res.status === 200) {
+              
+                alert('Registration Successful');
+                navigation.navigate('Home'); 
+            } else {
+               
+                alert('Registration Failed');
+            }
+        } catch (error) {
+           
+            console.error('Error registering admin:', error);
+            alert('Registration Failed');
+        }
     };
-
+    
     const handleBack = () => {
         navigation.goBack();
     };
@@ -220,7 +231,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
-        paddingTop: windowWidth*0.15,
+        paddingTop: windowWidth*0.10,
     },
     header: {
         flexDirection: 'row',
@@ -244,6 +255,7 @@ const styles = StyleSheet.create({
     subHeaderText: {
         fontSize: 16,
         color: Color.colorGray,
+        padding: 5,
     },
     subHeader: {
         color: Color.colorGray,
@@ -260,6 +272,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         marginBottom: 5,
         marginLeft: 10,
+        padding: 5,
     },
     input: {
         width: '95%',
