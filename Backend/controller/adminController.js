@@ -265,10 +265,12 @@ export const patientEachVistDetails = async (req, res) => {
       importantHistory: req.body.importantHistory,
       postHospitalization: req.body.postHospitalization,
       statusOfSickness: req.body.statusOfSickness,
-      catScore: req.body.catScore
+      catScore: req.body.catScore,
     };
 
+    patient.coordinator = req.body.coordinator
     patient.visitCount.push(newVisit);
+    patient.status = "Updated"
 
     const updatedPatient = await patient.save();
 
@@ -281,4 +283,3 @@ export const patientEachVistDetails = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
