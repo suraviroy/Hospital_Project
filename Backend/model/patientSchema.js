@@ -271,8 +271,10 @@ const patientSchema = new mongoose.Schema({
               },
             },
             others: {
-              type: String,
-              default: "NA",
+              typeOfExposure:{
+                type:String,
+                default:"NA",
+              },
               duration: {
                 numericValue: {
                   type: Number,

@@ -107,6 +107,8 @@ export const sectionAtodaysPatient = async (req, res) => {
       }
     );
 
+    //reverse the array so that the latest registerations come at the top
+    registeredPatients.reverse();
     res.status(200).json(registeredPatients);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -158,6 +160,8 @@ export const sectionAallPatient = async (req, res) => {
       }
     });
 
+    //reverse the array so that the latest registerations come at the top
+    registeredPatients.reverse();
     res.status(200).json(registeredPatients);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -167,7 +171,7 @@ export const sectionAallPatient = async (req, res) => {
 export const UpdateProfileNameId = async (req, res) => {
   try {
     const id = req.params.id;
-    
+
     const patientExists = await PatientSchema.exists({ patientId: id });
     if (!patientExists) {
       return res.status(404).json({ message: "Patient not found" });
@@ -175,7 +179,7 @@ export const UpdateProfileNameId = async (req, res) => {
 
     const registeredPatientsName = await PatientSchema.find(
       {
-        patientId: id
+        patientId: id,
       },
       {
         name: 1,
@@ -192,7 +196,7 @@ export const UpdateProfileNameId = async (req, res) => {
 export const PatientBasicDetails = async (req, res) => {
   try {
     const id = req.params.id;
- 
+
     const patientExists = await PatientSchema.exists({ patientId: id });
     if (!patientExists) {
       return res.status(404).json({ message: "Patient not found" });
@@ -200,7 +204,7 @@ export const PatientBasicDetails = async (req, res) => {
 
     const registeredPatientsName = await PatientSchema.find(
       {
-        patientId: id
+        patientId: id,
       },
       {
         name: 1,
@@ -225,5 +229,30 @@ export const PatientBasicDetails = async (req, res) => {
     res.status(200).json(registeredPatientsName);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+export const patientEachVistDetails = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const patientExists = await PatientSchema.exists({ patientId: id });
+    if (!patientExists) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const updatedPatient = await PatientSchema.findOneAndUpdate(
+      { patientId: id },
+      { $set: { visitCount: req.body.visitCount } },
+      { new: true }
+    );
+
+    if (!updatedPatient) {
+      return res.status(500).json({ message: "Failed to update patient data" });
+    }
+
+    res.status(200).json(updatedPatient);
+  } catch (err) {
+    res.status(500).json({ message: err });
   }
 };
