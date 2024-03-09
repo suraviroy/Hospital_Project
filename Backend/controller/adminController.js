@@ -241,11 +241,36 @@ export const patientEachVistDetails = async (req, res) => {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    const updatedPatient = await PatientSchema.findOneAndUpdate(
-      { patientId: id },
-      { $set: { visitCount: req.body.visitCount } },
-      { new: true }
-    );
+    const patient = await PatientSchema.findOne({ patientId: id });
+
+    // Get current date in the specified format
+    const currentDate = new Date().toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+
+    // Get current time in the specified format
+    const currentTime = new Date().toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    const newVisit = {
+      visitDate: currentDate,
+      visitTime: currentTime,
+      existingDeseases: req.body.existingDeseases,
+      problemForConsultation: req.body.problemForConsultation,
+      importantHistory: req.body.importantHistory,
+      postHospitalization: req.body.postHospitalization,
+      statusOfSickness: req.body.statusOfSickness,
+      catScore: req.body.catScore
+    };
+
+    patient.visitCount.push(newVisit);
+
+    const updatedPatient = await patient.save();
 
     if (!updatedPatient) {
       return res.status(500).json({ message: "Failed to update patient data" });
@@ -253,6 +278,7 @@ export const patientEachVistDetails = async (req, res) => {
 
     res.status(200).json(updatedPatient);
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ message: err.message });
   }
 };
+
