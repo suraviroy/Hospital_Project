@@ -283,3 +283,29 @@ export const patientEachVistDetails = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+export const allpatientList = async (req, res) => {
+  try {
+    const registeredPatients = await PatientSchema.find(
+      {
+        status: "Updated",
+      },
+      {
+        name: 1,
+        patientId: 1,
+        image: 1,
+        gender: 1,
+        age: 1,
+        visitDate: { $arrayElemAt: ["$visitCount.visitDate", -1] },
+        visitTime: { $arrayElemAt: ["$visitCount.visitTime", -1] },
+        _id: 0,
+      }
+    );
+
+    //reverse the array so that the latest registerations come at the top
+    registeredPatients.reverse();
+    res.status(200).json(registeredPatients);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
