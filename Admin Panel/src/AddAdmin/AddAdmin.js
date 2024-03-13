@@ -85,54 +85,132 @@ const AddAdmin = () => {
             return;
         }
     
-        let base64Image = '';
+    //     let base64Image = '';
     
-        try {
-            if (image) {
-                let imageUri = image;
-                if (image.startsWith('file://')) {
-                    const base64 = await FileSystem.readAsStringAsync(image, {
-                        encoding: FileSystem.EncodingType.Base64,
-                    });
-                    base64Image = `data:image/jpeg;base64,${base64}`;
-                } else {
-                    base64Image = image;
-                }
-            }
-        } catch (error) {
-            console.error('Error reading image:', error);
-            return;
-        }
-    
+    //     try {
+    //         if (image) {
+    //             let imageUri = image;
+    //             if (image.startsWith('file://')) {
+    //                 const base64 = await FileSystem.readAsStringAsync(image, {
+    //                     encoding: FileSystem.EncodingType.Base64,
+    //                 });
+    //                 base64Image = `data:image/jpeg;base64,${base64}`;
+    //             } else {
+    //                 base64Image = image;
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error('Error reading image:', error);
+    //         return;
+    //     }
+    //     const handleUpload=(image)=>{
+    //         const data = new FormData()
+    //         data.append('file',image)
+    //         data.append('upload preset','pulmocareapp')
+    //         data.append("cloud_name","pulmocare01")
+    //         fetch("https://api.cloudinary.com/v1_1/pulmocare01/image/upload",{
+    //           method: "post",
+    //           body: data  
+    //         }).then(res=>res.json())
+    //         then(data=>{
+    //             console.log(data)
+    //         })
+    //     }
         
+    //     const data = {
+    //         name: name,
+    //         phNumber: phoneNumber,
+    //         educationQualification: education,
+    //         gender: gender,
+    //         idNumber: idNumber,
+    //         picture: image,
+    //     };
+    
+    
+    //     try {
+    //         const res = await axios.post(adminRegistrationURL, data, {
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+    
+           
+    //         if (res.status === 200) {
+              
+    //             alert('Registration Successful');
+    //             navigation.navigate('Home'); 
+    //         } else {
+               
+    //             alert('Registration Failed');
+    //         }
+    //     } catch (error) {
+           
+    //         console.error('Error registering admin:', error);
+    //         alert('Registration Failed');
+    //     }
+    // };
+        // Upload image to Cloudinary
+        if (image) {
+            const formData = new FormData();
+            formData.append('file', {
+                uri: image,
+                name: `file.jpg`,
+                type: `image/jpg`,
+            });
+            formData.append('upload_preset', 'pulmocareapp');
+            formData.append('cloud_name', 'pulmocare01');
+    
+            try {
+                const response = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+    
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Cloudinary response:', data);
+    
+                   
+                    data && data.secure_url && setImage(data.secure_url);
+    
+                    
+                    saveDataToBackend(data.secure_url); 
+                } else {
+                    console.error('Failed to upload image to Cloudinary');
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            }
+        } else {
+            
+            saveDataToBackend('');
+        }
+    };
+    
+    const saveDataToBackend = async (imageUrl) => {
         const data = {
             name: name,
             phNumber: phoneNumber,
             educationQualification: education,
             gender: gender,
             idNumber: idNumber,
-            picture: image,
+            picture: imageUrl, 
         };
-    
     
         try {
             const res = await axios.post(adminRegistrationURL, data, {
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                },
             });
     
-           
             if (res.status === 200) {
-              
                 alert('Registration Successful');
-                navigation.navigate('Home'); 
+                navigation.navigate('Home');
             } else {
-               
                 alert('Registration Failed');
             }
         } catch (error) {
-           
             console.error('Error registering admin:', error);
             alert('Registration Failed');
         }

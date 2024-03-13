@@ -76,6 +76,7 @@ const AddPatient = () => {
         }
     };
     const handleCancel = () => {
+        setImage(null);
         setPatientName('');
         setAge('');
         setGender('');
@@ -189,62 +190,153 @@ const AddPatient = () => {
         stateToSend = manualState;
     }
 
-    try {
-        setLoading(true);
-        const allPatientsResponse = await fetch(`${backendURL}/adminRouter/sectionAallPatient`);
-        const allPatientsData = await allPatientsResponse.json();
-        const patientExists = allPatientsData.some(patient => patient.patientId === patientId);
-        if (patientExists) {
-            alert('Patient ID already exists');
-            return;
-        }
+    // try {
+    //     setLoading(true);
+    //     const allPatientsResponse = await fetch(`${backendURL}/adminRouter/sectionAallPatient`);
+    //     const allPatientsData = await allPatientsResponse.json();
+    //     const patientExists = allPatientsData.some(patient => patient.patientId === patientId);
+    //     if (patientExists) {
+    //         alert('Patient ID already exists');
+    //         return;
+    //     }
        
 
-        const requestBody = {
-            password: password,
-            name: patientName,
-            gender: gender,
-            patientId: patientId,
-            contactNumber: formattedContactNumber,
-            email: email,
-            bloodGroup: bloodGroup,
-            age: age,
-            address: address,
-            state: stateToSend,
-            country: country,
-            image: image,
-            consultingDoctor: consultingDoctor,
-            localContactName: localContactName,
-            localContactRelation: localContactRelation,
-            localContactNumber: localContactNumber,
-            // existingPatientDiagnosis: existingPatient
-        };
-        const response = await fetch(`${backendURL}/adminRouter/patientregistration`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-        });
+//         const requestBody = {
+//             password: password,
+//             name: patientName,
+//             gender: gender,
+//             patientId: patientId,
+//             contactNumber: formattedContactNumber,
+//             email: email,
+//             bloodGroup: bloodGroup,
+//             age: age,
+//             address: address,
+//             state: stateToSend,
+//             country: country,
+//             image: image,
+//             consultingDoctor: consultingDoctor,
+//             localContactName: localContactName,
+//             localContactRelation: localContactRelation,
+//             localContactNumber: localContactNumber,
+//             // existingPatientDiagnosis: existingPatient
+//         };
+//         const response = await fetch(`${backendURL}/adminRouter/patientregistration`, {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify(requestBody)
+//         });
 
-        if (response.ok) {
+//         if (response.ok) {
            
-            setLoading(false); 
-            setShowPopup(true); 
-        } else {
+//             setLoading(false); 
+//             setShowPopup(true); 
+//         } else {
           
-            setLoading(false); 
-            console.error('Error response from backend:', response.status);
-            alert('Failed to register patient. Please try again.');
-        }
+//             setLoading(false); 
+//             console.error('Error response from backend:', response.status);
+//             alert('Failed to register patient. Please try again.');
+//         }
       
        
        
+//     } catch (error) {
+//         console.error('Error registering patient:', error.message);
+//         alert('Failed to register patient. Please try again.');
+//         setLoading(false);
+//     }
+// };
+if (image) {
+    try {
+        setLoading(true);
+        const formData = new FormData();
+        formData.append('file', {
+            uri: image,
+            name: `file.jpg`,
+            type: `image/jpg`,
+        });
+        formData.append('upload_preset', 'pulmocareapp');
+        formData.append('cloud_name', 'pulmocare01');
+
+        const cloudinaryResponse = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (cloudinaryResponse.ok) {
+            const cloudinaryData = await cloudinaryResponse.json();
+            console.log('Cloudinary response:', cloudinaryData);
+
+           
+            savePatientData(cloudinaryData.secure_url, password);
+        } else {
+            console.error('Failed to upload image to Cloudinary');
+            alert('Failed to upload image. Please try again.');
+            setLoading(false);
+        }
     } catch (error) {
-        console.error('Error registering patient:', error.message);
-        alert('Failed to register patient. Please try again.');
+        console.error('Error uploading image:', error);
+        alert('Failed to upload image. Please try again.');
         setLoading(false);
     }
+} else {
+   
+    savePatientData('', password);
+}
+};
+
+const savePatientData = async (imageUrl, password, stateToSend) => {
+try {
+    const allPatientsResponse = await fetch(`${backendURL}/adminRouter/sectionAallPatient`);
+    const allPatientsData = await allPatientsResponse.json();
+    const patientExists = allPatientsData.some(patient => patient.patientId === patientId);
+    if (patientExists) {
+        alert('Patient ID already exists');
+        setLoading(false);
+        return;
+    }
+
+    const requestBody = {
+        password: password,
+        name: patientName,
+        gender: gender,
+        patientId: patientId,
+        contactNumber: formattedContactNumber,
+        email: email,
+        bloodGroup: bloodGroup,
+        age: age,
+        address: address,
+        state: stateToSend,
+        country: country,
+        image: imageUrl, // Pass the Cloudinary image URL
+        consultingDoctor: consultingDoctor,
+        localContactName: localContactName,
+        localContactRelation: localContactRelation,
+        localContactNumber: localContactNumber,
+        // existingPatientDiagnosis: existingPatient
+    };
+    const response = await fetch(`${backendURL}/adminRouter/patientregistration`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    });
+
+    if (response.ok) {
+        setLoading(false);
+        setShowPopup(true);
+    } else {
+        setLoading(false);
+        console.error('Error response from backend:', response.status);
+        alert('Failed to register patient. Please try again.');
+    }
+} catch (error) {
+    console.error('Error registering patient:', error.message);
+    alert('Failed to register patient. Please try again.');
+    setLoading(false);
+}
 };
 
     const handleDateOfBirthChange = (event, selectedDate) => {
