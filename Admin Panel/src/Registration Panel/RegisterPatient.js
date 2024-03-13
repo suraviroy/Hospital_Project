@@ -309,7 +309,7 @@ try {
         address: address,
         state: stateToSend,
         country: country,
-        image: imageUrl, // Pass the Cloudinary image URL
+        image: imageUrl,
         consultingDoctor: consultingDoctor,
         localContactName: localContactName,
         localContactRelation: localContactRelation,
