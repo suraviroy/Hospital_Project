@@ -12,6 +12,7 @@ import RegisterPopup from './RegisterPopup';
 const windowWidth = Dimensions.get('window').width;
 
 const AddPatient = () => {
+    const [savingData, setSavingData] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [loading, setLoading] = useState(false); 
     const [image, setImage] = useState(null);
@@ -39,7 +40,6 @@ const AddPatient = () => {
     const [selectedBloodGroup, setSelectedBloodGroup] = useState(bloodGroup);
     const [selectedState, setSelectedState] = useState(state);
     const [selectedCountry, setSelectedCountry] = useState(country);
-
 
 
 
@@ -120,223 +120,157 @@ const AddPatient = () => {
 
 
     const handleSave = async () => {
-        const password = generatePassword();
-        if (patientName === '') {
-            setPatientNameError(true);
-        } else {
-            setPatientNameError(false);
-        }
+    const password = generatePassword();
+    if (patientName === '') {
+        setPatientNameError(true);
+    } else {
+        setPatientNameError(false);
+    }
 
-        if (age === '') {
-            setAgeError(true);
-        } else {
-            setAgeError(false);
-        }
+    if (age === '') {
+        setAgeError(true);
+    } else {
+        setAgeError(false);
+    }
 
-        if (gender === '') {
-            setGenderError(true);
-        } else {
-            setGenderError(false);
-        }
+    if (gender === '') {
+        setGenderError(true);
+    } else {
+        setGenderError(false);
+    }
 
-        if (patientId === '') {
-            setPatientIdError(true);
-        } else {
-            setPatientIdError(false);
-        }
+    if (patientId === '') {
+        setPatientIdError(true);
+    } else {
+        setPatientIdError(false);
+    }
 
-        if (contactNumber === '') {
-            setContactNumberError(true);
-        } else {
-            setContactNumberError(false);
-        }
+    if (contactNumber === '') {
+        setContactNumberError(true);
+    } else {
+        setContactNumberError(false);
+    }
 
-        if (consultingDoctor === '') {
-            setConsultingDoctorError(true);
-        } else {
-            setConsultingDoctorError(false);
-        }
+    if (consultingDoctor === '') {
+        setConsultingDoctorError(true);
+    } else {
+        setConsultingDoctorError(false);
+    }
 
-        if (
-            patientName === '' ||
-            age === '' ||
-            gender === '' ||
-            patientId === '' ||
-            contactNumber === '' ||
-            consultingDoctor === ''
-        ) {
-            return;
-        }
+    if (
+        patientName === '' ||
+        age === '' ||
+        gender === '' ||
+        patientId === '' ||
+        contactNumber === '' ||
+        consultingDoctor === ''
+    ) {
+        return;
+    }
 
+    if (contactNumber.length !== 10) {
+        setContactNumberError(true);
+        alert('Contact number must be 10 digits long');
+        return;
+    } else {
+        setContactNumberError(false);
+    }
 
-        if (contactNumber.length !== 10) {
-            setContactNumberError(true);
-            alert('Contact number must be 10 digits long');
-            return;
-        } else {
-            setContactNumberError(false);
-        }
-        // if (stateType === 'dropdown' && !state) {
-        //     alert('Please select a state or enter manually if "Other" is chosen.');
-        //     return;
-        // }
-
-        // if (stateType === 'input' && !manualState) {
-        //     alert('Please enter a state name.');
-        //     return;
-        // }
-        let stateToSend = state;
+    let stateToSend = state;
     if (state === 'Other' && manualState) {
         stateToSend = manualState;
     }
 
-    // try {
-    //     setLoading(true);
-    //     const allPatientsResponse = await fetch(`${backendURL}/adminRouter/sectionAallPatient`);
-    //     const allPatientsData = await allPatientsResponse.json();
-    //     const patientExists = allPatientsData.some(patient => patient.patientId === patientId);
-    //     if (patientExists) {
-    //         alert('Patient ID already exists');
-    //         return;
-    //     }
-       
+    setLoading(true); // Set loading state to true when saving data
+    setSavingData(true);
+    if (image) {
+        try {
+            const formData = new FormData();
+            formData.append('file', {
+                uri: image,
+                name: `file.jpg`,
+                type: `image/jpg`,
+            });
+            formData.append('upload_preset', 'pulmocareapp');
+            formData.append('cloud_name', 'pulmocare01');
 
-//         const requestBody = {
-//             password: password,
-//             name: patientName,
-//             gender: gender,
-//             patientId: patientId,
-//             contactNumber: formattedContactNumber,
-//             email: email,
-//             bloodGroup: bloodGroup,
-//             age: age,
-//             address: address,
-//             state: stateToSend,
-//             country: country,
-//             image: image,
-//             consultingDoctor: consultingDoctor,
-//             localContactName: localContactName,
-//             localContactRelation: localContactRelation,
-//             localContactNumber: localContactNumber,
-//             // existingPatientDiagnosis: existingPatient
-//         };
-//         const response = await fetch(`${backendURL}/adminRouter/patientregistration`, {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(requestBody)
-//         });
+            const cloudinaryResponse = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
+                method: 'POST',
+                body: formData,
+            });
 
-//         if (response.ok) {
-           
-//             setLoading(false); 
-//             setShowPopup(true); 
-//         } else {
-          
-//             setLoading(false); 
-//             console.error('Error response from backend:', response.status);
-//             alert('Failed to register patient. Please try again.');
-//         }
-      
-       
-       
-//     } catch (error) {
-//         console.error('Error registering patient:', error.message);
-//         alert('Failed to register patient. Please try again.');
-//         setLoading(false);
-//     }
-// };
-if (image) {
-    try {
-        setLoading(true);
-        const formData = new FormData();
-        formData.append('file', {
-            uri: image,
-            name: `file.jpg`,
-            type: `image/jpg`,
-        });
-        formData.append('upload_preset', 'pulmocareapp');
-        formData.append('cloud_name', 'pulmocare01');
+            if (cloudinaryResponse.ok) {
+                const cloudinaryData = await cloudinaryResponse.json();
+                console.log('Cloudinary response:', cloudinaryData);
 
-        const cloudinaryResponse = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
-            method: 'POST',
-            body: formData,
-        });
-
-        if (cloudinaryResponse.ok) {
-            const cloudinaryData = await cloudinaryResponse.json();
-            console.log('Cloudinary response:', cloudinaryData);
-
-           
-            savePatientData(cloudinaryData.secure_url, password);
-        } else {
-            console.error('Failed to upload image to Cloudinary');
+                savePatientData(cloudinaryData.secure_url, password, stateToSend);
+            } else {
+                console.error('Failed to upload image to Cloudinary');
+                alert('Failed to upload image. Please try again.');
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
             alert('Failed to upload image. Please try again.');
             setLoading(false);
         }
-    } catch (error) {
-        console.error('Error uploading image:', error);
-        alert('Failed to upload image. Please try again.');
-        setLoading(false);
+    } else {
+        savePatientData('', password, stateToSend);
     }
-} else {
-   
-    savePatientData('', password);
-}
 };
 
 const savePatientData = async (imageUrl, password, stateToSend) => {
-try {
-    const allPatientsResponse = await fetch(`${backendURL}/adminRouter/sectionAallPatient`);
-    const allPatientsData = await allPatientsResponse.json();
-    const patientExists = allPatientsData.some(patient => patient.patientId === patientId);
-    if (patientExists) {
-        alert('Patient ID already exists');
-        setLoading(false);
-        return;
-    }
+    try {
+        const allPatientsResponse = await fetch(`${backendURL}/adminRouter/sectionAallPatient`);
+        const allPatientsData = await allPatientsResponse.json();
+        const patientExists = allPatientsData.some(patient => patient.patientId === patientId);
+        if (patientExists) {
+            alert('Patient ID already exists');
+            setLoading(false);
+            return;
+        }
 
-    const requestBody = {
-        password: password,
-        name: patientName,
-        gender: gender,
-        patientId: patientId,
-        contactNumber: formattedContactNumber,
-        email: email,
-        bloodGroup: bloodGroup,
-        age: age,
-        address: address,
-        state: stateToSend,
-        country: country,
-        image: imageUrl,
-        consultingDoctor: consultingDoctor,
-        localContactName: localContactName,
-        localContactRelation: localContactRelation,
-        localContactNumber: localContactNumber,
-        // existingPatientDiagnosis: existingPatient
-    };
-    const response = await fetch(`${backendURL}/adminRouter/patientregistration`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestBody)
-    });
+        const requestBody = {
+            password: password,
+            name: patientName,
+            gender: gender,
+            patientId: patientId,
+            contactNumber: formattedContactNumber,
+            email: email,
+            bloodGroup: bloodGroup,
+            age: age,
+            address: address,
+            state: stateToSend,
+            country: country,
+            image: imageUrl,
+            consultingDoctor: consultingDoctor,
+            localContactName: localContactName,
+            localContactRelation: localContactRelation,
+            localContactNumber: localContactNumber,
+            // existingPatientDiagnosis: existingPatient
+        };
+        const response = await fetch(`${backendURL}/adminRouter/patientregistration`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
 
-    if (response.ok) {
-        setLoading(false);
-        setShowPopup(true);
-    } else {
-        setLoading(false);
-        console.error('Error response from backend:', response.status);
+        if (response.ok) {
+            setLoading(false);
+            setShowPopup(true);
+            setSavingData(false);
+        } else {
+            setLoading(false);
+            console.error('Error response from backend:', response.status);
+            alert('Failed to register patient. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error registering patient:', error.message);
         alert('Failed to register patient. Please try again.');
+        setLoading(false);
     }
-} catch (error) {
-    console.error('Error registering patient:', error.message);
-    alert('Failed to register patient. Please try again.');
-    setLoading(false);
-}
 };
 
     const handleDateOfBirthChange = (event, selectedDate) => {
@@ -1151,8 +1085,8 @@ try {
                         <Text style={[styles.buttonText, styles.cancelText]}>Cancel</Text>
                     </TouchableOpacity>
                     
-                    <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
-                        <Text style={[styles.buttonText, styles.saveText]}>Save</Text>
+                    <TouchableOpacity style={[styles.button, styles.saveButton, savingData && styles.disabledButton]} onPress={handleSave}disabled={savingData}>
+                        <Text style={[styles.buttonText, styles.saveText, savingData && styles.disabledButtonText]}>Save</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -1173,6 +1107,12 @@ try {
 }
 export default AddPatient;
 const styles = StyleSheet.create({
+    disabledButton: {
+        backgroundColor: '#CCCCCC', 
+    },
+    disabledButtonText: {
+        color: '#888888',
+    },
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',

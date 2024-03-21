@@ -206,7 +206,7 @@ const AddAdmin = () => {
     
             if (res.status === 200) {
                 alert('Registration Successful');
-                navigation.navigate('Home');
+                navigation.navigate('BottomNavigation');
             } else {
                 alert('Registration Failed');
             }

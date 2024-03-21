@@ -13,7 +13,11 @@ const BasicDetailsURL = `${backendURL}/adminRouter/PatientBasicDetails`;
 
 const Item = ({ name, patientId, image, handleUpdate }) => (
     <View style={styles.regpatView13}>
-        <Image source={{ uri: image }} style={styles.regpatImage13} />
+        {image ? (
+            <Image source={{ uri: image }} style={styles.regpatImage13} />
+        ) : (
+            <Image source={require('../../../assets/images/user2.png')} style={styles.regpatImage13} />
+        )}
         <View style={styles.regpatDetails13}>
             <Text style={styles.regpatDetails14}>{name}</Text>
             <Text style={styles.regpatDetails15}>ID: {patientId}</Text>

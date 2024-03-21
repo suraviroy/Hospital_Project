@@ -40,7 +40,12 @@ const HomeAdmin = ({ searchText }) => {
        
         <View style={styles.item}>
         <View style={styles.leftContent}>
-        <Image style={styles.picture} source={{ uri: picture }}/>
+        {/* <Image style={styles.picture} source={{ uri: picture }}/> */}
+        {picture ? (
+            <Image source={{ uri: picture }} style={styles.picture} />
+        ) : (
+            <Image source={require('../../assets/images/user2.png')} style={styles.picture} />
+        )}
         <View style={styles.contain890}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.educationQualification}>{educationQualification}</Text>
