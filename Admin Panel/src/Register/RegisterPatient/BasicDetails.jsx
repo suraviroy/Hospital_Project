@@ -23,7 +23,7 @@ const BasicDetails = ({ route }) => {
                 {details.image ? (
                 <Image source={{ uri: details.image }} style={styles.profileImage} />
                 ) : (
-                <Image source={require('../../../assets/images/user2.png')} style={styles.profileImage} />
+                <Image source={require('../../../assets/images/user.png')} style={styles.profileImage} />
                  )}
              <Text style={styles.profileText}>Profile Picture</Text>
             </View>

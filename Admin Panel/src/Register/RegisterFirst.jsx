@@ -1,12 +1,146 @@
-import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text, Button, TextInput, TouchableOpacity, Image, Dimensions, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+const windowWidth = Dimensions.get('window').width;
+// import * as ImagePicker from 'expo-image-picker';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { useNavigation } from '@react-navigation/native';
+import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
+// import { PickerIos, Picker } from '@react-native-picker/picker';
+// import axios from 'axios';
+// import { backendURL } from "../backendapi";
+// import * as FileSystem from 'expo-file-system';
+// const adminRegistrationURL = `${backendURL}/adminListRouter/adminregistration`;
+import DiseaseForm from '../Register/RegisterPatient/DiseaseForm';
+import PastHosForm from '../Register/RegisterPatient/PastHosForm';
+// import ExiDisForm from './ExiDisForm';
+// import PFCForm from './PFCForm';
+// import SOSForm from './SOSForm';
+// import Exposure from './Exposure';
 
-const RegisterFirst =() => {
+const RegisterFirst = () => {
+    const navigation = useNavigation();
+
+    const handleBack = () => {
+        navigation.goBack();
+    };
+
+    const [selectedTab, setSelectedTab] = useState(0);
     return (
-        <View>
-
-        </View>
+        <SafeAreaView style = {styles.update2451}>
+            <View style = {styles.upheader2451}>
+                <TouchableOpacity onPress={handleBack} style={styles.backButton14}>
+                    <Text><Icon name="angle-left" size={30} color={Color.colorBlack} /></Text>
+                </TouchableOpacity>
+                <Text style = {styles.text14}>Update Profile</Text>
+            </View>
+            <ScrollView contentContainerStyle = {styles.scroll}>
+            <View style = {styles.det14}>
+                <Text style = {styles.text15}>Name : Michel Denil</Text>
+                <View style = {styles.patientId2451}><Text style = {styles.patientId13}>ID : 12345</Text></View>
+            </View>
+            <View style = {styles.switchButton}>
+                <TouchableOpacity style = {{
+                    width: '50%',
+                    height: 50,
+                    backgroundColor: selectedTab == 0 ? '#2A9988' : '#DBF4F1',
+                    borderRadius: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }} onPress={() => {setSelectedTab(0);}}>
+                    <Text style = {{
+                        color: selectedTab == 0 ? '#fff' : '#000',
+                        fontSize: 18,
+                        fontWeight: '500',
+                    }}>Basic Details</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style = {{
+                    width: '50%',
+                    height: 50,
+                    backgroundColor: selectedTab == 1 ? '#2A9988' : '#DBF4F1',
+                    borderRadius: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }} onPress={() => {setSelectedTab(1);}}>
+                    <Text style = {{
+                        color: selectedTab == 1 ? '#fff' : '#000',
+                        fontSize: 18,
+                        fontWeight: '500',
+                    }}>Update Diseases</Text>
+                </TouchableOpacity>
+            </View>
+            {selectedTab == 0 ? null : <DiseaseForm/> } 
+            </ScrollView>
+        </SafeAreaView>
     );
-}
-const styles = StyleSheet.create({})
+};
+
+
+
+const styles = StyleSheet.create({
+    update2451: {
+        marginTop: windowWidth*0.10,
+        flex:1,
+        width: '100%',
+        alignSelf: 'center',
+        marginBottom: windowWidth*0.17
+    },
+    upheader2451: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        marginHorizontal: windowWidth*0.025,
+        marginBottom: windowWidth*0.02
+    },
+    backButton14: {
+        marginRight: 10,
+        position: 'absolute',
+        left: 0,
+    },
+    text14: {
+        fontWeight: "bold",
+        fontSize: 25,
+        marginLeft: 30,
+        fontFamily: FontFamily.font_bold,
+    },
+    text15: {
+        fontSize: 16,
+        marginLeft: windowWidth*0.03,
+        fontFamily: FontFamily.font_bold,
+        marginTop: windowWidth*0.1,
+    },
+    patientId2451: {
+        width: windowWidth*0.3,
+        height: windowWidth*0.08,
+        backgroundColor: '#85DBCD',
+        borderTopLeftRadius: 15,
+        borderBottomLeftRadius: 15,
+        marginLeft: windowWidth*0.28,
+        marginTop: windowWidth*0.09,
+    },
+    patientId13: {
+        alignSelf: 'center',
+        marginTop: 4,
+        marginLeft: 3,
+    },
+    det14: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    switchButton: {
+        width: windowWidth*0.96,
+        height: 50,
+        alignSelf: 'center',
+        borderRadius: 10,
+        backgroundColor: '#DBF4F1',
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 20,
+    }, 
+    scroll: {
+        flexGrow: 1,
+        paddingBottom: 20,
+    }
+});
+
 export default RegisterFirst;

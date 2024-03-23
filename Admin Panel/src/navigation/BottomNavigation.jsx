@@ -8,6 +8,7 @@ import { Ionicons } from 'react-native-vector-icons';
 import Notification from '../Notification/Notification';
 import ViewList from '../ViewList/ViewList';
 import RegisterNotifications from '../Register/RegisterPatient/RegisterNotifications';
+import RegisterFirst from '../Register/RegisterFirst';
 
 const Tab = createBottomTabNavigator();
 
@@ -46,7 +47,7 @@ const BottomNavigation = () => {
                         iconName = focused ? 'home-sharp' : 'home-outline';
                     } else if (route.name === 'Notification') {
                         iconName = focused ? 'notifications-sharp' : 'notifications-outline';
-                    } else if (route.name === 'RegisterNotifications') {
+                    } else if (route.name === 'RegisterFirst') {
                         iconName = focused ? 'person-add-sharp' : 'person-add-outline';
                     } else if (route.name === 'ViewList') {
                         iconName = focused ? 'list-circle-sharp' : 'list-circle-outline';
@@ -81,8 +82,8 @@ const BottomNavigation = () => {
                 }}
             />
             <Tab.Screen
-                name="RegisterNotifications"
-                component={RegisterNotifications}
+                name="RegisterFirst"
+                component={RegisterFirst}
                 options={{
                     tabBarLabel: 'Register',
                     headerShown: false,

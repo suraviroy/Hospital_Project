@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image, Dimensions , Alert} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image, Dimensions , Alert,ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
@@ -8,10 +8,12 @@ import { AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { backendURL } from "../backendapi";
 import RegisterPopup from './RegisterPopup';
+import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 
 const windowWidth = Dimensions.get('window').width;
 
 const AddPatient = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [savingData, setSavingData] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [loading, setLoading] = useState(false); 
@@ -105,6 +107,7 @@ const AddPatient = () => {
         setSelectedBloodGroup(null);
         setSelectedState(null);
         setSelectedCountry(null);
+        setSavingData(false);
     };
     const calculateAge = (dob) => {
         const today = new Date();
@@ -181,8 +184,9 @@ const AddPatient = () => {
         stateToSend = manualState;
     }
 
-    setLoading(true); // Set loading state to true when saving data
+    setLoading(true);
     setSavingData(true);
+    setIsLoading(true);
     if (image) {
         try {
             const formData = new FormData();
@@ -227,6 +231,7 @@ const savePatientData = async (imageUrl, password, stateToSend) => {
         if (patientExists) {
             alert('Patient ID already exists');
             setLoading(false);
+            setSavingData(false);
             return;
         }
 
@@ -270,6 +275,9 @@ const savePatientData = async (imageUrl, password, stateToSend) => {
         console.error('Error registering patient:', error.message);
         alert('Failed to register patient. Please try again.');
         setLoading(false);
+    }finally {
+        // Stop loading
+        setIsLoading(false);
     }
 };
 
@@ -1085,8 +1093,13 @@ const savePatientData = async (imageUrl, password, stateToSend) => {
                         <Text style={[styles.buttonText, styles.cancelText]}>Cancel</Text>
                     </TouchableOpacity>
                     
-                    <TouchableOpacity style={[styles.button, styles.saveButton, savingData && styles.disabledButton]} onPress={handleSave}disabled={savingData}>
-                        <Text style={[styles.buttonText, styles.saveText, savingData && styles.disabledButtonText]}>Save</Text>
+                    <TouchableOpacity style={[styles.button, styles.saveButton, savingData]} onPress={handleSave}>
+                    {isLoading ? (
+                                <ActivityIndicator size="small" color={Color.colorWhite} />
+                            ) : (
+                                <Text style={[styles.buttonText, styles.saveText, savingData]}>Save</Text>
+                            )}
+                        
                     </TouchableOpacity>
                 </View>
             </ScrollView>

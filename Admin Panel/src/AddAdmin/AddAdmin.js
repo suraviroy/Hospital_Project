@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, Button, SafeAreaView, TextInput, TouchableOpacity, Image, Dimensions, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, Button, SafeAreaView, TextInput, TouchableOpacity, Image, Dimensions, ScrollView, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
@@ -23,6 +23,7 @@ const AddAdmin = () => {
     const [phoneError, setPhoneError] = useState(false);
     const [educationError, setEducationError] = useState(false);
     const [genderError, setGenderError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleRegister = () => {
         console.log('Name:', name);
@@ -84,72 +85,9 @@ const AddAdmin = () => {
             alert('Phone number must be 10 digits long');
             return;
         }
-    
-    //     let base64Image = '';
-    
-    //     try {
-    //         if (image) {
-    //             let imageUri = image;
-    //             if (image.startsWith('file://')) {
-    //                 const base64 = await FileSystem.readAsStringAsync(image, {
-    //                     encoding: FileSystem.EncodingType.Base64,
-    //                 });
-    //                 base64Image = `data:image/jpeg;base64,${base64}`;
-    //             } else {
-    //                 base64Image = image;
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('Error reading image:', error);
-    //         return;
-    //     }
-    //     const handleUpload=(image)=>{
-    //         const data = new FormData()
-    //         data.append('file',image)
-    //         data.append('upload preset','pulmocareapp')
-    //         data.append("cloud_name","pulmocare01")
-    //         fetch("https://api.cloudinary.com/v1_1/pulmocare01/image/upload",{
-    //           method: "post",
-    //           body: data  
-    //         }).then(res=>res.json())
-    //         then(data=>{
-    //             console.log(data)
-    //         })
-    //     }
-        
-    //     const data = {
-    //         name: name,
-    //         phNumber: phoneNumber,
-    //         educationQualification: education,
-    //         gender: gender,
-    //         idNumber: idNumber,
-    //         picture: image,
-    //     };
-    
-    
-    //     try {
-    //         const res = await axios.post(adminRegistrationURL, data, {
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         });
-    
-           
-    //         if (res.status === 200) {
-              
-    //             alert('Registration Successful');
-    //             navigation.navigate('Home'); 
-    //         } else {
-               
-    //             alert('Registration Failed');
-    //         }
-    //     } catch (error) {
-           
-    //         console.error('Error registering admin:', error);
-    //         alert('Registration Failed');
-    //     }
-    // };
-        // Upload image to Cloudinary
+
+        setIsLoading(true);
+
         if (image) {
             const formData = new FormData();
             formData.append('file', {
@@ -213,6 +151,9 @@ const AddAdmin = () => {
         } catch (error) {
             console.error('Error registering admin:', error);
             alert('Registration Failed');
+        } finally {
+
+            setIsLoading(false);
         }
     };
     
@@ -294,7 +235,11 @@ const AddAdmin = () => {
                             <Text style={[styles.buttonText, styles.cancelText]}>Cancel</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
-                            <Text style={[styles.buttonText, styles.saveText]}>Save</Text>
+                            {isLoading ? (
+                                <ActivityIndicator size="small" color={Color.colorWhite} />
+                            ) : (
+                                <Text style={[styles.buttonText, styles.saveText]}>Save</Text>
+                            )}
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -302,6 +247,8 @@ const AddAdmin = () => {
         </SafeAreaView>
     );
 };
+
+
 
 const windowWidth = Dimensions.get('window').width;
 
