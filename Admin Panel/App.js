@@ -2,7 +2,6 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 import Start from './src/starting page/start';
 import Login from './src/login page/login';
 import { useFonts } from 'expo-font';
@@ -12,9 +11,13 @@ import Notification from './src/Notification/Notification';
 import RegisterFirst from './src/Register/RegisterFirst';
 import ViewList from './src/ViewList/ViewList';
 import BottomNavigation from './src/navigation/BottomNavigation';
-import RegisterPatient from './src/Register/RegisterPatient/RegisterPatient';
 import HomeAdmin from './src/home page/HomeAdmin';
-import RegisterPanelStack from './src/RegisterPanel/RegisterPanelStack';
+import AddAdmin from './src/AddAdmin/AddAdmin';
+import RegisterNavbar from './src/Registration Panel/RegisterNavbar';
+import BasicDetails from './src/Register/RegisterPatient/BasicDetails';
+import PatientBasicDetails from './src/Registration Panel/PatientBasicDetails';
+import RegisteredPatient from './src/Register/RegisterPatient/RegisteredPatient';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -31,7 +34,7 @@ function App() {
     regular: require('./assets/fonts/JuliusSansOne-Regular.ttf'),
     medium01: require('./assets/fonts/Inter-Medium.ttf'),
     medium: require('./assets/fonts/Rubik-Medium.ttf'),
-    bold: require('./assets/fonts/Content-Bold.ttf'),
+    bold09: require('./assets/fonts/Content-Bold.ttf'),
     bold: require('./assets/fonts/Dongle-Bold.ttf'),
     bold: require('./assets/fonts/InknutAntiqua-Bold.ttf'),
     bold02: require('./assets/fonts/InriaSerif-Bold.ttf'),
@@ -52,11 +55,7 @@ function App() {
   if(!fontsLoaded){
     return null;
   }
-  // TIASHA
 
-  //Suraviiiiiiiiiiiiiiii
-  //Suravi
-  //Me again
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -67,10 +66,13 @@ function App() {
         <Stack.Screen name="RegisterFirst" component={RegisterFirst} />
         <Stack.Screen name="ViewList" component={ViewList} />
         <Stack.Screen name="BottomNavigation" component={BottomNavigation}/>
-        <Stack.Screen name="RegisterPatient" component={RegisterPatient}/>
         <Stack.Screen name="HomeAdmin" component={HomeAdmin}/>
-        <Stack.Screen name="RegisterPanel" component={RegisterPanelStack} />
-       
+        <Stack.Screen name="AddAdmin" component={AddAdmin}/>
+        <Stack.Screen name="RegisterNavbar" component={RegisterNavbar}/>
+        <Stack.Screen name="BasicDetails" component={BasicDetails}/>
+        <Stack.Screen name="PatientBasicDetails" component={PatientBasicDetails}/>
+        <Stack.Screen name="RegisterPatient" component={RegisteredPatient}/>
+
 
 
       </Stack.Navigator>

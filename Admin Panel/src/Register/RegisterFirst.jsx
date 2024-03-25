@@ -1,138 +1,146 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text, Button, TextInput, TouchableOpacity, Image, Dimensions, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+const windowWidth = Dimensions.get('window').width;
+// import * as ImagePicker from 'expo-image-picker';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { useNavigation } from '@react-navigation/native';
+import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
+// import { PickerIos, Picker } from '@react-native-picker/picker';
+// import axios from 'axios';
+// import { backendURL } from "../backendapi";
+// import * as FileSystem from 'expo-file-system';
+// const adminRegistrationURL = `${backendURL}/adminListRouter/adminregistration`;
+import DiseaseForm from '../Register/RegisterPatient/DiseaseForm';
+import PastHosForm from '../Register/RegisterPatient/PastHosForm';
+// import ExiDisForm from './ExiDisForm';
+// import PFCForm from './PFCForm';
+// import SOSForm from './SOSForm';
+// import Exposure from './Exposure';
 
 const RegisterFirst = () => {
+    const navigation = useNavigation();
+
+    const handleBack = () => {
+        navigation.goBack();
+    };
+
+    const [selectedTab, setSelectedTab] = useState(0);
     return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={styles.registerTextContainer}>
-                    <Text style={styles.registerText}>Register New Patient</Text>
-                </View>
-                <View style={styles.profileContainer}>
-                    <Image source={require("../../assets/images/user2.png")} style={styles.profileImage} />
-                    <Text style={styles.profileText}>Default Profile Picture</Text>
-                </View>
-                <View style={styles.detailsContainer}>
-                    <Text style={styles.label}>Patient Name:</Text>
-                    <Text style={styles.value}>Mark Smith</Text>
-                    <Text style={styles.label}>Age:</Text>
-                    <Text style={styles.value}>30</Text>
-                    <Text style={styles.label}>Gender:</Text>
-                    <Text style={styles.value}>Male</Text>
-                    <Text style={styles.label}>Patient ID:</Text>
-                    <Text style={styles.value}>P1234</Text>
-                    <Text style={styles.label}>Contact Number:</Text>
-                    <Text style={styles.value}>+911234567890</Text>
-                    <Text style={styles.label}>Consulting Doctor:</Text>
-                    <Text style={styles.value}>Dr. Parthasarathi Bhattacharyya</Text>
-                    <Text style={styles.label}>Email:</Text>
-                    <Text style={styles.value}>mark.smith@example.com</Text>
-                    <Text style={styles.label}>Blood Group:</Text>
-                    <Text style={styles.value}>A+</Text>
-                    <Text style={styles.label}>Address:</Text>
-                    <Text style={styles.value}>123 Main Street, City</Text>
-                    <Text style={styles.label}>State:</Text>
-                    <Text style={styles.value}>West Bengal</Text>
-                    <Text style={styles.label}>Country:</Text>
-                    <Text style={styles.value}>India</Text>
-                    <Text style={styles.label}>Local Contact Name:</Text>
-                    <Text style={styles.value}>Mary Smith</Text>
-                    <Text style={styles.label}>Local Contact Relation:</Text>
-                    <Text style={styles.value}>Spouse</Text>
-                    <Text style={styles.label}>Local Contact Number:</Text>
-                    <Text style={styles.value}>+911234567980</Text>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={[styles.button, styles.deleteButton]} >
-                        <Text style={[styles.buttonText, styles.deleteText]}>Delete</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.button, styles.updateButton]} >
-                        <Text style={[styles.buttonText, styles.updateText]}>Update</Text>
-                    </TouchableOpacity>
-                </View>
+        <SafeAreaView style = {styles.update2451}>
+            <View style = {styles.upheader2451}>
+                <TouchableOpacity onPress={handleBack} style={styles.backButton14}>
+                    <Text><Icon name="angle-left" size={30} color={Color.colorBlack} /></Text>
+                </TouchableOpacity>
+                <Text style = {styles.text14}>Update Profile</Text>
+            </View>
+            <ScrollView contentContainerStyle = {styles.scroll}>
+            <View style = {styles.det14}>
+                <Text style = {styles.text15}>Name : Michel Denil</Text>
+                <View style = {styles.patientId2451}><Text style = {styles.patientId13}>ID : 12345</Text></View>
+            </View>
+            <View style = {styles.switchButton}>
+                <TouchableOpacity style = {{
+                    width: '50%',
+                    height: 50,
+                    backgroundColor: selectedTab == 0 ? '#2A9988' : '#DBF4F1',
+                    borderRadius: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }} onPress={() => {setSelectedTab(0);}}>
+                    <Text style = {{
+                        color: selectedTab == 0 ? '#fff' : '#000',
+                        fontSize: 18,
+                        fontWeight: '500',
+                    }}>Basic Details</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style = {{
+                    width: '50%',
+                    height: 50,
+                    backgroundColor: selectedTab == 1 ? '#2A9988' : '#DBF4F1',
+                    borderRadius: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }} onPress={() => {setSelectedTab(1);}}>
+                    <Text style = {{
+                        color: selectedTab == 1 ? '#fff' : '#000',
+                        fontSize: 18,
+                        fontWeight: '500',
+                    }}>Update Diseases</Text>
+                </TouchableOpacity>
+            </View>
+            {selectedTab == 0 ? null : <DiseaseForm/> } 
             </ScrollView>
         </SafeAreaView>
     );
-}
+};
+
+
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
+    update2451: {
+        marginTop: windowWidth*0.10,
+        flex:1,
+        width: '100%',
+        alignSelf: 'center',
+        marginBottom: windowWidth*0.17
     },
-    scrollContent: {
+    upheader2451: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        marginHorizontal: windowWidth*0.025,
+        marginBottom: windowWidth*0.02
+    },
+    backButton14: {
+        marginRight: 10,
+        position: 'absolute',
+        left: 0,
+    },
+    text14: {
+        fontWeight: "bold",
+        fontSize: 25,
+        marginLeft: 30,
+        fontFamily: FontFamily.font_bold,
+    },
+    text15: {
+        fontSize: 16,
+        marginLeft: windowWidth*0.03,
+        fontFamily: FontFamily.font_bold,
+        marginTop: windowWidth*0.1,
+    },
+    patientId2451: {
+        width: windowWidth*0.3,
+        height: windowWidth*0.08,
+        backgroundColor: '#85DBCD',
+        borderTopLeftRadius: 15,
+        borderBottomLeftRadius: 15,
+        marginLeft: windowWidth*0.28,
+        marginTop: windowWidth*0.09,
+    },
+    patientId13: {
+        alignSelf: 'center',
+        marginTop: 4,
+        marginLeft: 3,
+    },
+    det14: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    switchButton: {
+        width: windowWidth*0.96,
+        height: 50,
+        alignSelf: 'center',
+        borderRadius: 10,
+        backgroundColor: '#DBF4F1',
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 20,
+    }, 
+    scroll: {
         flexGrow: 1,
-    },
-    registerTextContainer: {
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    registerText: {
-        fontSize: 26,
-        fontWeight: 'bold',
-    },
-    profileContainer: {
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    profileImage: {
-        width: 150,
-        height: 150,
-        resizeMode: 'cover',
-        borderRadius: 75,
-    },
-    profileText: {
-        marginTop: 10,
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    detailsContainer: {
-        marginTop: 20,
-        paddingHorizontal: 20,
-    },
-    label: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginTop: 10,
-    },
-    value: {
-        fontSize: 16,
-        marginTop: 5,
-    },
-    buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginBottom: 20, 
-    marginTop: 'auto', 
-},
-    button: {
-        height: 52,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 5,
-        width: '45%',
-    },
-    deleteButton: {
-        backgroundColor: '#FFFFFF',
-        borderWidth: 1,
-        borderColor: 'red',
-    },
-    deleteText: {
-        color: 'red',
-    },
-    updateButton: {
-        backgroundColor: '#008080',
-    },
-    updateText: {
-        color: '#FFFFFF',
-    },
-    buttonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
+        paddingBottom: 20,
+    }
 });
 
 export default RegisterFirst;
-

@@ -6,8 +6,9 @@ import { Ionicons } from 'react-native-vector-icons';
 
 
 import Notification from '../Notification/Notification';
-import RegisterFirst from '../Register/RegisterFirst';
 import ViewList from '../ViewList/ViewList';
+import RegisterNotifications from '../Register/RegisterPatient/RegisterNotifications';
+import RegisterFirst from '../Register/RegisterFirst';
 
 const Tab = createBottomTabNavigator();
 

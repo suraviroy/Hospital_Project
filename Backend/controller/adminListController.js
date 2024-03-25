@@ -57,3 +57,15 @@ export const adminList = async (req, res) => {
     res.status(500).json(err)
   }
 }
+
+export const adminNames = async (req, res) => {
+  try {
+    const admins = await AdminSchema.find({}, 'name')
+    const adminNames = admins.map(admin => admin.name)
+    res.status(200).json(adminNames)
+  } catch (err) {
+    console.log(err)
+    res.status(500).json(err)
+  }
+}
+
