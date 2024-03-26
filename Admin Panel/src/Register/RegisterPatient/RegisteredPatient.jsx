@@ -9,7 +9,7 @@ import { FontFamily } from '../../../GlobalStyles';
 import { backendURL } from "../../backendapi";
 
 const PatientListURL =  `${backendURL}/adminRouter/registeredPatientList`;
-const BasicDetailsURL = `${backendURL}/adminRouter/PatientBasicDetails`;
+const BasicDetailsURL = `${backendURL}/adminRouter/UpdateProfileNameId`;
 
 const Item = ({ name, patientId, image, handleUpdate }) => (
     <View style={styles.regpatView13}>
@@ -59,7 +59,7 @@ const RegisteredPatient = ({ searchText }) => {
         fetch(`${BasicDetailsURL}/${patientId}`)
             .then(response => response.json())
             .then(data => {
-                navigation.navigate('BasicDetails', { details: data[0] });
+                navigation.navigate('RegisterFirst', { details: data[0] });
             })
             .catch(error => {
                 console.error('Error fetching patient details:', error);

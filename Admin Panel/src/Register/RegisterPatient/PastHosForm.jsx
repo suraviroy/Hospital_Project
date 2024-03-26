@@ -1,15 +1,54 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
-// import * as ImagePicker from 'expo-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
 import { FontFamily, Color, Border, FontSize } from "../../../GlobalStyles";
-
+import * as DocumentPicker from 'expo-document-picker';
 
 const PastHosForm = () => {
     const [isClicked20, setIsClicked20] = useState(false);
     const [isClicked21, setIsClicked21] = useState(false);
+    const [pickedFile, setPickedFile] = useState(null);
+    const [isUploaded, setIsUploaded] = useState(false);
+
+    const pickFile = async () => {
+        try {
+            console.log("Attempting to pick a file...");
+            const filePickResponse = await DocumentPicker.getDocumentAsync({
+                type: "*/*",
+            });
+            console.log("File pick response:", filePickResponse);
+
+            if (!filePickResponse.cancelled) {
+                const fileInfo = filePickResponse.assets[0];
+                console.log("File picked successfully:", fileInfo.name);
+                console.log("File type:", fileInfo.type); 
+                const pickedFileData = {
+                    name: fileInfo.name,
+                    type: fileInfo.type,
+                    uri: fileInfo.uri,
+                };
+                setPickedFile(pickedFileData);
+            } else {
+                console.log("File picking canceled or failed.");
+            }
+        } catch (error) {
+            console.error("Error picking file:", error);
+        }
+    };
+    const uploadFile = async () => {
+        if (!pickedFile) {
+            console.log("No file picked!");
+            return;
+        }
+
+        console.log("Uploading file:", pickedFile);
+        setIsUploaded(true);
+        console.log("isUploaded:", isUploaded);
+    };
+
+    console.log("pickedFile:", pickedFile);
 
     return (
         <View style={styles.hosform}>
@@ -39,13 +78,24 @@ const PastHosForm = () => {
             </View>
             <View style={styles.hosopt1}>
                 <Icon name="paperclip" size={22} color={Color.colorGray_100} />
-                <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>Upload Discharge Certficate</Text>
-                <TouchableOpacity style={styles.uploadbutton}>
+                <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
+                {pickedFile ? pickedFile.name : 'Upload Discharge Certficate'}
+                    </Text>
+                <TouchableOpacity style={styles.uploadbutton} onPress={pickFile}>
                     <Text style={{ fontWeight: '700', fontSize: 15, color: '#2A9988', alignSelf: 'center' }}>Upload</Text>
                 </TouchableOpacity>
-                {/* {selectedFile && (
-                <Text>Selected File: {selectedFile.name}</Text>
-            )} */}
+                {pickedFile && (
+                    <View style={styles.selectedFileContainer}>
+                        <Text style={styles.selectedFileText}></Text>
+                        <Text style={styles.selectedFileName}></Text>
+                    </View>
+                )}
+                {isUploaded && (
+                    <Text style={{ fontWeight: '700', fontSize: 15, color: 'green', alignSelf: 'center', marginTop: 10 }}>
+                        File Uploaded Successfully!
+                    </Text>
+                )}
+    
             </View>
         </View>
     );

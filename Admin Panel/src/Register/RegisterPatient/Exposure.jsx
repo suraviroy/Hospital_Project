@@ -62,7 +62,7 @@ const Exposure = () => {
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Dust</Text>
                                 <TouchableOpacity>
-                                    <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                                    <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.duration4}>
@@ -83,7 +83,7 @@ const Exposure = () => {
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Cotton dust</Text>
                                 <TouchableOpacity>
-                                    <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                                    <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.duration4}>
@@ -104,7 +104,7 @@ const Exposure = () => {
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Wooden dust</Text>
                                 <TouchableOpacity>
-                                    <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                                    <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.duration4}>
@@ -125,7 +125,7 @@ const Exposure = () => {
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Pigeon</Text>
                                 <TouchableOpacity>
-                                    <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                                    <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.duration4}>
@@ -146,7 +146,7 @@ const Exposure = () => {
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Hay</Text>
                                 <TouchableOpacity>
-                                    <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                                    <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.duration4}>
@@ -167,7 +167,7 @@ const Exposure = () => {
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Moulds</Text>
                                 <TouchableOpacity>
-                                    <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                                    <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.duration4}>
@@ -188,7 +188,7 @@ const Exposure = () => {
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Pollen</Text>
                                 <TouchableOpacity>
-                                    <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                                    <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.duration4}>
@@ -209,7 +209,7 @@ const Exposure = () => {
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Chemical</Text>
                                 <TouchableOpacity>
-                                    <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                                    <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.duration4}>
@@ -230,7 +230,7 @@ const Exposure = () => {
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Stone dust</Text>
                                 <TouchableOpacity>
-                                    <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                                    <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.duration4}>
@@ -251,7 +251,7 @@ const Exposure = () => {
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Others</Text>
                                 <TouchableOpacity>
-                                    <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                                    <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                                 </TouchableOpacity>
                             </View>
                             <TouchableOpacity style={styles.textbox}>
