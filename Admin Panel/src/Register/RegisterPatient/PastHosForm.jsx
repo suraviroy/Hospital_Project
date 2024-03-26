@@ -88,8 +88,8 @@ const PastHosForm = () => {
                 </TouchableOpacity>
                 {pickedFile && (
                     <View style={styles.selectedFileContainer}>
-                        <Text style={styles.selectedFileText}>Selected File:</Text>
-                        <Text style={styles.selectedFileName}>{pickedFile.name}</Text>
+                        <Text style={styles.selectedFileText}></Text>
+                        <Text style={styles.selectedFileName}></Text>
                     </View>
                 )}
                 {isUploaded && (
