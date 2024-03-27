@@ -55,10 +55,10 @@ const patientSchema = new mongoose.Schema({
   password: {
     type: String,
   },
-  image :{
+  image: {
     type: String,
   },
-  coordinator :{
+  coordinator: {
     type: String,
   },
   visitCount: {
@@ -72,6 +72,54 @@ const patientSchema = new mongoose.Schema({
         },
         existingDeseases: {
           type: {
+            diabetes: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            hypertension: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            ihd: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
             hypothyroidism: {
               duration: {
                 numericValue: {
@@ -88,7 +136,215 @@ const patientSchema = new mongoose.Schema({
                 default: "NA",
               },
             },
-            diabetes: {
+            allergicRhinitis: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            hyperuricemia: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            asthama: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            tb: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            copd: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            ild: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            bronchiectasis: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            osa: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            ibs: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            inflammatoryBowelDisease: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            depression: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            anxiety: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            osa: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            collagenVascularDisease: {
               duration: {
                 numericValue: {
                   type: Number,
@@ -108,6 +364,57 @@ const patientSchema = new mongoose.Schema({
               organ: {
                 type: String,
                 default: "NA",
+              },
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            dyslipidemia: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            cld: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            ckd: {
+              typeofckd: {
+                type: String,
               },
               duration: {
                 numericValue: {
@@ -148,6 +455,22 @@ const patientSchema = new mongoose.Schema({
         },
         problemForConsultation: {
           type: {
+            sob: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
             cough: {
               duration: {
                 numericValue: {
@@ -164,11 +487,7 @@ const patientSchema = new mongoose.Schema({
                 default: "NA",
               },
             },
-            uncontrolledDisease: {
-              type: {
-                type: String,
-                default: "NA",
-              },
+            bleedingWithCough: {
               duration: {
                 numericValue: {
                   type: Number,
@@ -183,6 +502,206 @@ const patientSchema = new mongoose.Schema({
                 type: String,
                 default: "NA",
               },
+            },
+            chestPain: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            wheeze: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            phlagm: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            nasalCongestion: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            snoring: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            dayTimeSleepiness: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            weakness: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            drowsiness: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            lethargy: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            lowMood: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            diarrhoea: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+              statusOfDisease: {
+                type: String,
+                default: "NA",
+              },
+            },
+            uncontrolledDisease: {
+              type: [
+                {
+                  name: {
+                    type: String,
+                    default: "NA",
+                  },
+                  duration: {
+                    numericValue: {
+                      type: Number,
+                      default: 0,
+                    },
+                    unit: {
+                      type: String,
+                      default: "NA",
+                    },
+                  },
+                  statusOfDisease: {
+                    type: String,
+                    default: "NA",
+                  },
+                },
+              ],
             },
             others: {
               disease: {
@@ -270,10 +789,106 @@ const patientSchema = new mongoose.Schema({
                 },
               },
             },
+            cottonDust: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+            },
+            woodDust: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+            },
+            pigeon: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+            },
+            hay: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+            },
+            moulds: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+            },
+            pollen: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+            },
+            chemical: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+            },
+            stoneDust: {
+              duration: {
+                numericValue: {
+                  type: Number,
+                  default: 0,
+                },
+                unit: {
+                  type: String,
+                  default: "NA",
+                },
+              },
+            },
             others: {
-              typeOfExposure:{
-                type:String,
-                default:"NA",
+              typeOfExposure: {
+                type: String,
+                default: "NA",
               },
               duration: {
                 numericValue: {
