@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
@@ -7,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily } from '../../../GlobalStyles';
 import { backendURL } from "../../backendapi";
 
-const PatientListURL =  `${backendURL}/adminRouter/registeredPatientList`;
+const PatientListURL = `${backendURL}/adminRouter/registeredPatientList`;
 const BasicDetailsURL = `${backendURL}/adminRouter/UpdateProfileNameId`;
 
 const Item = ({ name, patientId, image, handleUpdate }) => (
@@ -132,11 +131,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         position: "absolute",
-        width: 109,
+        width: windowWidth*0.27,
         height: 34,
         borderRadius: 5,
         marginTop: 30,
-        marginLeft: 270,
+        marginLeft: windowWidth*0.7,
         backgroundColor: '#2A9988',
     },
     update13: {
