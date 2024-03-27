@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
         height: 50,
         width: 380,
         backgroundColor: "#FFFFFF",
-        marginTop: windowWidth*0.06,
+        marginTop: windowWidth*0.05,
     },
     searchWrapper012: {
         flex: 1,

@@ -1,4 +1,4 @@
-import React, { useState,useEffect  } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Button, SafeAreaView, TextInput, TouchableOpacity, Image, Dimensions, ScrollView, FlatList } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 // import * as ImagePicker from 'expo-image-picker';
@@ -15,6 +15,9 @@ import { backendURL } from "../../backendapi";
 
 
 const DiseaseForm = () => {
+    const [diseases, setDiseases] = useState([]);
+
+    const [selectedUnit1, setSelectedUnit1] = useState('Unit');
     const [selectedOption1, setSelectedOption1] = useState('Select');
     const [selectedOption2, setSelectedOption2] = useState('Select');
     const [selectedOption3, setSelectedOption3] = useState('Select');
@@ -45,6 +48,69 @@ const DiseaseForm = () => {
     const [coordinators, setCoordinators] = useState([]);
     const [isClicked18, setIsClicked18] = useState(false);
     const [selectedCoordinator, setSelectedCoordinator] = useState('Select');
+    const [selectedYear, setSelectedYear] = useState('');
+
+    const Unit = [
+        {
+            value: 'Days',
+            key: 'DY',
+        },
+        {
+            value: 'Weeks',
+            key: 'WK',
+        },
+        {
+            value: 'Months',
+            key: 'MT',
+        },
+        {
+            value: 'Years',
+            key: 'YR',
+        },
+    ]
+    const handleSave = () => {
+
+        const formattedData = {
+            existingDeseases: {}
+        };
+
+        diseases.forEach(disease => {
+            const {
+                name,
+                duration,
+                organ,
+                type,
+                disease: diseaseName,
+                status
+            } = disease;
+            const lowercaseName = name.toLowerCase();
+
+
+            if (!formattedData.existingDeseases[lowercaseName]) {
+                formattedData.existingDeseases[lowercaseName] = {};
+            }
+            switch (name) {
+                case 'Malignancy':
+                    formattedData.existingDeseases[lowercaseName].organ = organ;
+                    break;
+                case 'Others':
+                    formattedData.existingDeseases[lowercaseName].disease = diseaseName;
+                    break;
+                case 'CKD':
+                    formattedData.existingDeseases[lowercaseName].type = type;
+                    break;
+                default:
+                    break;
+            }
+            formattedData.existingDeseases[lowercaseName].duration = duration;
+            formattedData.existingDeseases[lowercaseName].statusOfDisease = status;
+        });
+
+        console.log("Data to be sent to backend:", JSON.stringify(formattedData));
+
+
+    };
+
 
     useEffect(() => {
         fetchAdminNames();
@@ -68,424 +134,449 @@ const DiseaseForm = () => {
 
     return (
         <View style={styles.container}>
-        <SafeAreaView style={styles.disform}>
-            <View style={styles.disheader}>
-                <Text style={styles.texthead}>Existing Disease</Text>
-            </View>
-            <ExiDisForm />
-            <View style={styles.disheader}>
-                <Text style={styles.texthead}>Problem For Consultation</Text>
-            </View>
-            <PFCForm />
-            <View style={styles.disheader}>
-                <Text style={styles.texthead}>Important History</Text>
-            </View>
-            <View style={styles.history}>
-                <View style={styles.hislist}>
-                    <Text style={styles.textlist}>Allergy :</Text>
+            <SafeAreaView style={styles.disform}>
+                <View style={styles.disheader}>
+                    <Text style={styles.texthead}>Existing Disease</Text>
                 </View>
-                <TouchableOpacity style={styles.dropdown14} onPress={() => {
-                    setIsClicked3(!isClicked3);
-                }}>
-                    <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>{selectedOption1}</Text>
-                    {isClicked3 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
-                </TouchableOpacity>
-            </View>
-            {isClicked3 ? (
-                <View style={styles.options}>
-                    <View style={styles.option}>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption1(("Yes"));
-                            setIsClicked3(false);
-                            setIsClicked9(!isClicked9);
-                            setIsClicked9(true);
-                        }}>
-                            <Text style={{ fontSize: 15 }}>Yes</Text>
-                        </TouchableOpacity>
+                <ExiDisForm />
+                {/* <ExiDisForm diseases={diseases} setDiseases={setDiseases} /> */}
+                <View style={styles.disheader}>
+                    <Text style={styles.texthead}>Problem For Consultation</Text>
+                </View>
+                <PFCForm />
+                <View style={styles.disheader}>
+                    <Text style={styles.texthead}>Important History</Text>
+                </View>
+                <View style={styles.history}>
+                    <View style={styles.hislist}>
+                        <Text style={styles.textlist}>Allergy :</Text>
+                    </View>
+                    <TouchableOpacity style={styles.dropdown14} onPress={() => {
+                        setIsClicked3(!isClicked3);
+                    }}>
+                        <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>{selectedOption1}</Text>
+                        {isClicked3 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
+                    </TouchableOpacity>
+                    
+                </View>
+                {isClicked3 ? (
+                    <View style={styles.options}>
+                        <View style={styles.option}>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption1(("Yes"));
+                                setIsClicked3(false);
+                                setIsClicked9(!isClicked9);
+                                setIsClicked9(true);
+                            }}>
+                                <Text style={{ fontSize: 15 }}>Yes</Text>
+                            </TouchableOpacity>
 
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption1(("No"));
-                            setIsClicked3(false);
-                            setIsClicked9(false);
-                        }}>
-                            <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity style={{ width: '180%'}} onPress={() => {
+                                setSelectedOption1(("No"));
+                                setIsClicked3(false);
+                                setIsClicked9(false);
+                            }}>
+                                <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-            ) : null}
-            {isClicked9 ? (
-                <View style={styles.problems}>
-                    <View style={styles.problist}>
-                        <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Type of Allergy :</Text>
-                        <TouchableOpacity>
-                            <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                ) : null}
+                {isClicked9 ? (
+                    <View style={styles.problems}>
+                        <View style={styles.problist}>
+                            <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Type of Allergy :</Text>
+                            {/* <TouchableOpacity>
+                                <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                            </TouchableOpacity> */}
+                        </View>
+                        <TouchableOpacity style={styles.textbox}>
+                            <TextInput style={{ fontSize: 15, width: windowWidth * 0.8 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
                         </TouchableOpacity>
+                        <View style={styles.duration4}>
+                            <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
+                            <TouchableOpacity style={styles.dropdown20}>
+                                <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                            </TouchableOpacity>
+                            <View style={styles.dropdown21}>
+                                <Picker
+                                    selectedValue={selectedUnit1}
+                                    onValueChange={(itemValue, itemIndex) =>
+                                        setSelectedUnit1(itemValue)
+                                    }
+                                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                                    <Picker.Item label="Unit" value="" style={{ color: Color.colorGray_200 }} />
+                                    {Unit.map((unit) => (
+                                        <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{ color: Color.colorBlack }} />
+                                    ))}
+                                </Picker>
+                            </View>
+                        </View>
                     </View>
-                    <TouchableOpacity style={styles.textbox}>
-                        <TextInput style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.8 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
+                ) : null}
+                <View style={styles.history}>
+                    <View style={styles.hislist}>
+                        <Text style={styles.textlist}>Drug Reaction :</Text>
+                    </View>
+                    <TouchableOpacity style={styles.dropdown14} onPress={() => {
+                        setIsClicked4(!isClicked4);
+                    }}>
+                        <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>{selectedOption2}</Text>
+                        {isClicked4 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
                     </TouchableOpacity>
-                    <View style={styles.duration4}>
-                        <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
-                        <TouchableOpacity style={styles.dropdown20}>
-                            <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                </View>
+                {isClicked4 ? (
+                    <View style={styles.options}>
+                        <View style={styles.option}>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption2(("Yes"));
+                                setIsClicked4(false);
+                                setIsClicked10(!isClicked10);
+                                setIsClicked10(true);
+                            }}>
+                                <Text style={{ fontSize: 15 }}>Yes</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption2(("No"));
+                                setIsClicked4(false);
+                                setIsClicked10(false);
+                            }}>
+                                <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ) : null}
+                {isClicked10 ? (
+                    <View style={styles.problems3}>
+                        <View style={styles.problist}>
+                            <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>What type of drugs?</Text>
+                            {/* <TouchableOpacity>
+                                <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                            </TouchableOpacity> */}
+                        </View>
+                        <TouchableOpacity style={styles.textbox}>
+                            <TextInput style={{ fontSize: 15, width: windowWidth * 0.8 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.dropdown21}>
-                            <Text style={{ color: '#8E7D7D', fontSize: 15 }}>Unit</Text>
-                            <Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.15} />
+                        <Text style={{ fontWeight: '700', fontSize: 16, width: '50%', marginTop: windowWidth * 0.02 }}>What type of reaction?</Text>
+                        <TouchableOpacity style={styles.textbox}>
+                            <TextInput style={{ fontSize: 15, width: windowWidth * 0.8 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
                         </TouchableOpacity>
                     </View>
+                ) : null}
+                <View style={styles.history}>
+                    <View style={styles.hislist}>
+                        <Text style={styles.textlist}>Past Surgery :</Text>
+                    </View>
+                    <TouchableOpacity style={styles.dropdown14} onPress={() => {
+                        setIsClicked5(!isClicked5);
+                    }}>
+                        <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>{selectedOption3}</Text>
+                        {isClicked5 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
+                    </TouchableOpacity>
                 </View>
-            ) : null}
-            <View style={styles.history}>
-                <View style={styles.hislist}>
-                    <Text style={styles.textlist}>Drug Reaction :</Text>
+                {isClicked5 ? (
+                    <View style={styles.options}>
+                        <View style={styles.option}>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption3(("Yes"));
+                                setIsClicked5(false);
+                                setIsClicked11(!isClicked11);
+                                setIsClicked11(true);
+                            }}>
+                                <Text style={{ fontSize: 15 }}>Yes</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption3(("No"));
+                                setIsClicked5(false);
+                                setIsClicked11(false);
+                            }}>
+                                <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ) : null}
+                {isClicked11 ? (
+                    <View style={styles.problems}>
+                        <View style={styles.problist}>
+                            <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Type of Surgery :</Text>
+                            {/* <TouchableOpacity>
+                                <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                            </TouchableOpacity> */}
+                        </View>
+                        <TouchableOpacity style={styles.textbox}>
+                            <TextInput style={{ fontSize: 15, width: windowWidth * 0.8 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
+                        </TouchableOpacity>
+                        <View style={styles.duration4}>
+                            <Text style={{ fontWeight: '400', fontSize: 14 }}>Year of Surgery :</Text>
+                            <View style={styles.dropdown22}>
+                                <Picker
+                                    selectedValue={selectedYear}
+                                    style={{ height: 50, width: '100%', paddingHorizontal: 10 }}
+                                    onValueChange={(itemValue, itemIndex) =>
+                                        setSelectedYear(itemValue)
+                                    }
+                                >
+                                    <Picker.Item label="Select" value="" style={{ color: Color.colorGray_200 }} />
+                                    {Array.from({ length: new Date().getFullYear() - 1980 + 1 }, (_, i) => 1980 + i).map((year) => (
+                                        <Picker.Item key={year} label={year.toString()} value={year} style={{ color: Color.colorBlack }} />
+                                    ))}
+                                </Picker>
+                            </View>
+                        </View>
+                    </View>
+                ) : null}
+                <View style={styles.history}>
+                    <View style={styles.hislist}>
+                        <Text style={styles.textlist}>Past Diseases :</Text>
+                    </View>
+                    <TouchableOpacity style={styles.dropdown14} onPress={() => {
+                        setIsClicked6(!isClicked6);
+                    }}>
+                        <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>{selectedOption4}</Text>
+                        {isClicked6 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.dropdown14} onPress={() => {
-                    setIsClicked4(!isClicked4);
+                {isClicked6 ? (
+                    <View style={styles.options}>
+                        <View style={styles.option}>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption4(("Yes"));
+                                setIsClicked6(false);
+                                setIsClicked12(!isClicked12);
+                                setIsClicked12(true);
+                            }}>
+                                <Text style={{ fontSize: 15 }}>Yes</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption4(("No"));
+                                setIsClicked6(false);
+                                setIsClicked12(false);
+                            }}>
+                                <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ) : null}
+                {isClicked12 ? (
+                    <View style={styles.problems4}>
+                        <View style={styles.problist}>
+                            <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Type of Disease :</Text>
+                            {/* <TouchableOpacity>
+                                <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                            </TouchableOpacity> */}
+                        </View>
+                        <TouchableOpacity style={styles.textbox}>
+                            <TextInput style={{ fontSize: 15, width: windowWidth * 0.8 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
+                        </TouchableOpacity>
+                    </View>
+                ) : null}
+                <View style={styles.history}>
+                    <View style={styles.hislist}>
+                        <Text style={styles.textlist}>Family Histroy :</Text>
+                    </View>
+                    <TouchableOpacity style={styles.dropdown14} onPress={() => {
+                        setIsClicked7(!isClicked7);
+                    }}>
+                        <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>{selectedOption5}</Text>
+                        {isClicked7 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
+                    </TouchableOpacity>
+                </View>
+                {isClicked7 ? (
+                    <View style={styles.options}>
+                        <View style={styles.option}>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption5(("Yes"));
+                                setIsClicked7(false);
+                                setIsClicked13(!isClicked13);
+                                setIsClicked13(true);
+                            }}>
+                                <Text style={{ fontSize: 15 }}>Yes</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption5(("No"));
+                                setIsClicked7(false);
+                                setIsClicked13(false);
+                            }}>
+                                <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ) : null}
+                {isClicked13 ? (
+                    <View style={styles.problems4}>
+                        <View style={styles.problist}>
+                            <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Type here :</Text>
+                            {/* <TouchableOpacity>
+                                <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                            </TouchableOpacity> */}
+                        </View>
+                        <TouchableOpacity style={styles.textbox}>
+                            <TextInput style={{ fontSize: 15, width: windowWidth * 0.8 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
+                        </TouchableOpacity>
+                    </View>
+                ) : null}
+                <View style={styles.history}>
+                    <View style={styles.hislist}>
+                        <Text style={styles.textlist}>Occupation :</Text>
+                    </View>
+                    <TouchableOpacity style={styles.dropdown15}>
+                        <TextInput style={{ fontSize: 15, width: windowWidth * 0.45 }} placeholder='Enter here' placeholderTextColor={'#8E7D7D'}></TextInput>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.history}>
+                    <View style={styles.hislist}>
+                        <Text style={styles.textlist}>Exposure :</Text>
+                    </View>
+                    <TouchableOpacity style={styles.dropdown14} onPress={() => {
+                        setIsClicked8(!isClicked8);
+                    }}>
+                        <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>{selectedOption6}</Text>
+                        {isClicked8 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
+                    </TouchableOpacity>
+                </View>
+                {isClicked8 ? (
+                    <View style={styles.options}>
+                        <View style={styles.option}>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption6(("Yes"));
+                                setIsClicked8(false);
+                                setIsClicked14(!isClicked14);
+                                setIsClicked14(true);
+                            }}>
+                                <Text style={{ fontSize: 15 }}>Yes</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption6(("No"));
+                                setIsClicked8(false);
+                                setIsClicked14(false);
+                            }}>
+                                <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ) : null}
+                {isClicked14 ? (
+                    <Exposure />
+                ) : null}
+                <View style={styles.disheader}>
+                    <Text style={styles.texthead}>Past Hospitalization</Text>
+                </View>
+                <TouchableOpacity style={styles.dropdown13} onPress={() => {
+                    setIsClicked15(!isClicked15);
                 }}>
-                    <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>{selectedOption2}</Text>
-                    {isClicked4 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
+                    <Text style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.73 }}>{selectedOption7}</Text>
+                    {isClicked15 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.1} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.1} />)}
                 </TouchableOpacity>
-            </View>
-            {isClicked4 ? (
-                <View style={styles.options}>
-                    <View style={styles.option}>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption2(("Yes"));
-                            setIsClicked4(false);
-                            setIsClicked10(!isClicked10);
-                            setIsClicked10(true);
+                {isClicked15 ? (
+                    <View style={styles.options2}>
+                        <View style={styles.option}>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption7(("Yes"));
+                                setIsClicked15(false);
+                                setIsClicked16(!isClicked16);
+                                setIsClicked16(true);
+                            }}>
+                                <Text style={{ fontSize: 15 }}>Yes</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption7(("No"));
+                                setIsClicked15(false);
+                                setIsClicked16(false);
+                            }}>
+                                <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ) : null}
+                {isClicked16 ? (
+                    <View>
+                        {data.map((item, index) => (
+                            <PastHosForm
+                                key={index}
+                                onDataChange={(year, days, reason) => {
+                                    let tempData = [...data];
+                                    tempData[index] = { year, days, reason };
+                                    setData(tempData);
+                                }}
+                            />
+                        ))}
+                        <TouchableOpacity style={styles.addmore} onPress={() => {
+                            setData([...data, { year: '', days: '', reason: '' }]);
                         }}>
-                            <Text style={{ fontSize: 15 }}>Yes</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption2(("No"));
-                            setIsClicked4(false);
-                            setIsClicked10(false);
-                        }}>
-                            <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
+                            <Text style={{ fontWeight: '700', fontSize: 15, color: '#2A9988', alignSelf: 'center' }}>Add More</Text>
                         </TouchableOpacity>
                     </View>
+                ) : null}
+                <View style={styles.disheader}>
+                    <Text style={styles.texthead}>Status Of Sickness</Text>
                 </View>
-            ) : null}
-            {isClicked10 ? (
-                <View style={styles.problems3}>
-                    <View style={styles.problist}>
-                        <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>What type of drugs?</Text>
-                        <TouchableOpacity>
-                            <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                        </TouchableOpacity>
+                <SOSForm />
+                {isClicked17 ? (
+                    <View style={styles.options3}>
+                        <View style={styles.option}>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption8(("Somewhat sick"));
+                                setIsClicked17(false);
+                            }}>
+                                <Text style={{ fontSize: 15 }}>Somewhat sick</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption8(("Sick"));
+                                setIsClicked17(false);
+                            }}>
+                                <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>Sick</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption8(("Quite sick"));
+                                setIsClicked17(false);
+                            }}>
+                                <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>Quite sick</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption8(("Very sick"));
+                                setIsClicked17(false);
+                            }}>
+                                <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>Very sick</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ width: '180%' }} onPress={() => {
+                                setSelectedOption8(("Morbus"));
+                                setIsClicked17(false);
+                            }}>
+                                <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>Morbus</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                    <TouchableOpacity style={styles.textbox}>
-                        <TextInput style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.8 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
-                    </TouchableOpacity>
-                    <Text style={{ fontWeight: '700', fontSize: 16, width: '50%', marginTop: windowWidth * 0.02 }}>What type of reaction?</Text>
-                    <TouchableOpacity style={styles.textbox}>
-                        <TextInput style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.8 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
-                    </TouchableOpacity>
+                ) : null}
+                <View style={styles.disheader}>
+                    <Text style={styles.texthead}>Enter CAT Score</Text>
                 </View>
-            ) : null}
-            <View style={styles.history}>
-                <View style={styles.hislist}>
-                    <Text style={styles.textlist}>Past Surgery :</Text>
-                </View>
-                <TouchableOpacity style={styles.dropdown14} onPress={() => {
-                    setIsClicked5(!isClicked5);
-                }}>
-                    <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>{selectedOption3}</Text>
-                    {isClicked5 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
+                <TouchableOpacity style={styles.dropdown13}>
+                    <TextInput
+                        style={{ fontSize: 15, width: windowWidth * 0.9 }}
+                        keyboardType='numeric'
+                        placeholder='Enter here'
+                        placeholderTextColor={'#8E7D7D'}>
+                    </TextInput>
                 </TouchableOpacity>
-            </View>
-            {isClicked5 ? (
-                <View style={styles.options}>
-                    <View style={styles.option}>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption3(("Yes"));
-                            setIsClicked5(false);
-                            setIsClicked11(!isClicked11);
-                            setIsClicked11(true);
-                        }}>
-                            <Text style={{ fontSize: 15 }}>Yes</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption3(("No"));
-                            setIsClicked5(false);
-                            setIsClicked11(false);
-                        }}>
-                            <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
-                        </TouchableOpacity>
-                    </View>
+                <View style={styles.disheader}>
+                    <Text style={styles.texthead}>Choose Coordinator</Text>
                 </View>
-            ) : null}
-            {isClicked11 ? (
-                <View style={styles.problems}>
-                    <View style={styles.problist}>
-                        <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Type of Surgery :</Text>
-                        <TouchableOpacity>
-                            <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                        </TouchableOpacity>
+                <View style={styles.dropdown19}>
+                        <Picker
+                            selectedValue={selectedCoordinator}
+                            style={{ height: 50, width: '100%', paddingHorizontal: 10 }}
+                            onValueChange={(itemValue) => setSelectedCoordinator(itemValue)}>
+                            <Picker.Item label="Select" value="" style={{color:Color.colorGray_200}}/>
+                            {coordinators.map((coordinator, index) => (
+                                <Picker.Item key={index} label={coordinator} value={coordinator} style={{color:Color.colorBlack}}/>
+                            ))}
+                        </Picker>
                     </View>
-                    <TouchableOpacity style={styles.textbox}>
-                        <TextInput style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.8 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
-                    </TouchableOpacity>
-                    <View style={styles.duration4}>
-                        <Text style={{ fontWeight: '400', fontSize: 14 }}>Year of Surgery :</Text>
-                        <TouchableOpacity style={styles.dropdown21}>
-                            <Text style={{ color: '#8E7D7D', fontSize: 15 }}>Year</Text>
-                            <Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.14} />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            ) : null}
-            <View style={styles.history}>
-                <View style={styles.hislist}>
-                    <Text style={styles.textlist}>Past Diseases :</Text>
-                </View>
-                <TouchableOpacity style={styles.dropdown14} onPress={() => {
-                    setIsClicked6(!isClicked6);
-                }}>
-                    <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>{selectedOption4}</Text>
-                    {isClicked6 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
+                <TouchableOpacity style={styles.submitButton}
+                // onPress={handleSave}
+                >
+                    <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>Submit</Text>
                 </TouchableOpacity>
-            </View>
-            {isClicked6 ? (
-                <View style={styles.options}>
-                    <View style={styles.option}>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption4(("Yes"));
-                            setIsClicked6(false);
-                            setIsClicked12(!isClicked12);
-                            setIsClicked12(true);
-                        }}>
-                            <Text style={{ fontSize: 15 }}>Yes</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption4(("No"));
-                            setIsClicked6(false);
-                            setIsClicked12(false);
-                        }}>
-                            <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            ) : null}
-            {isClicked12 ? (
-                <View style={styles.problems4}>
-                    <View style={styles.problist}>
-                        <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Type of Disease :</Text>
-                        <TouchableOpacity>
-                            <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                        </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity style={styles.textbox}>
-                        <TextInput style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.8 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
-                    </TouchableOpacity>
-                </View>
-            ) : null}
-            <View style={styles.history}>
-                <View style={styles.hislist}>
-                    <Text style={styles.textlist}>Family Histroy :</Text>
-                </View>
-                <TouchableOpacity style={styles.dropdown14} onPress={() => {
-                    setIsClicked7(!isClicked7);
-                }}>
-                    <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>{selectedOption5}</Text>
-                    {isClicked7 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
-                </TouchableOpacity>
-            </View>
-            {isClicked7 ? (
-                <View style={styles.options}>
-                    <View style={styles.option}>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption5(("Yes"));
-                            setIsClicked7(false);
-                            setIsClicked13(!isClicked13);
-                            setIsClicked13(true);
-                        }}>
-                            <Text style={{ fontSize: 15 }}>Yes</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption5(("No"));
-                            setIsClicked7(false);
-                            setIsClicked13(false);
-                        }}>
-                            <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            ) : null}
-            {isClicked13 ? (
-                <View style={styles.problems4}>
-                    <View style={styles.problist}>
-                        <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Type here :</Text>
-                        <TouchableOpacity>
-                            <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                        </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity style={styles.textbox}>
-                        <TextInput style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.8 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
-                    </TouchableOpacity>
-                </View>
-            ) : null}
-            <View style={styles.history}>
-                <View style={styles.hislist}>
-                    <Text style={styles.textlist}>Occupation :</Text>
-                </View>
-                <TouchableOpacity style={styles.dropdown15}>
-                    <TextInput style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.45 }} placeholder='Enter here' placeholderTextColor={'#8E7D7D'}></TextInput>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.history}>
-                <View style={styles.hislist}>
-                    <Text style={styles.textlist}>Exposure :</Text>
-                </View>
-                <TouchableOpacity style={styles.dropdown14} onPress={() => {
-                    setIsClicked8(!isClicked8);
-                }}>
-                    <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>{selectedOption6}</Text>
-                    {isClicked8 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
-                </TouchableOpacity>
-            </View>
-            {isClicked8 ? (
-                <View style={styles.options}>
-                    <View style={styles.option}>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption6(("Yes"));
-                            setIsClicked8(false);
-                            setIsClicked14(!isClicked14);
-                            setIsClicked14(true);
-                        }}>
-                            <Text style={{ fontSize: 15 }}>Yes</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption6(("No"));
-                            setIsClicked8(false);
-                            setIsClicked14(false);
-                        }}>
-                            <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            ) : null}
-            {isClicked14 ? (
-                <Exposure/>
-            ) : null}
-            <View style={styles.disheader}>
-                <Text style={styles.texthead}>Past Hospitalization</Text>
-            </View>
-            <TouchableOpacity style={styles.dropdown13} onPress={() => {
-                setIsClicked15(!isClicked15);
-            }}>
-                <Text style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.73 }}>{selectedOption7}</Text>
-                {isClicked15 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.1} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.1} />)}
-            </TouchableOpacity>
-            {isClicked15 ? (
-                <View style={styles.options2}>
-                    <View style={styles.option}>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption7(("Yes"));
-                            setIsClicked15(false);
-                            setIsClicked16(!isClicked16);
-                            setIsClicked16(true);
-                        }}>
-                            <Text style={{ fontSize: 15 }}>Yes</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption7(("No"));
-                            setIsClicked15(false);
-                            setIsClicked16(false);
-                        }}>
-                            <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>No</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            ) : null}
-            {isClicked16 ? (
-               <View>
-               {data.map((item, index) => (
-                   <PastHosForm
-                       key={index}
-                       onDataChange={(year, days, reason) => {
-                           let tempData = [...data];
-                           tempData[index] = { year, days, reason };
-                           setData(tempData);
-                       }}
-                   />
-               ))}
-               <TouchableOpacity style={styles.addmore} onPress={() => {
-                   setData([...data, { year: '', days: '', reason: '' }]);
-               }}>
-                   <Text style={{ fontWeight: '700', fontSize: 15, color: '#2A9988', alignSelf: 'center' }}>Add More</Text>
-               </TouchableOpacity>
-           </View>
-            ) : null}
-            <View style={styles.disheader}>
-                <Text style={styles.texthead}>Status Of Sickness</Text>
-            </View>
-            <SOSForm />
-            {isClicked17 ? (
-                <View style={styles.options3}>
-                    <View style={styles.option}>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption8(("Somewhat sick"));
-                            setIsClicked17(false);
-                        }}>
-                            <Text style={{ fontSize: 15 }}>Somewhat sick</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption8(("Sick"));
-                            setIsClicked17(false);
-                        }}>
-                            <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>Sick</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption8(("Quite sick"));
-                            setIsClicked17(false);
-                        }}>
-                            <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>Quite sick</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption8(("Very sick"));
-                            setIsClicked17(false);
-                        }}>
-                            <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>Very sick</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ width: '180%' }} onPress={() => {
-                            setSelectedOption8(("Morbus"));
-                            setIsClicked17(false);
-                        }}>
-                            <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>Morbus</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            ) : null}
-            <View style={styles.disheader}>
-                <Text style={styles.texthead}>Enter CAT Score</Text>
-            </View>
-            <TouchableOpacity style={styles.dropdown13}>
-                <TextInput
-                    style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.9 }}
-                    keyboardType='numeric'
-                    placeholder='Enter here'
-                    placeholderTextColor={'#8E7D7D'}>
-                </TextInput>
-            </TouchableOpacity>
-            <View style={styles.disheader}>
-                <Text style={styles.texthead}>Choose Coordinator</Text>
-                <Picker
-                    selectedValue={selectedCoordinator}
-                    style={styles.picker}
-                    onValueChange={(itemValue) => setSelectedCoordinator(itemValue)}>
-                    <Picker.Item label="Select" value=""/>
-                    {coordinators.map((coordinator, index) => (
-                        <Picker.Item key={index} label={coordinator} value={coordinator} />
-                    ))}
-                </Picker>
-                </View>
-            <TouchableOpacity style={styles.submitButton}>
-                <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>Submit</Text>
-            </TouchableOpacity>
-        </SafeAreaView>
+            </SafeAreaView>
         </View>
     );
 };
@@ -639,8 +730,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#F1F4F3',
         flexDirection: 'row',
         alignItems: 'center',
-        paddingLeft: 10,
-        paddingRight: 10,
+        // paddingLeft: 10,
+        // paddingRight: 10,
         marginLeft: windowWidth * 0.02,
     },
     duration2: {
@@ -649,7 +740,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     dropdown22: {
-        width: windowWidth * 0.55,
+        width: windowWidth * 0.58,
         height: 34,
         borderRadius: 2,
         borderWidth: 0.5,
@@ -837,6 +928,20 @@ const styles = StyleSheet.create({
         marginLeft: windowWidth * 0.03,
         paddingLeft: 15,
         paddingTop: 10,
+    },
+    dropdown19: {
+        width: '95%',
+        height: 50,
+        borderRadius: 5,
+        borderWidth: 0.5,
+        borderColor: '#A99F9F',
+        alignSelf: 'center',
+        marginTop: windowWidth * 0.03,
+        backgroundColor: '#e3e3e3',
+        flexDirection: 'row',
+        alignItems: 'center',
+        // paddingLeft: 15,
+        // paddingRight: 15,
     },
 });
 

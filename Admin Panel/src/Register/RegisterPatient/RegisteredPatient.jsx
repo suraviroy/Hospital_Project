@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
@@ -45,7 +44,7 @@ const RegisteredPatient = ({ searchText }) => {
             .catch(error => {
                 console.error('Error fetching Patient list:', error);
             });
-    }, []);
+    }, [patients]);
 
     useEffect(() => {
         const filtered = patients.filter(patient =>

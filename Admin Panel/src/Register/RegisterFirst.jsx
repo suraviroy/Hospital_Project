@@ -80,7 +80,7 @@ const RegisterFirst = () => {
                         }}>Update Diseases</Text>
                     </TouchableOpacity>
                 </View>
-                {selectedTab == 0 ? patientId && <BasicDetails patientId={patientId} /> : <DiseaseForm />}
+                {selectedTab == 0 ? patientId && <BasicDetails patientId={patientId} /> : <DiseaseForm patientId={patientId} />}
             </ScrollView>
         </SafeAreaView>
     );

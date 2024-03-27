@@ -1,29 +1,32 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Dimensions } from 'react-native';
-const windowWidth = Dimensions.get('window').width;
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
 import { FontFamily, Color, Border, FontSize } from "../../../GlobalStyles";
+import { PickerIos, Picker } from '@react-native-picker/picker';
 import * as DocumentPicker from 'expo-document-picker';
+const windowWidth = Dimensions.get('window').width;
 
 const PastHosForm = () => {
     const [isClicked20, setIsClicked20] = useState(false);
     const [isClicked21, setIsClicked21] = useState(false);
     const [pickedFile, setPickedFile] = useState(null);
     const [isUploaded, setIsUploaded] = useState(false);
-
+    const [selectedYear, setSelectedYear] = useState(null);
+    const [duration, setDuration] = useState('');
+    const [reason, setReason] = useState('');
     const pickFile = async () => {
         try {
             console.log("Attempting to pick a file...");
             const filePickResponse = await DocumentPicker.getDocumentAsync({
-                type: "*/*",
+                type: "/",
             });
             console.log("File pick response:", filePickResponse);
 
-            if (!filePickResponse.cancelled) {
+            if (!filePickResponse.canceled) {
                 const fileInfo = filePickResponse.assets[0];
                 console.log("File picked successfully:", fileInfo.name);
-                console.log("File type:", fileInfo.type); 
+                console.log("File type:", fileInfo.type);
                 const pickedFileData = {
                     name: fileInfo.name,
                     type: fileInfo.type,
@@ -37,6 +40,7 @@ const PastHosForm = () => {
             console.error("Error picking file:", error);
         }
     };
+
     const uploadFile = async () => {
         if (!pickedFile) {
             console.log("No file picked!");
@@ -53,34 +57,49 @@ const PastHosForm = () => {
     return (
         <View style={styles.hosform}>
             <View style={styles.hosopt}>
-                <Text style={{ fontWeight: '500', fontSize: 16, width: windowWidth * 0.57 }}>Year of hospitalization :</Text>
-                <TouchableOpacity style={styles.dropdown60} onPress={() => {
-                    setIsClicked20(!isClicked20);
-                }}>
-                    <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>Select</Text>
-                    {isClicked20 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
-                </TouchableOpacity>
+                <Text style={{ fontWeight: '500', fontSize: 16, width: windowWidth * 0.5 }}>Year of hospitalization :</Text>
+                <View style={styles.dropdown21}>
+                    <Picker
+                        selectedValue={selectedYear}
+                        style={{ height: 50, width: '100%' }}
+                        onValueChange={(itemValue, itemIndex) =>
+                            setSelectedYear(itemValue)
+                        }>
+                        <Picker.Item label="Select" value="" style={{ color: Color.colorGray_200 }} />
+                        {Array.from({ length: new Date().getFullYear() - 1980 + 1 }, (_, i) => 1980 + i).map((year) => (
+                            <Picker.Item key={year} label={year.toString()} value={year} style={{ color: Color.colorBlack }}/>
+                        ))}
+                    </Picker>
+                </View>
             </View>
             <View style={styles.hosopt}>
-                <Text style={{ fontWeight: '500', fontSize: 16, width: windowWidth * 0.57 }}>Duration in days :</Text>
-                <TouchableOpacity style={styles.dropdown60} onPress={() => {
-                    setIsClicked21(!isClicked21);
-                }}>
-                    <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>Select</Text>
-                    {isClicked21 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
-                </TouchableOpacity>
+                <Text style={{ fontWeight: '500', fontSize: 16, width: windowWidth * 0.5 }}>Duration in days :</Text>
+                <TextInput
+                    style={styles.dropdown60}
+                    placeholder="Enter duration"
+                    placeholderTextColor={'#8E7D7D'}
+                    value={duration}
+                    onChangeText={setDuration}
+                    keyboardType="numeric"
+                />
             </View>
             <View style={styles.hosopt}>
                 <Text style={{ fontWeight: '500', fontSize: 16, width: windowWidth * 0.2 }}>Reason :</Text>
                 <TouchableOpacity style={styles.dropdown61}>
-                    <TextInput style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.6 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
+                    <TextInput
+                        style={{ fontSize: 15, width: windowWidth * 0.6, alignSelf: 'center' }}
+                        placeholder='Enter Here'
+                        placeholderTextColor={'#8E7D7D'}
+                        value={reason}
+                        onChangeText={setReason}
+                    />
                 </TouchableOpacity>
             </View>
             <View style={styles.hosopt1}>
                 <Icon name="paperclip" size={22} color={Color.colorGray_100} />
                 <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
-                {pickedFile ? pickedFile.name : 'Upload Discharge Certficate'}
-                    </Text>
+                    {pickedFile ? pickedFile.name : 'Upload Discharge Certficate'}
+                </Text>
                 <TouchableOpacity style={styles.uploadbutton} onPress={pickFile}>
                     <Text style={{ fontWeight: '700', fontSize: 15, color: '#2A9988', alignSelf: 'center' }}>Upload</Text>
                 </TouchableOpacity>
@@ -95,7 +114,7 @@ const PastHosForm = () => {
                         File Uploaded Successfully!
                     </Text>
                 )}
-    
+
             </View>
         </View>
     );
@@ -126,34 +145,26 @@ const styles = StyleSheet.create({
         borderRadius: 5
     },
     dropdown60: {
-        width: windowWidth * 0.3,
+        width: windowWidth * 0.4,
         height: windowWidth * 0.1,
         borderRadius: 5,
         borderWidth: 0.5,
         borderColor: '#A99F9F',
-        // alignSelf: 'center',
-        // marginTop: windowWidth*0.03,
         backgroundColor: '#e3e3e3',
-        flexDirection: 'row',
-        alignItems: 'center',
         paddingLeft: 15,
         paddingRight: 15,
-        // marginLeft: windowWidth * 0.2,
+        fontSize: 15
     },
     dropdown61: {
-        width: windowWidth * 0.67,
+        width: windowWidth * 0.7,
         height: windowWidth * 0.1,
         borderRadius: 5,
         borderWidth: 0.5,
         borderColor: '#A99F9F',
-        // alignSelf: 'center',
-        // marginTop: windowWidth*0.03,
         backgroundColor: '#e3e3e3',
-        flexDirection: 'row',
-        alignItems: 'center',
         paddingLeft: 15,
         paddingRight: 15,
-        // marginLeft: windowWidth * 0.2,
+        justifyContent: 'center'
     },
     uploadbutton: {
         width: windowWidth * 0.3,
@@ -163,6 +174,21 @@ const styles = StyleSheet.create({
         borderColor: '#2A9988',
         borderRadius: 5,
         justifyContent: 'center'
+    },
+    dropdown21: {
+        width: windowWidth * 0.4,
+        height: windowWidth * 0.1,
+        borderRadius: 5,
+        borderWidth: 0.5,
+        borderColor: '#A99F9F',
+        alignSelf: 'center',
+        // marginTop: windowWidth*0.03,
+        backgroundColor: '#e3e3e3',
+        flexDirection: 'row',
+        alignItems: 'center',
+        // paddingLeft: 10,
+        // paddingRight: 10,
+        // marginLeft: windowWidth * 0.01,
     },
 });
 

@@ -5,10 +5,20 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Color } from '../../../GlobalStyles';
 import { MultipleSelectList } from 'react-native-dropdown-select-list';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
-
+import { Picker } from '@react-native-picker/picker';
 
 const Exposure = () => {
     const [selected, setSelected] = useState([]);
+    const [selectedUnit1, setSelectedUnit1] = useState('Unit');
+    const [selectedUnit2, setSelectedUnit2] = useState('Unit');
+    const [selectedUnit3, setSelectedUnit3] = useState('Unit');
+    const [selectedUnit4, setSelectedUnit4] = useState('Unit');
+    const [selectedUnit5, setSelectedUnit5] = useState('Unit');
+    const [selectedUnit6, setSelectedUnit6] = useState('Unit');
+    const [selectedUnit7, setSelectedUnit7] = useState('Unit');
+    const [selectedUnit8, setSelectedUnit8] = useState('Unit');
+    const [selectedUnit9, setSelectedUnit9] = useState('Unit');
+    const [selectedUnit10, setSelectedUnit10] = useState('Unit');
 
     const Dis_Options = [
         {
@@ -53,6 +63,25 @@ const Exposure = () => {
         },
     ]
 
+    const Unit = [
+        {
+            value: 'Days',
+            key: 'DY',
+        },
+        {
+            value: 'Weeks',
+            key: 'WK',
+        },
+        {
+            value: 'Months',
+            key: 'MT',
+        },
+        {
+            value: 'Years',
+            key: 'YR',
+        },
+    ]
+
     const renderAdditionalFields = () => {
         return selected.map((option) => {
             switch (option) {
@@ -61,19 +90,28 @@ const Exposure = () => {
                         <View key={option} style={styles.problems5}>
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Dust</Text>
-                                <TouchableOpacity>
+                                {/* <TouchableOpacity>
                                     <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                             <View style={styles.duration4}>
                                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                                 <TouchableOpacity style={styles.dropdown20}>
-                                    <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                                    <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.dropdown21}>
-                                    <Text style={{ color: '#8E7D7D', fontSize: 15 }}>Unit</Text>
-                                    <Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.15} />
-                                </TouchableOpacity>
+                                <View style={styles.dropdown21}>
+                                    <Picker
+                                        selectedValue={selectedUnit1}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            setSelectedUnit1(itemValue)
+                                        }
+                                        style={{ width: '100%', paddingHorizontal: 10 }}>
+                                        <Picker.Item label="Unit" value="" style={{ color: Color.colorGray_200 }} />
+                                        {Unit.map((unit) => (
+                                            <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{ color: Color.colorBlack }} />
+                                        ))}
+                                    </Picker>
+                                </View>
                             </View>
                         </View>
                     );
@@ -82,19 +120,28 @@ const Exposure = () => {
                         <View key={option} style={styles.problems5}>
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Cotton dust</Text>
-                                <TouchableOpacity>
+                                {/* <TouchableOpacity>
                                     <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                             <View style={styles.duration4}>
                                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                                 <TouchableOpacity style={styles.dropdown20}>
-                                    <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                                    <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.dropdown21}>
-                                    <Text style={{ color: '#8E7D7D', fontSize: 15 }}>Unit</Text>
-                                    <Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.15} />
-                                </TouchableOpacity>
+                                <View style={styles.dropdown21}>
+                                    <Picker
+                                        selectedValue={selectedUnit2}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            setSelectedUnit2(itemValue)
+                                        }
+                                        style={{ width: '100%', paddingHorizontal: 10 }}>
+                                        <Picker.Item label="Unit" value="" style={{ color: Color.colorGray_200 }} />
+                                        {Unit.map((unit) => (
+                                            <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{ color: Color.colorBlack }} />
+                                        ))}
+                                    </Picker>
+                                </View>
                             </View>
                         </View>
                     );
@@ -103,19 +150,28 @@ const Exposure = () => {
                         <View key={option} style={styles.problems5}>
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Wooden dust</Text>
-                                <TouchableOpacity>
+                                {/* <TouchableOpacity>
                                     <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                             <View style={styles.duration4}>
                                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                                 <TouchableOpacity style={styles.dropdown20}>
-                                    <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                                    <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.dropdown21}>
-                                    <Text style={{ color: '#8E7D7D', fontSize: 15 }}>Unit</Text>
-                                    <Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.15} />
-                                </TouchableOpacity>
+                                <View style={styles.dropdown21}>
+                                    <Picker
+                                        selectedValue={selectedUnit3}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            setSelectedUnit3(itemValue)
+                                        }
+                                        style={{ width: '100%', paddingHorizontal: 10 }}>
+                                        <Picker.Item label="Unit" value="" style={{ color: Color.colorGray_200 }} />
+                                        {Unit.map((unit) => (
+                                            <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{ color: Color.colorBlack }} />
+                                        ))}
+                                    </Picker>
+                                </View>
                             </View>
                         </View>
                     );
@@ -124,19 +180,28 @@ const Exposure = () => {
                         <View key={option} style={styles.problems5}>
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Pigeon</Text>
-                                <TouchableOpacity>
+                                {/* <TouchableOpacity>
                                     <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                             <View style={styles.duration4}>
                                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                                 <TouchableOpacity style={styles.dropdown20}>
-                                    <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                                    <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.dropdown21}>
-                                    <Text style={{ color: '#8E7D7D', fontSize: 15 }}>Unit</Text>
-                                    <Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.15} />
-                                </TouchableOpacity>
+                                <View style={styles.dropdown21}>
+                                    <Picker
+                                        selectedValue={selectedUnit4}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            setSelectedUnit4(itemValue)
+                                        }
+                                        style={{ width: '100%', paddingHorizontal: 10 }}>
+                                        <Picker.Item label="Unit" value="" style={{ color: Color.colorGray_200 }} />
+                                        {Unit.map((unit) => (
+                                            <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{ color: Color.colorBlack }} />
+                                        ))}
+                                    </Picker>
+                                </View>
                             </View>
                         </View>
                     );
@@ -145,19 +210,28 @@ const Exposure = () => {
                         <View key={option} style={styles.problems5}>
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Hay</Text>
-                                <TouchableOpacity>
+                                {/* <TouchableOpacity>
                                     <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                             <View style={styles.duration4}>
                                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                                 <TouchableOpacity style={styles.dropdown20}>
-                                    <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                                    <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.dropdown21}>
-                                    <Text style={{ color: '#8E7D7D', fontSize: 15 }}>Unit</Text>
-                                    <Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.15} />
-                                </TouchableOpacity>
+                                <View style={styles.dropdown21}>
+                                    <Picker
+                                        selectedValue={selectedUnit5}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            setSelectedUnit5(itemValue)
+                                        }
+                                        style={{ width: '100%', paddingHorizontal: 10 }}>
+                                        <Picker.Item label="Unit" value="" style={{ color: Color.colorGray_200 }} />
+                                        {Unit.map((unit) => (
+                                            <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{ color: Color.colorBlack }} />
+                                        ))}
+                                    </Picker>
+                                </View>
                             </View>
                         </View>
                     );
@@ -166,19 +240,28 @@ const Exposure = () => {
                         <View key={option} style={styles.problems5}>
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Moulds</Text>
-                                <TouchableOpacity>
+                                {/* <TouchableOpacity>
                                     <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                             <View style={styles.duration4}>
                                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                                 <TouchableOpacity style={styles.dropdown20}>
-                                    <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                                    <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.dropdown21}>
-                                    <Text style={{ color: '#8E7D7D', fontSize: 15 }}>Unit</Text>
-                                    <Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.15} />
-                                </TouchableOpacity>
+                                <View style={styles.dropdown21}>
+                                    <Picker
+                                        selectedValue={selectedUnit6}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            setSelectedUnit6(itemValue)
+                                        }
+                                        style={{ width: '100%', paddingHorizontal: 10 }}>
+                                        <Picker.Item label="Unit" value="" style={{ color: Color.colorGray_200 }} />
+                                        {Unit.map((unit) => (
+                                            <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{ color: Color.colorBlack }} />
+                                        ))}
+                                    </Picker>
+                                </View>
                             </View>
                         </View>
                     );
@@ -187,19 +270,28 @@ const Exposure = () => {
                         <View key={option} style={styles.problems5}>
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Pollen</Text>
-                                <TouchableOpacity>
+                                {/* <TouchableOpacity>
                                     <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                             <View style={styles.duration4}>
                                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                                 <TouchableOpacity style={styles.dropdown20}>
-                                    <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                                    <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.dropdown21}>
-                                    <Text style={{ color: '#8E7D7D', fontSize: 15 }}>Unit</Text>
-                                    <Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.15} />
-                                </TouchableOpacity>
+                                <View style={styles.dropdown21}>
+                                    <Picker
+                                        selectedValue={selectedUnit7}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            setSelectedUnit7(itemValue)
+                                        }
+                                        style={{ width: '100%', paddingHorizontal: 10 }}>
+                                        <Picker.Item label="Unit" value="" style={{ color: Color.colorGray_200 }} />
+                                        {Unit.map((unit) => (
+                                            <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{ color: Color.colorBlack }} />
+                                        ))}
+                                    </Picker>
+                                </View>
                             </View>
                         </View>
                     );
@@ -208,19 +300,28 @@ const Exposure = () => {
                         <View key={option} style={styles.problems5}>
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Chemical</Text>
-                                <TouchableOpacity>
+                                {/* <TouchableOpacity>
                                     <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                             <View style={styles.duration4}>
                                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                                 <TouchableOpacity style={styles.dropdown20}>
-                                    <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                                    <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.dropdown21}>
-                                    <Text style={{ color: '#8E7D7D', fontSize: 15 }}>Unit</Text>
-                                    <Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.15} />
-                                </TouchableOpacity>
+                                <View style={styles.dropdown21}>
+                                    <Picker
+                                        selectedValue={selectedUnit8}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            setSelectedUnit8(itemValue)
+                                        }
+                                        style={{ width: '100%', paddingHorizontal: 10}}>
+                                        <Picker.Item label="Unit" value="" style={{ color: Color.colorGray_200 }} />
+                                        {Unit.map((unit) => (
+                                            <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{ color: Color.colorBlack }} />
+                                        ))}
+                                    </Picker>
+                                </View>
                             </View>
                         </View>
                     );
@@ -229,19 +330,28 @@ const Exposure = () => {
                         <View key={option} style={styles.problems5}>
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Stone dust</Text>
-                                <TouchableOpacity>
+                                {/* <TouchableOpacity>
                                     <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                             <View style={styles.duration4}>
                                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                                 <TouchableOpacity style={styles.dropdown20}>
-                                    <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                                    <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.dropdown21}>
-                                    <Text style={{ color: '#8E7D7D', fontSize: 15 }}>Unit</Text>
-                                    <Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.15} />
-                                </TouchableOpacity>
+                                <View style={styles.dropdown21}>
+                                    <Picker
+                                        selectedValue={selectedUnit9}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            setSelectedUnit9(itemValue)
+                                        }
+                                        style={{ width: '100%', paddingHorizontal: 10 }}>
+                                        <Picker.Item label="Unit" value="" style={{ color: Color.colorGray_200 }} />
+                                        {Unit.map((unit) => (
+                                            <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{ color: Color.colorBlack }} />
+                                        ))}
+                                    </Picker>
+                                </View>
                             </View>
                         </View>
                     );
@@ -250,22 +360,31 @@ const Exposure = () => {
                         <View key={option} style={styles.problems}>
                             <View style={styles.problist}>
                                 <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Others</Text>
-                                <TouchableOpacity>
+                                {/* <TouchableOpacity>
                                     <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                             <TouchableOpacity style={styles.textbox}>
-                                <TextInput style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.6 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
+                                <TextInput style={{ fontSize: 15, width: windowWidth * 0.6 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
                             </TouchableOpacity>
                             <View style={styles.duration4}>
                                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                                 <TouchableOpacity style={styles.dropdown20}>
-                                    <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                                    <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.dropdown21}>
-                                    <Text style={{ color: '#8E7D7D', fontSize: 15 }}>Unit</Text>
-                                    <Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.15} />
-                                </TouchableOpacity>
+                                <View style={styles.dropdown21}>
+                                    <Picker
+                                        selectedValue={selectedUnit10}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            setSelectedUnit10(itemValue)
+                                        }
+                                        style={{ width: '100%', paddingHorizontal: 10 }}>
+                                        <Picker.Item label="Unit" value="" style={{ color: Color.colorGray_200 }} />
+                                        {Unit.map((unit) => (
+                                            <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{ color: Color.colorBlack }} />
+                                        ))}
+                                    </Picker>
+                                </View>
                             </View>
                         </View>
                     );
@@ -363,8 +482,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#F1F4F3',
         flexDirection: 'row',
         alignItems: 'center',
-        paddingLeft: 10,
-        paddingRight: 10,
+        // paddingLeft: 10,
+        // paddingRight: 10,
         marginLeft: windowWidth * 0.02,
     },
     problems: {
