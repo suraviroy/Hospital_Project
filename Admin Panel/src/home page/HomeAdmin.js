@@ -22,7 +22,7 @@ const HomeAdmin = ({ searchText }) => {
             .catch(error => {
                 console.error('Error fetching admin list:', error);
             });
-    }, []);
+    }, [adminList]);
 
     useEffect(() => {
         const filteredList = adminList.filter(admin => admin.name.toLowerCase().startsWith(searchText.toLowerCase()) || admin.idNumber.startsWith(searchText));
@@ -40,7 +40,12 @@ const HomeAdmin = ({ searchText }) => {
        
         <View style={styles.item}>
         <View style={styles.leftContent}>
-        <Image style={styles.picture} source={{ uri: picture }}/>
+        {/* <Image style={styles.picture} source={{ uri: picture }}/> */}
+        {picture ? (
+            <Image source={{ uri: picture }} style={styles.picture} />
+        ) : (
+            <Image source={require('../../assets/images/user.png')} style={styles.picture} />
+        )}
         <View style={styles.contain890}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.educationQualification}>{educationQualification}</Text>
@@ -92,7 +97,7 @@ const HomeAdmin = ({ searchText }) => {
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 70,
+        marginBottom: 65,
         flex: 1,
         marginTop: windowWidth*0.04,
     },
@@ -153,6 +158,7 @@ const styles = StyleSheet.create({
     educationQualification: {
         fontSize: 12,
         fontFamily: 'regular89',
+        paddingTop: 5,
     },
     gender: {
         paddingTop: 10,

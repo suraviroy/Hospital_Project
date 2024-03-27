@@ -8,6 +8,7 @@ import {
   UpdateProfileNameId,
   PatientBasicDetails,
   patientEachVistDetails,
+  allpatientList
 } from "../controller/adminController.js";
 const adminRouter = express.Router();
 
@@ -18,5 +19,6 @@ adminRouter.get("/sectionAallPatient", sectionAallPatient);
 adminRouter.get("/updateProfileNameId/:id", UpdateProfileNameId);
 adminRouter.get("/patientBasicDetails/:id", PatientBasicDetails);
 adminRouter.post("/patientEachVisitDetails/:id", patientEachVistDetails);
+adminRouter.get("/allpatientList", allpatientList);
 
 export default adminRouter;

@@ -8,6 +8,8 @@ import { FontFamily } from '../../GlobalStyles';
 import { backendURL } from "../backendapi";
 
 const TodayListURL = `${backendURL}/adminRouter/sectionAtodaysPatient`;
+const BasicDetailsURL = `${backendURL}/adminRouter/PatientBasicDetails`;
+
 
 const TodayList = ({ searchText }) => {
     const navigation = useNavigation();
@@ -29,7 +31,7 @@ const TodayList = ({ searchText }) => {
         };
 
         fetchData();
-    }, []);
+    }, [patients]);
 
     useEffect(() => {
         const filtered = patients.filter(patient =>
@@ -40,12 +42,24 @@ const TodayList = ({ searchText }) => {
     }, [searchText, patients]);
 
     const handleViewDetails = (patientId) => {
-        navigation.navigate('#');
+           fetch(`${BasicDetailsURL}/${patientId}`)
+            .then(response => response.json())
+            .then(data => {
+                navigation.navigate('PatientBasicDetails', { details: data[0] });
+            })
+            .catch(error => {
+                console.error('Error fetching patient details:', error);
+            });
     };
 
     const renderPatientItem = ({ item }) => (
         <View style={styles.patientView2451}>
+            {/* <Image source={{ uri: item.image }} style={styles.patientImage2451} /> */}
+            {item.image ? (
             <Image source={{ uri: item.image }} style={styles.patientImage2451} />
+        ) : (
+            <Image source={require('../../assets/images/user.png')} style={styles.patientImage2451} />
+        )}
             <View style={styles.patientDetails13}>
                 <Text style={styles.patientDetails2451}>{item.name}</Text>
                 <Text style={styles.patientDetails2450}>{item.gender}</Text>

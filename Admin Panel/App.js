@@ -14,6 +14,10 @@ import BottomNavigation from './src/navigation/BottomNavigation';
 import HomeAdmin from './src/home page/HomeAdmin';
 import AddAdmin from './src/AddAdmin/AddAdmin';
 import RegisterNavbar from './src/Registration Panel/RegisterNavbar';
+import BasicDetails from './src/Register/RegisterPatient/BasicDetails';
+import PatientBasicDetails from './src/Registration Panel/PatientBasicDetails';
+import RegisteredPatient from './src/Register/RegisterPatient/RegisteredPatient';
+import DiseaseForm from './src/Register/RegisterPatient/DiseaseForm';
 
 
 const Stack = createNativeStackNavigator();
@@ -37,7 +41,7 @@ function App() {
     bold02: require('./assets/fonts/InriaSerif-Bold.ttf'),
     bold01: require('./assets/fonts/Inter-Bold.ttf'),
     extrabold01: require('./assets/fonts/Inter-ExtraBold.ttf'),
-    semibold: require('./assets/fonts/Inter-SemiBold.ttf'),
+    semibold01: require('./assets/fonts/Inter-SemiBold.ttf'),
     semibold: require('./assets/fonts/Inter-SemiBold.ttf'),
     bold01: require('./assets/fonts/Lato-Bold.ttf'),
     black: require('./assets/fonts/Lato-Black.ttf'),
@@ -66,6 +70,11 @@ function App() {
         <Stack.Screen name="HomeAdmin" component={HomeAdmin}/>
         <Stack.Screen name="AddAdmin" component={AddAdmin}/>
         <Stack.Screen name="RegisterNavbar" component={RegisterNavbar}/>
+        <Stack.Screen name="BasicDetails" component={BasicDetails}/>
+        <Stack.Screen name="PatientBasicDetails" component={PatientBasicDetails}/>
+        <Stack.Screen name="RegisterPatient" component={RegisteredPatient}/>
+        <Stack.Screen name="DiseaseForm" component={DiseaseForm}/>
+
 
 
       </Stack.Navigator>

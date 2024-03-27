@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image, Dimensions , Alert} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image, Dimensions , Alert,ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
@@ -8,10 +8,13 @@ import { AntDesign } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { backendURL } from "../backendapi";
 import RegisterPopup from './RegisterPopup';
+import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 
 const windowWidth = Dimensions.get('window').width;
 
 const AddPatient = () => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [savingData, setSavingData] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [loading, setLoading] = useState(false); 
     const [image, setImage] = useState(null);
@@ -39,7 +42,6 @@ const AddPatient = () => {
     const [selectedBloodGroup, setSelectedBloodGroup] = useState(bloodGroup);
     const [selectedState, setSelectedState] = useState(state);
     const [selectedCountry, setSelectedCountry] = useState(country);
-
 
 
 
@@ -76,6 +78,7 @@ const AddPatient = () => {
         }
     };
     const handleCancel = () => {
+        setImage(null);
         setPatientName('');
         setAge('');
         setGender('');
@@ -104,6 +107,7 @@ const AddPatient = () => {
         setSelectedBloodGroup(null);
         setSelectedState(null);
         setSelectedCountry(null);
+        setSavingData(false);
     };
     const calculateAge = (dob) => {
         const today = new Date();
@@ -119,86 +123,117 @@ const AddPatient = () => {
 
 
     const handleSave = async () => {
-        const password = generatePassword();
-        if (patientName === '') {
-            setPatientNameError(true);
-        } else {
-            setPatientNameError(false);
-        }
+    const password = generatePassword();
+    if (patientName === '') {
+        setPatientNameError(true);
+    } else {
+        setPatientNameError(false);
+    }
 
-        if (age === '') {
-            setAgeError(true);
-        } else {
-            setAgeError(false);
-        }
+    if (age === '') {
+        setAgeError(true);
+    } else {
+        setAgeError(false);
+    }
 
-        if (gender === '') {
-            setGenderError(true);
-        } else {
-            setGenderError(false);
-        }
+    if (gender === '') {
+        setGenderError(true);
+    } else {
+        setGenderError(false);
+    }
 
-        if (patientId === '') {
-            setPatientIdError(true);
-        } else {
-            setPatientIdError(false);
-        }
+    if (patientId === '') {
+        setPatientIdError(true);
+    } else {
+        setPatientIdError(false);
+    }
 
-        if (contactNumber === '') {
-            setContactNumberError(true);
-        } else {
-            setContactNumberError(false);
-        }
+    if (contactNumber === '') {
+        setContactNumberError(true);
+    } else {
+        setContactNumberError(false);
+    }
 
-        if (consultingDoctor === '') {
-            setConsultingDoctorError(true);
-        } else {
-            setConsultingDoctorError(false);
-        }
+    if (consultingDoctor === '') {
+        setConsultingDoctorError(true);
+    } else {
+        setConsultingDoctorError(false);
+    }
 
-        if (
-            patientName === '' ||
-            age === '' ||
-            gender === '' ||
-            patientId === '' ||
-            contactNumber === '' ||
-            consultingDoctor === ''
-        ) {
-            return;
-        }
+    if (
+        patientName === '' ||
+        age === '' ||
+        gender === '' ||
+        patientId === '' ||
+        contactNumber === '' ||
+        consultingDoctor === ''
+    ) {
+        return;
+    }
 
+    if (contactNumber.length !== 10) {
+        setContactNumberError(true);
+        alert('Contact number must be 10 digits long');
+        return;
+    } else {
+        setContactNumberError(false);
+    }
 
-        if (contactNumber.length !== 10) {
-            setContactNumberError(true);
-            alert('Contact number must be 10 digits long');
-            return;
-        } else {
-            setContactNumberError(false);
-        }
-        // if (stateType === 'dropdown' && !state) {
-        //     alert('Please select a state or enter manually if "Other" is chosen.');
-        //     return;
-        // }
-
-        // if (stateType === 'input' && !manualState) {
-        //     alert('Please enter a state name.');
-        //     return;
-        // }
-        let stateToSend = state;
+    let stateToSend = state;
     if (state === 'Other' && manualState) {
         stateToSend = manualState;
     }
 
+    setLoading(true);
+    setSavingData(true);
+    setIsLoading(true);
+    if (image) {
+        try {
+            const formData = new FormData();
+            formData.append('file', {
+                uri: image,
+                name: `file.jpg`,
+                type: `image/jpg`,
+            });
+            formData.append('upload_preset', 'pulmocareapp');
+            formData.append('cloud_name', 'pulmocare01');
+
+            const cloudinaryResponse = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (cloudinaryResponse.ok) {
+                const cloudinaryData = await cloudinaryResponse.json();
+                console.log('Cloudinary response:', cloudinaryData);
+
+                savePatientData(cloudinaryData.secure_url, password, stateToSend);
+            } else {
+                console.error('Failed to upload image to Cloudinary');
+                alert('Failed to upload image. Please try again.');
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Failed to upload image. Please try again.');
+            setLoading(false);
+        }
+    } else {
+        savePatientData('', password, stateToSend);
+    }
+};
+
+const savePatientData = async (imageUrl, password, stateToSend) => {
     try {
-        setLoading(true);
         const allPatientsResponse = await fetch(`${backendURL}/adminRouter/sectionAallPatient`);
         const allPatientsData = await allPatientsResponse.json();
         const patientExists = allPatientsData.some(patient => patient.patientId === patientId);
         if (patientExists) {
             alert('Patient ID already exists');
+            setLoading(false);
+            setSavingData(false);
             return;
         }
-       
 
         const requestBody = {
             password: password,
@@ -212,7 +247,7 @@ const AddPatient = () => {
             address: address,
             state: stateToSend,
             country: country,
-            image: image,
+            image: imageUrl,
             consultingDoctor: consultingDoctor,
             localContactName: localContactName,
             localContactRelation: localContactRelation,
@@ -228,22 +263,21 @@ const AddPatient = () => {
         });
 
         if (response.ok) {
-           
-            setLoading(false); 
-            setShowPopup(true); 
+            setLoading(false);
+            setShowPopup(true);
+            setSavingData(false);
         } else {
-          
-            setLoading(false); 
+            setLoading(false);
             console.error('Error response from backend:', response.status);
             alert('Failed to register patient. Please try again.');
         }
-      
-       
-       
     } catch (error) {
         console.error('Error registering patient:', error.message);
         alert('Failed to register patient. Please try again.');
         setLoading(false);
+    }finally {
+        // Stop loading
+        setIsLoading(false);
     }
 };
 
@@ -1059,8 +1093,13 @@ const AddPatient = () => {
                         <Text style={[styles.buttonText, styles.cancelText]}>Cancel</Text>
                     </TouchableOpacity>
                     
-                    <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
-                        <Text style={[styles.buttonText, styles.saveText]}>Save</Text>
+                    <TouchableOpacity style={[styles.button, styles.saveButton, savingData]} onPress={handleSave}>
+                    {isLoading ? (
+                                <ActivityIndicator size="small" color={Color.colorWhite} />
+                            ) : (
+                                <Text style={[styles.buttonText, styles.saveText, savingData]}>Save</Text>
+                            )}
+                        
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -1081,11 +1120,17 @@ const AddPatient = () => {
 }
 export default AddPatient;
 const styles = StyleSheet.create({
+    disabledButton: {
+        backgroundColor: '#CCCCCC', 
+    },
+    disabledButtonText: {
+        color: '#888888',
+    },
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
         paddingBottom: 80,
-        paddingTop: windowWidth*0.15,
+        paddingTop: windowWidth*0.10,
     },
     scrollViewContent: {
         flexGrow: 1,
@@ -1097,7 +1142,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     registerText: {
-        fontSize: 26,
+        fontSize: 24,
         fontWeight: 'bold',
     },
     imagePickerContainer: {

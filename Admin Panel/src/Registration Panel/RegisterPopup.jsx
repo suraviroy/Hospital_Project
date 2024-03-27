@@ -1,15 +1,16 @@
-
 import React from 'react';
-import { Modal, View, Text, StyleSheet,TouchableOpacity, Image, ActivityIndicator ,Platform,Linking} from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Linking, Dimensions } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from 'react-native-vector-icons';
+const windowWidth = Dimensions.get('window').width;
+
 const openEmail = (email, patientName, patientId, password) => {
     if (!email) {
         alert("Sorry!! You have not provided any email.");
         return;
     }
     const subject = "Patient Registration Details";
-    const body = 
-`Congratulations!! ${patientName}
+    const body =
+        `Congratulations!! ${patientName}
 You are Successfully Registered!!
 
 Your Patient ID: ${patientId}
@@ -25,19 +26,21 @@ Thank You,
 Best Wishes From IPCR `;
     Linking.openURL(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
 };
-
-const RegisterPopup = ({ visible,setVisible, loading, patientName,handleCancel, patientId, email, contactNumber, password }) => {
+const RegisterPopup = ({ visible, setVisible, loading, patientName, handleCancel, patientId, email, contactNumber, password }) => {
     return (
         <Modal transparent visible={visible}>
             <View style={styles.modalBackground}>
                 <View style={styles.modalContainer}>
                     {loading ? (
-                        <ActivityIndicator size="large" color="#0000ff" />
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="large" color="#0000ff" />
+                            <Text style={styles.loadingText}>Loading...</Text>
+                        </View>
                     ) : (
                         <>
                             <View style={styles.header}>
                                 <Image source={require("../../assets/images/confirmation.gif")} style={styles.gif} />
-                                <TouchableOpacity style={styles.closeButton} onPress={() =>{ setVisible(false); handleCancel();}}>
+                                <TouchableOpacity style={styles.closeButton} onPress={() => { setVisible(false); handleCancel(); }}>
                                     <Ionicons name="close-circle" size={25} color={'#8E7D7D'} />
                                 </TouchableOpacity>
                             </View>
@@ -55,7 +58,7 @@ const RegisterPopup = ({ visible,setVisible, loading, patientName,handleCancel, 
                                         <Text style={styles.insideText}>Password: {password}</Text>
                                     </View>
                                     <View style={styles.BelowBottom}>
-                                        <TouchableOpacity style={styles.gmailButton} onPress={()=> openEmail(email,patientName,patientId,password)}>
+                                        <TouchableOpacity style={styles.gmailButton} onPress={() => openEmail(email, patientName, patientId, password)}>
                                             <MaterialCommunityIcons name="gmail" size={20} color={'#000000'} />
                                             <Text style={styles.BelowText}>Send To Gmail</Text>
                                         </TouchableOpacity>
@@ -74,13 +77,8 @@ const RegisterPopup = ({ visible,setVisible, loading, patientName,handleCancel, 
     );
 };
 
-
+export default RegisterPopup;
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     modalBackground: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.5)',
@@ -88,93 +86,103 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     modalContainer: {
-        width: '80%',
+        width: windowWidth * 0.8, 
         backgroundColor: '#D3F1ED',
-        paddingHorizontal: 5,
+        paddingHorizontal: 0.03 * windowWidth, 
         paddingVertical: 5,
         borderRadius: 20,
         elevation: 20,
     },
     header: {
         width: '100%',
-        height: 30,
+        height: 0.1 * windowWidth, 
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 5,
-        marginBottom: 40,
+        marginBottom: 0.1 * windowWidth,
     },
     closeButton: {
         position: 'absolute',
         right: 5,
     },
     text: {
-        fontSize: 16,
+        fontSize: 0.04 * windowWidth, 
         fontFamily: 'bold09',
-        marginTop: 15,
         textAlign: 'center',
     },
     info: {
-        marginTop: 10,
+        marginTop: 0.02 * windowWidth, 
         marginLeft: 5,
     },
     infoText: {
-        fontSize: 14,
-        fontFamily: 'Roboto', 
-        fontWeight: 'bold', 
-        color: '#000000', 
+        fontSize: 0.032 * windowWidth, 
+        fontFamily: 'Roboto',
+        fontWeight: 'bold',
+        color: '#000000',
         padding: 2,
     },
     gif: {
-        height: 150,
-        width: 150,
+        height: 0.3 * windowWidth, 
+        width: 0.3 * windowWidth,
         aspectRatio: 1,
-        marginTop: 40,
+        marginTop: 0.08 * windowWidth, 
     },
     bottom: {
-        margin: 10,
+        margin: 0.03 * windowWidth, 
         backgroundColor: '#1E7568',
-        height: 182,
-        width: 283,
+        height: 0.40 * windowWidth,
+        width: 0.69 * windowWidth,
         borderRadius: 20,
     },
-    insideBottom:{
-        margin: 10,
+    insideBottom: {
+        margin: 0.02 * windowWidth,
     },
-    insideText:{
-        fontSize: 14,
+    insideText: {
+        fontSize: 0.032 * windowWidth,
         fontFamily: 'Roboto',
-        fontWeight: 'bold', 
+        fontWeight: 'bold',
         color: '#FFFFFF',
         padding: 2,
     },
-    BelowBottom:{
+    BelowBottom: {
         alignItems: 'center',
         justifyContent: 'center',
     },
-    gmailButton:{
-        padding: 5,
+    gmailButton: {
+        padding: 0.02 * windowWidth, 
         flexDirection: 'row',
-        backgroundColor:'#DBF4F1',
-        width: 168,
+        backgroundColor: '#DBF4F1',
+        width: 0.43 * windowWidth, 
         borderRadius: 8,
     },
-    BelowText:{
-        fontSize: 12,
+    BelowText: {
+        fontSize: 0.027 * windowWidth,
         fontFamily: 'bold09',
-        marginLeft: 5,
-        color:"#000000",
+        marginLeft: 0.02 * windowWidth,
+        color: "#000000",
         alignItems: 'center',
-        justifyContent:'center',
+        justifyContent: 'center',
     },
-    callButton:{
-        marginTop:10,
-        padding: 5,
+    callButton: {
+        marginTop: 0.03 * windowWidth, 
+        padding: 0.02 * windowWidth,
         flexDirection: 'row',
-        backgroundColor:'#A5F3CE',
-        width: 168,
-        borderRadius: 8,  
-    }
+        backgroundColor: '#A5F3CE',
+        width: 0.43* windowWidth,
+        borderRadius: 8,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        fontFamily: 'bold09',
+    },
 });
 
-export default RegisterPopup;
+
+

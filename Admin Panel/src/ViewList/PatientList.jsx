@@ -43,7 +43,12 @@ const PatientList = ({ searchText }) => {
 
     const renderPatientItem = ({ item }) => (
         <View style={styles.patientView2451}>
+            {/* <Image source={{ uri: item.picture }} style={styles.patientImage2451} /> */}
+            {item.picture ? (
             <Image source={{ uri: item.picture }} style={styles.patientImage2451} />
+        ) : (
+            <Image source={require('../../assets/images/user2.png')} style={styles.patientImage2451} />
+        )}
             <View style={styles.patientDetails13}>
                 <Text style={styles.patientDetails2451}>{item.name}</Text>
                 <Text style={styles.patientDetails2450}>{item.gender}</Text>
@@ -82,7 +87,7 @@ const styles = StyleSheet.create({
     patientContainer2451:{
         flex: 1, 
         marginBottom: 85,
-        marginTop: -windowWidth*0.10,
+        paddingTop: -windowWidth*0.11,
     },
     patientView2451: {
         width: windowWidth - 15, 
