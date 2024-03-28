@@ -9,7 +9,7 @@ import { PickerIos, Picker } from '@react-native-picker/picker';
 
 const ExiDisForm = () => {
   const [selectedOrgan, setSelectedOrgan] = useState('Select from the dropdown');
-  const [selectedType,setSelectedType] = useState('Select from the dropdown');
+  const [selectedType, setSelectedType] = useState('Select from the dropdown');
   const [selected, setSelected] = useState([]);
   const [selectedUnit1, setSelectedUnit1] = useState('Unit');
   const [selectedStatus1, setSelectedStatus1] = useState('Select');
@@ -179,14 +179,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Diabetes</Text>
-                <TouchableOpacity onPress={() => handleDelete('Diabetes')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Diabetes')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -194,26 +194,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit1(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10}}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus1}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus1(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus1}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus1(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -223,14 +223,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Hypertension</Text>
-                <TouchableOpacity onPress={() => handleDelete('Hypertension')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Hypertension')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -238,26 +238,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit2(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus2}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus2(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus2}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus2(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -267,14 +267,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>IHD</Text>
-                <TouchableOpacity onPress={() => handleDelete('IHD')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('IHD')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -282,26 +282,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit3(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus3}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus3(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus3}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus3(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -311,14 +311,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Hypothyroidism</Text>
-                <TouchableOpacity onPress={() => handleDelete('Hypothyroidism')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Hypothyroidism')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -326,26 +326,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit4(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus4}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus4(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus4}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus4(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -355,14 +355,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Allergic Rhinitis</Text>
-                <TouchableOpacity onPress={() => handleDelete('Allergic Rhinitis')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Allergic Rhinitis')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -370,26 +370,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit5(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus5}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus5(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus5}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus5(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -399,14 +399,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Hyperuricemia</Text>
-                <TouchableOpacity onPress={() => handleDelete('Hyperuricemia')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Hyperuricemia')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -414,26 +414,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit6(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus6}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus6(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus6}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus6(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -443,14 +443,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Asthma</Text>
-                <TouchableOpacity onPress={() => handleDelete('Asthma')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Asthma')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -458,26 +458,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit7(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10, color: Color.colorGray_200 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus7}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus7(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus7}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus7(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -487,14 +487,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>TB</Text>
-                <TouchableOpacity onPress={() => handleDelete('TB')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('TB')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -502,26 +502,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit8(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus8}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus8(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus8}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus8(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -531,14 +531,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>COPD</Text>
-                <TouchableOpacity onPress={() => handleDelete('COPD')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('COPD')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -546,26 +546,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit9(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus9}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus9(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus9}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus9(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -575,14 +575,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>ILD</Text>
-                <TouchableOpacity onPress={() => handleDelete('ILD')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('ILD')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -590,26 +590,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit10(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus10}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus10(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus10}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus10(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -619,14 +619,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Bronchiectasis</Text>
-                <TouchableOpacity onPress={() => handleDelete('Bronchiectasis')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Bronchiectasis')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -634,26 +634,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit11(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus11}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus11(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus11}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus11(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -663,14 +663,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>OSA</Text>
-                <TouchableOpacity onPress={() => handleDelete('OSA')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('OSA')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -678,26 +678,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit12(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus12}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus12(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus12}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus12(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -707,14 +707,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>IBS</Text>
-                <TouchableOpacity onPress={() => handleDelete('IBS')}v>
+                {/* <TouchableOpacity onPress={() => handleDelete('IBS')} v>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -722,26 +722,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit13(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus13}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus13(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus13}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus13(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -751,14 +751,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Inflammatory bowel diseases</Text>
-                <TouchableOpacity onPress={() => handleDelete('Inflammatory bowel diseases')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Inflammatory bowel diseases')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -766,26 +766,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit14(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus14}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus14(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus14}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus14(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -795,14 +795,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Depression</Text>
-                <TouchableOpacity onPress={() => handleDelete('Depression')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Depression')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -810,26 +810,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit15(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus15}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus15(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus15}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus15(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -839,14 +839,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Anxiety</Text>
-                <TouchableOpacity onPress={() => handleDelete('Anxiety')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Anxiety')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -854,26 +854,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit16(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus16}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus16(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus16}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus16(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -883,14 +883,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Collagen vascular disease</Text>
-                <TouchableOpacity onPress={() => handleDelete('Collagen vascular disease')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Collagen vascular disease')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -898,26 +898,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit17(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus17}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus17(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus17}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus17(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -927,14 +927,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Dyslipidemia</Text>
-                <TouchableOpacity onPress={() => handleDelete('Dyslipidemia')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Dyslipidemia')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -942,26 +942,26 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit18(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus18}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus18(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus18}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus18(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
@@ -971,14 +971,14 @@ const ExiDisForm = () => {
             <View key={option} style={styles.problems}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>CLD</Text>
-                <TouchableOpacity onPress={() => handleDelete('CLD')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('CLD')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -986,53 +986,53 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit19(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus19}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus19(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus19}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus19(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
           );
-          case 'Malignancy':
-            return (
-              <View key={option} style={styles.problems2}>
-                <View style={styles.problist}>
-                  <Text style={styles.probheader}>Malignancy</Text>
-                  <TouchableOpacity onPress={() => handleDelete('Malignancy')}>
-                    <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.duration3}>
-                  <Text style={{ fontWeight: '400', fontSize: 14 }}>Select Organ :</Text>
-                  <View style={styles.dropdown23}>
-                    <Picker
-                      selectedValue={selectedOrgan}
-                      onValueChange={(itemValue, itemIndex) => setSelectedOrgan(itemValue)}
-                      style={{ width: 200, height: 30, paddingHorizontal: 10 }}>
-                      <Picker.Item label="Select" value="" />
-                      {organs.map((organ, index) => (
-                        <Picker.Item key={index} label={organ} value={organ} />
-                      ))}
-                      {/* <Picker.Item label="Others" value="Others" /> */}
-                    </Picker>
-                    {/* <View>
+        case 'Malignancy':
+          return (
+            <View key={option} style={styles.problems2}>
+              <View style={styles.problist}>
+                <Text style={styles.probheader}>Malignancy</Text>
+                {/* <TouchableOpacity onPress={() => handleDelete('Malignancy')}>
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
+                </TouchableOpacity> */}
+              </View>
+              <View style={styles.duration3}>
+                <Text style={{ fontWeight: '400', fontSize: 14 }}>Select Organ :</Text>
+                <View style={styles.dropdown23}>
+                  <Picker
+                    selectedValue={selectedOrgan}
+                    onValueChange={(itemValue, itemIndex) => setSelectedOrgan(itemValue)}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {organs.map((organ, index) => (
+                      <Picker.Item key={index} label={organ} value={organ} style={{color: Color.colorBlack}}/>
+                    ))}
+                    {/* <Picker.Item label="Others" value="Others" /> */}
+                  </Picker>
+                  {/* <View>
                     {selectedOrgan === "Others" && (
                       <TextInput
                         style={{ color: '#8E7D7D', fontSize: 15 }}
@@ -1043,63 +1043,63 @@ const ExiDisForm = () => {
                   
                     )}
                     </View> */}
-                  </View>
                 </View>
-                <View style={styles.duration4}>
-                  <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
-                  <View style={styles.dropdown20}>
-                    <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
-                  </View>
-                  <View style={styles.dropdown21}>
+              </View>
+              <View style={styles.duration4}>
+                <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
+                <View style={styles.dropdown20}>
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'}></TextInput>
+                </View>
+                <View style={styles.dropdown21}>
                   <Picker
                     selectedValue={selectedUnit20}
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit20(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
-                  </View>
-                </View>
-                <View style={styles.duration2}>
-                  <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
-                  <View style={styles.dropdown22}>
-                    <Picker
-                      selectedValue={selectedStatus20}
-                      onValueChange={(itemValue, itemIndex) => setSelectedStatus20(itemValue)}
-                      style={{ width: 150, height: 30, paddingHorizontal: 10 }}>
-                      <Picker.Item label="Select" value="" />
-                      {StatusOptions.map((status, index) => (
-                        <Picker.Item key={index} label={status} value={status} />
-                      ))}
-                    </Picker>
-                  </View>
                 </View>
               </View>
-            );
-          
+              <View style={styles.duration2}>
+                <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
+                <View style={styles.dropdown22}>
+                  <Picker
+                    selectedValue={selectedStatus20}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus20(itemValue)}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
+                </View>
+              </View>
+            </View>
+          );
+
         case 'Others':
           return (
             <View key={option} style={styles.problems2}>
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Others</Text>
-                <TouchableOpacity onPress={() => handleDelete('Others')}>
+                {/* <TouchableOpacity onPress={() => handleDelete('Others')}>
                   <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
               <View style={styles.duration3}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Disease :</Text>
                 <TouchableOpacity style={styles.dropdown24}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.6 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
+                  <TextInput style={{ fontSize: 15, width: windowWidth * 0.6 }} placeholder='Enter Here' placeholderTextColor={'#8E7D7D'}></TextInput>
                 </TouchableOpacity>
               </View>
               <View style={styles.duration4}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
                 <View style={styles.dropdown20}>
-                  <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
                 </View>
                 <View style={styles.dropdown21}>
                   <Picker
@@ -1107,51 +1107,51 @@ const ExiDisForm = () => {
                     onValueChange={(itemValue, itemIndex) =>
                       setSelectedUnit21(itemValue)
                     }
-                    style={{width:'100%', paddingHorizontal:10, color: Color.colorGray_200}}>
-                    <Picker.Item label="Unit" value="" />
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
                     {Unit.map((unit) => (
-                      <Picker.Item key={unit.key} label={unit.value} value={unit.value}/>
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
                     ))}
                   </Picker>
                 </View>
-                </View>
-                <View style={styles.duration2}>
+              </View>
+              <View style={styles.duration2}>
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
                 <View style={styles.dropdown22}>
-                <Picker
-                  selectedValue={selectedStatus21}
-                  style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                  onValueChange={(itemValue, itemIndex) => setSelectedStatus21(itemValue)}>
-                  <Picker.Item label="Select" value="" />
-                  {StatusOptions.map((status, index) => (
-                    <Picker.Item key={index} label={status} value={status} />
-                  ))}
-                </Picker>
+                  <Picker
+                    selectedValue={selectedStatus21}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus21(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
           );
-          case 'CKD':
-            return (
-              <View key={option} style={styles.problems2}>
-                <View style={styles.problist}>
-                  <Text style={styles.probheader}>CKD</Text>
-                  <TouchableOpacity onPress={() => handleDelete('CKD')}>
-                    <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.duration3}>
-                  <Text style={{ fontWeight: '400', fontSize: 14 }}>Select Type :</Text>
-                  <View style={styles.dropdown25}>
-                    <Picker
-                      selectedValue={selectedType}
-                      onValueChange={(itemValue, itemIndex) => setSelectedType(itemValue)}
-                      style={{ width: 200, height: 30, paddingHorizontal: 10 }}>
-                      <Picker.Item label="Select" value="" />
-                      <Picker.Item label="Hematological" value="Hematological" />
-                      {/* <Picker.Item label="Others" value="Others" /> */}
-                    </Picker>
-                    {/* {selectedType === "Others" && (
+        case 'CKD':
+          return (
+            <View key={option} style={styles.problems2}>
+              <View style={styles.problist}>
+                <Text style={styles.probheader}>CKD</Text>
+                {/* <TouchableOpacity onPress={() => handleDelete('CKD')}>
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
+                </TouchableOpacity> */}
+              </View>
+              <View style={styles.duration3}>
+                <Text style={{ fontWeight: '400', fontSize: 14 }}>Select Type :</Text>
+                <View style={styles.dropdown25}>
+                  <Picker
+                    selectedValue={selectedType}
+                    onValueChange={(itemValue, itemIndex) => setSelectedType(itemValue)}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    <Picker.Item label="Hematological" value="Hematological" style={{color: Color.colorBlack}}/>
+                    {/* <Picker.Item label="Others" value="Others" /> */}
+                  </Picker>
+                  {/* {selectedType === "Others" && (
                       <TextInput
                         style={{ color: '#8E7D7D', fontSize: 15 }}
                         placeholder='Type Other Type'
@@ -1159,42 +1159,42 @@ const ExiDisForm = () => {
                         onChangeText={(text) => setOtherType(text)}
                       />
                     )} */}
-                  </View>
-                </View>
-                <View style={styles.duration4}>
-                  <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
-                  <View style={styles.dropdown20}>
-                    <TextInput style={{ color: '#8E7D7D', fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
-                  </View>
-                  <View style={styles.dropdown21}>
-                    <Picker
-                      selectedValue={selectedUnit22}
-                      onValueChange={(itemValue, itemIndex) => setSelectedUnit22(itemValue)}
-                      style={{ width: '100%', paddingHorizontal: 10, color: Color.colorGray_200 }}>
-                      <Picker.Item label="Unit" value="" />
-                      {Unit.map((unit) => (
-                        <Picker.Item key={unit.key} label={unit.value} value={unit.value} />
-                      ))}
-                    </Picker>
-                  </View>
-                </View>
-                <View style={styles.duration2}>
-                  <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
-                  <View style={styles.dropdown22}>
-                    <Picker
-                      selectedValue={selectedStatus22}
-                      style={{ width: 150, height: 30, paddingHorizontal: 10 }}
-                      onValueChange={(itemValue, itemIndex) => setSelectedStatus22(itemValue)}>
-                      <Picker.Item label="Select" value="" />
-                      {StatusOptions.map((status, index) => (
-                        <Picker.Item key={index} label={status} value={status} />
-                      ))}
-                    </Picker>
-                  </View>
                 </View>
               </View>
-            );
-          
+              <View style={styles.duration4}>
+                <Text style={{ fontWeight: '400', fontSize: 14 }}>Duration :</Text>
+                <View style={styles.dropdown20}>
+                  <TextInput style={{ fontSize: 15 }} keyboardType='numeric' placeholder='Numeric Value' placeholderTextColor={'#8E7D7D'} />
+                </View>
+                <View style={styles.dropdown21}>
+                  <Picker
+                    selectedValue={selectedUnit22}
+                    onValueChange={(itemValue, itemIndex) => setSelectedUnit22(itemValue)}
+                    style={{ width: '100%', paddingHorizontal: 10 }}>
+                    <Picker.Item label="Unit" value="" style={{color: Color.colorGray_200}}/>
+                    {Unit.map((unit) => (
+                      <Picker.Item key={unit.key} label={unit.value} value={unit.value} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
+                </View>
+              </View>
+              <View style={styles.duration2}>
+                <Text style={{ fontWeight: '400', fontSize: 14 }}>Status of disease :</Text>
+                <View style={styles.dropdown22}>
+                  <Picker
+                    selectedValue={selectedStatus22}
+                    style={{ width: '100%', height: 30, paddingHorizontal: 10 }}
+                    onValueChange={(itemValue, itemIndex) => setSelectedStatus22(itemValue)}>
+                    <Picker.Item label="Select" value="" style={{color: Color.colorGray_200}}/>
+                    {StatusOptions.map((status, index) => (
+                      <Picker.Item key={index} label={status} value={status} style={{color: Color.colorBlack}}/>
+                    ))}
+                  </Picker>
+                </View>
+              </View>
+            </View>
+          );
+
         default:
           return null;
       }
@@ -1277,7 +1277,7 @@ const styles = StyleSheet.create({
     marginLeft: windowWidth * 0.05
   },
   dropdown21: {
-    width: windowWidth * 0.33,
+    width: windowWidth * 0.3,
     height: 34,
     borderRadius: 2,
     borderWidth: 0.5,
@@ -1340,8 +1340,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F4F3',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 7,
-    paddingRight: 10,
+    // paddingLeft: 7,
+    // paddingRight: 10,
     marginLeft: windowWidth * 0.02,
   },
   duration4: {
@@ -1375,8 +1375,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F4F3',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 7,
-    paddingRight: 10,
+    // paddingLeft: 7,
+    // paddingRight: 10,
     marginLeft: windowWidth * 0.02,
   },
 });

@@ -7,7 +7,7 @@ import { FontFamily } from '../../GlobalStyles';
 import { backendURL } from "../backendapi";
 
 
-const ViewListURL = `${backendURL}/adminListRouter/adminlist`;
+const ViewListURL = `${backendURL}/adminRouter/allpatientList`;
 
 const PatientList = ({ searchText }) => {
     const navigation = useNavigation();
@@ -27,12 +27,17 @@ const PatientList = ({ searchText }) => {
         };
 
         fetchData();
-    }, []);
+    }, [patients]);
 
     useEffect(() => {
+        if (!searchText) {
+            setFilteredPatients(patients);
+            return;
+        }
+
         const filtered = patients.filter(patient =>
             patient.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            patient.idNumber.toLowerCase().includes(searchText.toLowerCase())
+            patient.patientId.toLowerCase().includes(searchText.toLowerCase())
         );
         setFilteredPatients(filtered);
     }, [searchText, patients]);
@@ -44,17 +49,18 @@ const PatientList = ({ searchText }) => {
     const renderPatientItem = ({ item }) => (
         <View style={styles.patientView2451}>
             {/* <Image source={{ uri: item.picture }} style={styles.patientImage2451} /> */}
-            {item.picture ? (
-            <Image source={{ uri: item.picture }} style={styles.patientImage2451} />
+            {item.image ? (
+            <Image source={{ uri: item.image }} style={styles.patientImage2451} />
         ) : (
             <Image source={require('../../assets/images/user2.png')} style={styles.patientImage2451} />
         )}
             <View style={styles.patientDetails13}>
                 <Text style={styles.patientDetails2451}>{item.name}</Text>
                 <Text style={styles.patientDetails2450}>{item.gender}</Text>
+                <Text style={styles.patientDetails2452}>{item.age}</Text>
             </View>
             <View style={styles.patientId2451}>
-                <Text style={styles.patientId13}>{item.idNumber}</Text>
+                <Text style={styles.patientId13}>{item.patientId}</Text>
             </View>
             <TouchableOpacity
                 style={styles.viewButton2451}
@@ -63,7 +69,7 @@ const PatientList = ({ searchText }) => {
                 <Text style={styles.viewDetails}>View Details</Text>
             </TouchableOpacity>
             <View style={styles.appointmentdet13}>
-                <Text style={styles.appointment2451}>Last Appointment On: <Text style={styles.time2451}>{item.date},  {item.time}</Text></Text>
+                <Text style={styles.appointment2451}>Last Appointment On: <Text style={styles.time2451}>{item.visitDate},  {item.visitTime}</Text></Text>
             </View>
         </View>
     );
@@ -74,7 +80,7 @@ const PatientList = ({ searchText }) => {
                 nestedScrollEnabled
                 data={filteredPatients}
                 renderItem={renderPatientItem}
-                keyExtractor={item => item._id}
+                keyExtractor={item => item.patientId}
             />
         </SafeAreaView>
     );
@@ -87,7 +93,7 @@ const styles = StyleSheet.create({
     patientContainer2451:{
         flex: 1, 
         marginBottom: 85,
-        paddingTop: -windowWidth*0.11,
+        paddingTop: -windowWidth*0.14,
     },
     patientView2451: {
         width: windowWidth - 15, 
@@ -108,7 +114,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#85DBCD',
         borderTopLeftRadius: 12,
         borderBottomLeftRadius: 12,
-        marginLeft: 0,
+        marginLeft: windowWidth*0.027,
         marginTop: 7,
         alignContent: 'center',
         textAlignVertical: 'center',
@@ -119,14 +125,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         position: "absolute",
-        width: 109,
+        width: windowWidth*0.28,
         height: 34,
         borderColor: '#077547',
         borderWidth: 2,
         borderStyle: 'solid',
         borderRadius: 5,
         marginTop: 70,
-        marginLeft: 260,
+        marginLeft: windowWidth*0.65,
     },
     viewDetails: {
         color: '#077547',
@@ -150,7 +156,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         alignItems: 'center',
         marginLeft: 10,
-        marginTop: 30,
+        marginTop: 25,
         fontSize: 14,
         fontFamily: FontFamily.font_bold,
     },
@@ -160,18 +166,27 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         color: 'grey',
         fontSize: 12,
+        fontFamily: FontFamily.font_bold,
     },
     patientDetails2452: {
-        marginTop: 15,
-        marginLeft: 15,
+        // marginTop: 55,
+        marginLeft: 10,
         alignItems: 'center',
-        color: 'grey',
-        fontSize: 14,
+        color: 'black',
+        fontSize: 12,
+        fontFamily: 'bold01'
     },
+    // patientDetails2452: {
+    //     marginTop: 15,
+    //     marginLeft: 15,
+    //     alignItems: 'center',
+    //     color: 'grey',
+    //     fontSize: 14,
+    // },
     patientDetails13: {
         display: 'flex',
         flexDirection: 'column',
-        width: '45%',
+        width: windowWidth*0.4,
     },
     appointmentdet13: {
         position: 'absolute',
