@@ -1,4 +1,5 @@
 import PatientSchema from "../model/patientSchema.js";
+import moment from "moment-timezone";
 
 export const patientregistration = async (req, res) => {
   try {
@@ -21,19 +22,10 @@ export const patientregistration = async (req, res) => {
       localContactNumber,
     } = req.body;
 
-    // Get current date in the specified format
-    const currentDate = new Date().toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-
-    // Get current time in the specified format
-    const currentTime = new Date().toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+    // Get the desired time zone (e.g., server's time zone or a specific time zone)
+    const desiredTimezone = "Asia/Kolkata"; // Replace with your desired time zone
+    const currentDate = moment().tz(desiredTimezone).format("MMMM D, YYYY");
+    const currentTime = moment().tz(desiredTimezone).format("hh:mm A");
 
     const finduser = await PatientSchema.findOne({ patientId: patientId });
     if (finduser) {
@@ -87,11 +79,10 @@ export const registeredPatientList = async (req, res) => {
 
 export const sectionAtodaysPatient = async (req, res) => {
   try {
-    const currentDate = new Date().toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
+    // Get the desired time zone (e.g., server's time zone or a specific time zone)
+    const desiredTimezone = "Asia/Kolkata"; // Replace with your desired time zone
+    // Get the current date and time in the desired time zone
+    const currentDate = moment().tz(desiredTimezone).format("MMMM D, YYYY");
 
     const registeredPatients = await PatientSchema.find(
       {
@@ -244,19 +235,11 @@ export const patientEachVistDetails = async (req, res) => {
 
     const patient = await PatientSchema.findOne({ patientId: id });
 
-    // Get current date in the specified format
-    const currentDate = new Date().toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-
-    // Get current time in the specified format
-    const currentTime = new Date().toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+    // Get the desired time zone (e.g., server's time zone or a specific time zone)
+    const desiredTimezone = "Asia/Kolkata"; // Replace with your desired time zone
+    // Get the current date and time in the desired time zone
+    const currentDate = moment().tz(desiredTimezone).format("MMMM D, YYYY");
+    const currentTime = moment().tz(desiredTimezone).format("hh:mm A");
 
     const newVisit = {
       visitDate: currentDate,
@@ -269,9 +252,9 @@ export const patientEachVistDetails = async (req, res) => {
       catScore: req.body.catScore,
     };
 
-    patient.coordinator = req.body.coordinator
+    patient.coordinator = req.body.coordinator;
     patient.visitCount.push(newVisit);
-    patient.status = "Updated"
+    patient.status = "Updated";
 
     const updatedPatient = await patient.save();
 
