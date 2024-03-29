@@ -20,6 +20,36 @@ const ExiDisForm = ({  diseases, setDiseases  }) => {
       switch (option) {
         case 'Diabetes':
           return renderCommonFields(option);
+        case 'Hypertension':
+          return renderCommonFields(option);
+        case 'IHD':
+          return renderCommonFields(option);
+        case 'Hypothyroidism':
+          return renderCommonFields(option);
+        case 'Allergic Rhinitis':
+          return renderCommonFields(option);
+        case 'Asthma':
+            return renderCommonFields(option);
+        case 'TB':
+              return renderCommonFields(option);
+        case 'COPD':
+            return renderCommonFields(option);
+        case 'ILD':
+              return renderCommonFields(option);
+        case 'Bronchiectasis':
+              return renderCommonFields(option);
+        case 'OSA':
+              return renderCommonFields(option);
+        case 'IBS':
+              return renderCommonFields(option);
+        case 'Inflammatory bowel diseases':
+              return renderCommonFields(option);
+        case 'Depression':
+              return renderCommonFields(option);
+        case 'Anxiety':
+              return renderCommonFields(option);
+        case 'Collagen vascular disease':
+              return renderCommonFields(option);       
         case 'Malignancy':
           return renderMalignancyFields(option);
         case 'Others':
