@@ -1,5 +1,8 @@
 import PatientSchema from "../model/patientSchema.js";
 import moment from "moment-timezone";
+import excelJS from 'exceljs';
+
+
 
 export const patientregistration = async (req, res) => {
   try {
@@ -291,5 +294,133 @@ export const allpatientList = async (req, res) => {
     res.status(200).json(registeredPatients);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+
+export const excelFile = async (req, res) => {
+
+  try {
+    const workbook = new excelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Patient Details");
+
+    worksheet.columns = [
+      { header: "Sl No", key: "s_no" },
+      { header: "Name", key: "name" },
+      { header: "Gender", key: "gender" },
+      { header: "Age", key: "age" },
+      { header: "Patient ID", key: "patientId" },
+      { header: "Contact no.", key: "contactNumber" },
+      { header: "Email.", key: "email" },
+      { header: "Blood Group", key: "bloodGroup" },
+      { header: "State", key: "state" },
+      { header: "Country", key: "country" },
+      { header: "Date", key: "date" },
+      { header: "Time", key: "time" },
+      { header: "Consulting Doctor", key: "consultingDoctor" },
+      { header: "Local Contact Name", key: "localContactName" },
+      { header: "Local Contact Relation", key: "localContactRelation" },
+      { header: "Local Contact Number", key: "localContactNumber" },
+      { header: "Visit Date", key: "visitDate" },
+      { header: "Visit Time", key: "visitTime" },
+
+      { header: "Diabetes Duration", key: "diabetesDuration" },
+      { header: "Unit", key: "diabetesDurationUnit" },
+      { header: "Status", key: "diabetesStatus" },
+
+      { header: "Hypertension Duration", key: "hypertensionDuration" },
+      { header: "Unit", key: "hypertensionDurationUnit" },
+      { header: "Status", key: "hypertensionStatus" },
+
+      { header: "HID Duration", key: "HIDDuration" },
+      { header: "Unit", key: "HIDDurationUnit" },
+      { header: "Status", key: "HIDStatus" },
+
+      { header: "hypothyroidism Duration", key: "hypothyroidismDuration" },
+      { header: "Unit", key: "hypothyroidismDurationUnit" },
+      { header: "Status", key: "hypothyroidismStatus" },
+
+      { header: "Allergic Rhinitis Duration", key: "allergicRhinitisDuration" },
+      { header: "Unit", key: "allergicRhinitisDurationUnit" },
+      { header: "Status", key: "allergicRhinitisStatus" },
+
+      { header: "Hyperuricemia Duration", key: "hyperuricemiaDuration" },
+      { header: "Unit", key: "hyperuricemiaDurationUnit" },
+      { header: "Status", key: "hyperuricemiaStatus" },
+
+    ]
+
+    let counter = 1;
+    const userData = await PatientSchema.find();
+
+
+    userData.forEach((visit) => {
+
+      const rowData = {
+        s_no: counter,
+        name: visit.name,
+        gender: visit.gender,
+        age: visit.age,
+        patientId: visit.patientId,
+        contactNumber: visit.contactNumber,
+        email: visit.email,
+        bloodGroup: visit.bloodGroup,
+        state: visit.state,
+        country: visit.country,
+        date: visit.date,
+        time: visit.time,
+        consultingDoctor: visit.consultingDoctor,
+        localContactName: visit.localContactName,
+        localContactRelation: visit.localContactRelation,
+        localContactNumber: visit.localContactNumber,
+        visitDate: visit?.visitCount[0]?.visitDate,
+        diabetesDuration: visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.numericValue,
+        diabetesDurationUnit: visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.unit,
+        diabetesStatus: visit?.visitCount[0]?.existingDeseases?.diabetes?.statusOfDisease,
+
+        hypertensionDuration: visit?.visitCount[0]?.existingDeseases?.hypertension?.duration?.numericValue,
+        hypertensionDurationUnit: visit?.visitCount[0]?.existingDeseases?.hypertension?.duration?.unit,
+        hypertensionStatus: visit?.visitCount[0]?.existingDeseases?.hypertension?.statusOfDisease,
+
+        HIDDuration: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.numericValue,
+        HIDDurationUnit: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.unit,
+        HIDStatus: visit?.visitCount[0]?.existingDeseases?.ihd?.statusOfDisease,
+ 
+        hypothyroidismDuration: visit?.visitCount[0]?.existingDeseases?.hypothyroidism?.duration?.numericValue,
+        hypothyroidismDurationUnit: visit?.visitCount[0]?.existingDeseases?.hypothyroidism?.duration?.unit,
+        hypothyroidismStatus: visit?.visitCount[0]?.existingDeseases?.hypothyroidism?.statusOfDisease,
+
+        allergicRhinitisDuration: visit?.visitCount[0]?.existingDeseases?.allergicRhinitis?.duration?.numericValue,
+        allergicRhinitisDurationUnit: visit?.visitCount[0]?.existingDeseases?.allergicRhinitis?.duration?.unit,
+        allergicRhinitisStatus: visit?.visitCount[0]?.existingDeseases?.allergicRhinitis?.statusOfDisease,
+
+        hyperuricemiaDuration: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.numericValue,
+        hyperuricemiaDurationUnit: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.unit,
+        hyperuricemiaStatus: visit?.visitCount[0]?.existingDeseases?.ihd?.statusOfDisease,
+      };
+
+      console.log(visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.numericValue)
+
+
+      worksheet.addRow(rowData);
+      counter++;
+    });
+
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.font = { bold: true };
+    })
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheatml.sheet"
+    )
+    res.setHeader("Content-Disposition", `attachment; filename= users.xlsx`);
+
+    return workbook.xlsx.write(res).then(() => {
+      res.status(200)
+    })
+
+  } catch (error) {
+    console.log(error.message)
   }
 };
