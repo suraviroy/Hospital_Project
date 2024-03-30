@@ -79,7 +79,7 @@ const DiseaseForm = () => {
                 name,
                 duration,
                 organ,
-                type,
+                typeofckd,
                 disease: diseaseName,
                 status
             } = disease;
@@ -97,7 +97,7 @@ const DiseaseForm = () => {
                     formattedData.existingDeseases[lowercaseName].disease = diseaseName;
                     break;
                 case 'CKD':
-                    formattedData.existingDeseases[lowercaseName].type = type;
+                    formattedData.existingDeseases[lowercaseName].typeofckd = typeofckd;
                     break;
                 default:
                     break;
@@ -138,8 +138,8 @@ const DiseaseForm = () => {
                 <View style={styles.disheader}>
                     <Text style={styles.texthead}>Existing Disease</Text>
                 </View>
-                <ExiDisForm />
-                {/* <ExiDisForm diseases={diseases} setDiseases={setDiseases} /> */}
+                {/* <ExiDisForm /> */}
+                <ExiDisForm diseases={diseases} setDiseases={setDiseases} />
                 <View style={styles.disheader}>
                     <Text style={styles.texthead}>Problem For Consultation</Text>
                 </View>
@@ -572,7 +572,7 @@ const DiseaseForm = () => {
                         </Picker>
                     </View>
                 <TouchableOpacity style={styles.submitButton}
-                // onPress={handleSave}
+                onPress={handleSave}
                 >
                     <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>Submit</Text>
                 </TouchableOpacity>
