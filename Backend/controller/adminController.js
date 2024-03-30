@@ -297,7 +297,7 @@ export const allpatientList = async (req, res) => {
 
 
 export const excelFile = async (req, res) => {
-//
+  //
   try {
     const workbook = new excelJS.Workbook();
     const worksheet = workbook.addWorksheet("Patient Details");
@@ -310,6 +310,7 @@ export const excelFile = async (req, res) => {
       { header: "Patient ID", key: "patientId" },
       { header: "Contact no.", key: "contactNumber" },
       { header: "Email.", key: "email" },
+
       { header: "Blood Group", key: "bloodGroup" },
       { header: "State", key: "state" },
       { header: "Country", key: "country" },
@@ -319,9 +320,11 @@ export const excelFile = async (req, res) => {
       { header: "Local Contact Name", key: "localContactName" },
       { header: "Local Contact Relation", key: "localContactRelation" },
       { header: "Local Contact Number", key: "localContactNumber" },
+
       { header: "Visit Date", key: "visitDate" },
       { header: "Visit Time", key: "visitTime" },
 
+      // Existing disease
       { header: "Diabetes Duration", key: "diabetesDuration" },
       { header: "Unit", key: "diabetesDurationUnit" },
       { header: "Status", key: "diabetesStatus" },
@@ -345,6 +348,141 @@ export const excelFile = async (req, res) => {
       { header: "Hyperuricemia Duration", key: "hyperuricemiaDuration" },
       { header: "Unit", key: "hyperuricemiaDurationUnit" },
       { header: "Status", key: "hyperuricemiaStatus" },
+
+      { header: "Asthama Duration", key: "asthamaDuration" },
+      { header: "Unit", key: "asthamaDurationUnit" },
+      { header: "Status", key: "asthamaStatus" },
+
+      { header: "TB Duration", key: "tbDuration" },
+      { header: "Unit", key: "tbDurationUnit" },
+      { header: "Status", key: "tbStatus" },
+
+      { header: "COPD Duration", key: "copdDuration" },
+      { header: "Unit", key: "copdDurationUnit" },
+      { header: "Status", key: "copdStatus" },
+
+      { header: "ILD Duration", key: "ildDuration" },
+      { header: "Unit", key: "ildDurationUnit" },
+      { header: "Status", key: "copdStatus" },
+
+      { header: "Bronchiectasis Duration", key: "bronchiectasisDuration" },
+      { header: "Unit", key: "bronchiectasisDurationUnit" },
+      { header: "Status", key: "bronchiectasisStatus" },
+
+      { header: "OSA Duration", key: "osaDuration" },
+      { header: "Unit", key: "osaDurationUnit" },
+      { header: "Status", key: "osaStatus" },
+
+      { header: "IBS Duration", key: "ibsDuration" },
+      { header: "Unit", key: "ibsDurationUnit" },
+      { header: "Status", key: "ibsStatus" },
+
+      // Inflammatory Bowel Disease
+      { header: "Inflammatory Bowel Disease Duration", key: "inflammatoryBowelDiseaseDuration" },
+      { header: "Unit", key: "inflammatoryBowelDiseaseDurationUnit" },
+      { header: "Status", key: "inflammatoryBowelDiseaseStatus" },
+
+      // Depression
+      { header: "Depression Duration", key: "depressionDuration" },
+      { header: "Unit", key: "depressionDurationUnit" },
+      { header: "Status", key: "depressionStatus" },
+
+      // Anxiety
+      { header: "Anxiety Duration", key: "anxietyDuration" },
+      { header: "Unit", key: "anxietyDurationUnit" },
+      { header: "Status", key: "anxietyStatus" },
+
+      // Collagen Vascular Disease
+      { header: "Collagen Vascular Disease Duration", key: "collagenVascularDiseaseDuration" },
+      { header: "Unit", key: "collagenVascularDiseaseDurationUnit" },
+      { header: "Status", key: "collagenVascularDiseaseStatus" },
+
+      // Malignancy
+      { header: "Malignancy Duration", key: "malignancyDuration" },
+      { header: "Unit", key: "malignancyDurationUnit" },
+      { header: "Organ", key: "malignancyOrgan" },
+      { header: "Status", key: "malignancyStatus" },
+
+      // Dyslipidemia
+      { header: "Dyslipidemia Duration", key: "dyslipidemiaDuration" },
+      { header: "Unit", key: "dyslipidemiaDurationUnit" },
+      { header: "Status", key: "dyslipidemiaStatus" },
+
+      // CLD
+      { header: "CLD Duration", key: "cldDuration" },
+      { header: "Unit", key: "cldDurationUnit" },
+      { header: "Status", key: "cldStatus" },
+
+      // CKD
+      { header: "CKD Duration", key: "ckdDuration" },
+      { header: "Unit", key: "ckdDurationUnit" },
+      { header: "Type", key: "ckdType" },
+      { header: "Status", key: "ckdStatus" },
+
+      // Others
+      { header: "Others Disease", key: "othersDisease" },
+      { header: "Duration", key: "othersDuration" },
+      { header: "Unit", key: "othersDurationUnit" },
+      { header: "Status", key: "othersStatus" },
+
+      // Problem for consultation 
+      { header: "Problem", key: "problem" },
+
+      { header: "SOB Duration", key: "sobDuration" },
+      { header: "SOB Unit", key: "sobDurationUnit" },
+      { header: "SOB Status", key: "sobStatus" },
+
+      { header: "Cough Duration", key: "coughDuration" },
+      { header: "Cough Unit", key: "coughDurationUnit" },
+      { header: "Cough Status", key: "coughStatus" },
+
+      { header: "Bleeding With Cough Duration", key: "bleedingWithCoughDuration" },
+      { header: "Bleeding With Cough Unit", key: "bleedingWithCoughDurationUnit" },
+      { header: "Bleeding With Cough Status", key: "bleedingWithCoughStatus" },
+
+      { header: "Chest Pain Duration", key: "chestPainDuration" },
+      { header: "Chest Pain Unit", key: "chestPainDurationUnit" },
+      { header: "Chest Pain Status", key: "chestPainStatus" },
+
+      { header: "Wheeze Duration", key: "wheezeDuration" },
+      { header: "Wheeze Unit", key: "wheezeDurationUnit" },
+      { header: "Wheeze Status", key: "wheezeStatus" },
+
+      { header: "Phlegm Duration", key: "phlegmDuration" },
+      { header: "Phlegm Unit", key: "phlegmDurationUnit" },
+      { header: "Phlegm Status", key: "phlegmStatus" },
+
+      { header: "Nasal Congestion Duration", key: "nasalCongestionDuration" },
+      { header: "Nasal Congestion Unit", key: "nasalCongestionDurationUnit" },
+      { header: "Nasal Congestion Status", key: "nasalCongestionStatus" },
+
+      { header: "Snoring Duration", key: "snoringDuration" },
+      { header: "Snoring Unit", key: "snoringDurationUnit" },
+      { header: "Snoring Status", key: "snoringStatus" },
+
+      { header: "Daytime Sleepiness Duration", key: "dayTimeSleepinessDuration" },
+      { header: "Daytime Sleepiness Unit", key: "dayTimeSleepinessDurationUnit" },
+      { header: "Daytime Sleepiness Status", key: "dayTimeSleepinessStatus" },
+
+      { header: "Weakness Duration", key: "weaknessDuration" },
+      { header: "Weakness Unit", key: "weaknessDurationUnit" },
+      { header: "Weakness Status", key: "weaknessStatus" },
+
+      { header: "Drowsiness Duration", key: "drowsinessDuration" },
+      { header: "Drowsiness Unit", key: "drowsinessDurationUnit" },
+      { header: "Drowsiness Status", key: "drowsinessStatus" },
+
+      { header: "Lethargy Duration", key: "lethargyDuration" },
+      { header: "Lethargy Unit", key: "lethargyDurationUnit" },
+      { header: "Lethargy Status", key: "lethargyStatus" },
+
+      { header: "Low Mood Duration", key: "lowMoodDuration" },
+      { header: "Low Mood Unit", key: "lowMoodDurationUnit" },
+      { header: "Low Mood Status", key: "lowMoodStatus" },
+
+      { header: "Diarrhoea Duration", key: "diarrheaDuration" },
+      { header: "Diarrhoea Unit", key: "diarrheaDurationUnit" },
+      { header: "Diarrhoea Status", key: "diarrheaStatus" },
 
     ]
 
@@ -372,6 +510,8 @@ export const excelFile = async (req, res) => {
         localContactRelation: visit.localContactRelation,
         localContactNumber: visit.localContactNumber,
         visitDate: visit?.visitCount[0]?.visitDate,
+
+        // Existing disease
         diabetesDuration: visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.numericValue,
         diabetesDurationUnit: visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.unit,
         diabetesStatus: visit?.visitCount[0]?.existingDeseases?.diabetes?.statusOfDisease,
@@ -383,7 +523,7 @@ export const excelFile = async (req, res) => {
         HIDDuration: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.numericValue,
         HIDDurationUnit: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.unit,
         HIDStatus: visit?.visitCount[0]?.existingDeseases?.ihd?.statusOfDisease,
- 
+
         hypothyroidismDuration: visit?.visitCount[0]?.existingDeseases?.hypothyroidism?.duration?.numericValue,
         hypothyroidismDurationUnit: visit?.visitCount[0]?.existingDeseases?.hypothyroidism?.duration?.unit,
         hypothyroidismStatus: visit?.visitCount[0]?.existingDeseases?.hypothyroidism?.statusOfDisease,
@@ -395,6 +535,153 @@ export const excelFile = async (req, res) => {
         hyperuricemiaDuration: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.numericValue,
         hyperuricemiaDurationUnit: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.unit,
         hyperuricemiaStatus: visit?.visitCount[0]?.existingDeseases?.ihd?.statusOfDisease,
+
+        asthamaDuration: visit?.visitCount[0]?.existingDeseases?.asthama?.duration?.numericValue,
+        asthamaDurationUnit: visit?.visitCount[0]?.existingDeseases?.asthama?.duration?.unit,
+        asthamaStatus: visit?.visitCount[0]?.existingDeseases?.asthama?.statusOfDisease,
+
+        tbDuration: visit?.visitCount[0]?.existingDeseases?.tb?.duration?.numericValue,
+        tbDurationUnit: visit?.visitCount[0]?.existingDeseases?.tb?.duration?.unit,
+        tbStatus: visit?.visitCount[0]?.existingDeseases?.tb?.statusOfDisease,
+
+        copdDuration: visit?.visitCount[0]?.existingDeseases?.copd?.duration?.numericValue,
+        copdDurationUnit: visit?.visitCount[0]?.existingDeseases?.copd?.duration?.unit,
+        copdStatus: visit?.visitCount[0]?.existingDeseases?.copd?.statusOfDisease,
+
+        ildDuration: visit?.visitCount[0]?.existingDeseases?.ild?.duration?.numericValue,
+        ildDurationUnit: visit?.visitCount[0]?.existingDeseases?.ild?.duration?.unit,
+        ildStatus: visit?.visitCount[0]?.existingDeseases?.ild?.statusOfDisease,
+
+        bronchiectasisDuration: visit?.visitCount[0]?.existingDeseases?.bronchiectasis?.duration?.numericValue,
+        bronchiectasisDurationUnit: visit?.visitCount[0]?.existingDeseases?.bronchiectasis?.duration?.unit,
+        bronchiectasisStatus: visit?.visitCount[0]?.existingDeseases?.bronchiectasis?.statusOfDisease,
+
+        osaDuration: visit?.visitCount[0]?.existingDeseases?.osa?.duration?.numericValue,
+        osaDurationUnit: visit?.visitCount[0]?.existingDeseases?.osa?.duration?.unit,
+        osaStatus: visit?.visitCount[0]?.existingDeseases?.osa?.statusOfDisease,
+
+        ibsDuration: visit?.visitCount[0]?.existingDeseases?.ibs?.duration?.numericValue,
+        ibsDurationUnit: visit?.visitCount[0]?.existingDeseases?.ibs?.duration?.unit,
+        ibsStatus: visit?.visitCount[0]?.existingDeseases?.ibs?.statusOfDisease,
+
+        inflammatoryBowelDiseaseDuration: visit?.visitCount[0]?.existingDeseases?.inflammatoryBowelDisease?.duration?.numericValue,
+        inflammatoryBowelDiseaseDurationUnit: visit?.visitCount[0]?.existingDeseases?.inflammatoryBowelDisease?.duration?.unit,
+        inflammatoryBowelDiseaseStatus: visit?.visitCount[0]?.existingDeseases?.inflammatoryBowelDisease?.statusOfDisease,
+
+        depressionDuration: visit?.visitCount[0]?.existingDeseases?.depression?.duration?.numericValue,
+        depressionDurationUnit: visit?.visitCount[0]?.existingDeseases?.depression?.duration?.unit,
+        depressionStatus: visit?.visitCount[0]?.existingDeseases?.depression?.statusOfDisease,
+
+        anxietyDuration: visit?.visitCount[0]?.existingDeseases?.anxiety?.duration?.numericValue,
+        anxietyDurationUnit: visit?.visitCount[0]?.existingDeseases?.anxiety?.duration?.unit,
+        anxietyStatus: visit?.visitCount[0]?.existingDeseases?.anxiety?.statusOfDisease,
+
+        osaDuration: visit?.visitCount[0]?.existingDeseases?.osa?.duration?.numericValue,
+        osaDurationUnit: visit?.visitCount[0]?.existingDeseases?.osa?.duration?.unit,
+        osaStatus: visit?.visitCount[0]?.existingDeseases?.osa?.statusOfDisease,
+
+        collagenVascularDiseaseDuration: visit?.visitCount[0]?.existingDeseases?.collagenVascularDisease?.duration?.numericValue,
+        collagenVascularDiseaseDurationUnit: visit?.visitCount[0]?.existingDeseases?.collagenVascularDisease?.duration?.unit,
+        collagenVascularDiseaseStatus: visit?.visitCount[0]?.existingDeseases?.collagenVascularDisease?.statusOfDisease,
+
+        malignancyOrgan: visit?.visitCount[0]?.existingDeseases?.malignancy?.organ,
+        malignancyDuration: visit?.visitCount[0]?.existingDeseases?.malignancy?.duration?.numericValue,
+        malignancyDurationUnit: visit?.visitCount[0]?.existingDeseases?.malignancy?.duration?.unit,
+        malignancyStatus: visit?.visitCount[0]?.existingDeseases?.malignancy?.statusOfDisease,
+
+        dyslipidemiaDuration: visit?.visitCount[0]?.existingDeseases?.dyslipidemia?.duration?.numericValue,
+        dyslipidemiaDurationUnit: visit?.visitCount[0]?.existingDeseases?.dyslipidemia?.duration?.unit,
+        dyslipidemiaStatus: visit?.visitCount[0]?.existingDeseases?.dyslipidemia?.statusOfDisease,
+
+        cldDuration: visit?.visitCount[0]?.existingDeseases?.cld?.duration?.numericValue,
+        cldDurationUnit: visit?.visitCount[0]?.existingDeseases?.cld?.duration?.unit,
+        cldStatus: visit?.visitCount[0]?.existingDeseases?.cld?.statusOfDisease,
+
+        ckdType: visit?.visitCount[0]?.existingDeseases?.ckd?.typeofckd,
+        ckdDuration: visit?.visitCount[0]?.existingDeseases?.ckd?.duration?.numericValue,
+        ckdDurationUnit: visit?.visitCount[0]?.existingDeseases?.ckd?.duration?.unit,
+        ckdStatus: visit?.visitCount[0]?.existingDeseases?.ckd?.statusOfDisease,
+
+        othersDisease: visit?.visitCount[0]?.existingDeseases?.others?.disease,
+        othersDuration: visit?.visitCount[0]?.existingDeseases?.others?.duration?.numericValue,
+        othersDurationUnit: visit?.visitCount[0]?.existingDeseases?.others?.duration?.unit,
+        othersStatus: visit?.visitCount[0]?.existingDeseases?.others?.statusOfDisease,
+
+        //Problem for consultation
+
+        problem :'Problem for consultation',
+
+        sobDuration: visit?.visitCount[0]?.problemForConsultation?.sob?.duration?.numericValue,
+        sobDurationUnit: visit?.visitCount[0]?.problemForConsultation?.sob?.duration?.unit,
+        sobStatus: visit?.visitCount[0]?.problemForConsultation?.sob?.statusOfDisease,
+
+        // cough
+        coughDuration: visit?.visitCount[0]?.problemForConsultation?.cough?.duration?.numericValue,
+        coughDurationUnit: visit?.visitCount[0]?.problemForConsultation?.cough?.duration?.unit,
+        coughStatus: visit?.visitCount[0]?.problemForConsultation?.cough?.statusOfDisease,
+
+        // bleeding with cough
+        bleedingWithCoughDuration: visit?.visitCount[0]?.problemForConsultation?.bleedingWithCough?.duration?.numericValue,
+        bleedingWithCoughDurationUnit: visit?.visitCount[0]?.problemForConsultation?.bleedingWithCough?.duration?.unit,
+        bleedingWithCoughStatus: visit?.visitCount[0]?.problemForConsultation?.bleedingWithCough?.statusOfDisease,
+
+        // chest pain
+        chestPainDuration: visit?.visitCount[0]?.problemForConsultation?.chestPain?.duration?.numericValue,
+        chestPainDurationUnit: visit?.visitCount[0]?.problemForConsultation?.chestPain?.duration?.unit,
+        chestPainStatus: visit?.visitCount[0]?.problemForConsultation?.chestPain?.statusOfDisease,
+
+        // wheeze
+        wheezeDuration: visit?.visitCount[0]?.problemForConsultation?.wheeze?.duration?.numericValue,
+        wheezeDurationUnit: visit?.visitCount[0]?.problemForConsultation?.wheeze?.duration?.unit,
+        wheezeStatus: visit?.visitCount[0]?.problemForConsultation?.wheeze?.statusOfDisease,
+
+        // phlegm
+        phlegmDuration: visit?.visitCount[0]?.problemForConsultation?.phlagm?.duration?.numericValue,
+        phlegmDurationUnit: visit?.visitCount[0]?.problemForConsultation?.phlagm?.duration?.unit,
+        phlegmStatus: visit?.visitCount[0]?.problemForConsultation?.phlagm?.statusOfDisease,
+
+        // nasal congestion
+        nasalCongestionDuration: visit?.visitCount[0]?.problemForConsultation?.nasalCongestion?.duration?.numericValue,
+        nasalCongestionDurationUnit: visit?.visitCount[0]?.problemForConsultation?.nasalCongestion?.duration?.unit,
+        nasalCongestionStatus: visit?.visitCount[0]?.problemForConsultation?.nasalCongestion?.statusOfDisease,
+
+        // snoring
+        snoringDuration: visit?.visitCount[0]?.problemForConsultation?.snoring?.duration?.numericValue,
+        snoringDurationUnit: visit?.visitCount[0]?.problemForConsultation?.snoring?.duration?.unit,
+        snoringStatus: visit?.visitCount[0]?.problemForConsultation?.snoring?.statusOfDisease,
+
+        // daytime sleepiness
+        dayTimeSleepinessDuration: visit?.visitCount[0]?.problemForConsultation?.dayTimeSleepiness?.duration?.numericValue,
+        dayTimeSleepinessDurationUnit: visit?.visitCount[0]?.problemForConsultation?.dayTimeSleepiness?.duration?.unit,
+        dayTimeSleepinessStatus: visit?.visitCount[0]?.problemForConsultation?.dayTimeSleepiness?.statusOfDisease,
+
+        // weakness
+        weaknessDuration: visit?.visitCount[0]?.problemForConsultation?.weakness?.duration?.numericValue,
+        weaknessDurationUnit: visit?.visitCount[0]?.problemForConsultation?.weakness?.duration?.unit,
+        weaknessStatus: visit?.visitCount[0]?.problemForConsultation?.weakness?.statusOfDisease,
+
+        // drowsiness
+        drowsinessDuration: visit?.visitCount[0]?.problemForConsultation?.drowsiness?.duration?.numericValue,
+        drowsinessDurationUnit: visit?.visitCount[0]?.problemForConsultation?.drowsiness?.duration?.unit,
+        drowsinessStatus: visit?.visitCount[0]?.problemForConsultation?.drowsiness?.statusOfDisease,
+
+        // lethargy
+        lethargyDuration: visit?.visitCount[0]?.problemForConsultation?.lethargy?.duration?.numericValue,
+        lethargyDurationUnit: visit?.visitCount[0]?.problemForConsultation?.lethargy?.duration?.unit,
+        lethargyStatus: visit?.visitCount[0]?.problemForConsultation?.lethargy?.statusOfDisease,
+
+        // low mood
+        lowMoodDuration: visit?.visitCount[0]?.problemForConsultation?.lowMood?.duration?.numericValue,
+        lowMoodDurationUnit: visit?.visitCount[0]?.problemForConsultation?.lowMood?.duration?.unit,
+        lowMoodStatus: visit?.visitCount[0]?.problemForConsultation?.lowMood?.statusOfDisease,
+
+        // diarrhea
+        diarrheaDuration: visit?.visitCount[0]?.problemForConsultation?.diarrhoea?.duration?.numericValue,
+        diarrheaDurationUnit: visit?.visitCount[0]?.problemForConsultation?.diarrhoea?.duration?.unit,
+        diarrheaStatus: visit?.visitCount[0]?.problemForConsultation?.diarrhoea?.statusOfDisease,
+
+
+
       };
 
       console.log(visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.numericValue)
