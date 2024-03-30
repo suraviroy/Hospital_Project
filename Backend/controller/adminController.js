@@ -2,8 +2,6 @@ import PatientSchema from "../model/patientSchema.js";
 import moment from "moment-timezone";
 import excelJS from 'exceljs';
 
-
-
 export const patientregistration = async (req, res) => {
   try {
     const {
