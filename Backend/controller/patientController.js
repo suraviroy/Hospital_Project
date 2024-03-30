@@ -1,17 +1,25 @@
 import PatientSchema from "../model/patientSchema.js";
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { patientId, password } = req.body;
 
   try {
-    const existingUser = await PatientSchema.findOne({ email });
+    const existingUser = await PatientSchema.findOne({ patientId });
     if (!existingUser)
       return res.json({ status: "error", message: "Patient does not exist" });
 
     if (password != existingUser.password)
       return res.json({ status: "error", message: "Invalid credentials" });
 
-    res.status(200).json({ status: "success", existingUser });
+    const { name, gender, age, contactNumber, bloodGroup, image } =
+      existingUser;
+
+    res
+      .status(200)
+      .json({
+        status: "success",
+        result: { name, gender, age, contactNumber, bloodGroup, image },
+      });
   } catch (error) {
     res.status(500).json(error);
   }
