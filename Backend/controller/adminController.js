@@ -437,52 +437,64 @@ export const excelFile = async (req, res) => {
       { header: "Cough Status", key: "coughStatus" },
 
       { header: "Bleeding With Cough Duration", key: "bleedingWithCoughDuration" },
-      { header: "Bleeding With Cough Unit", key: "bleedingWithCoughDurationUnit" },
-      { header: "Bleeding With Cough Status", key: "bleedingWithCoughStatus" },
+      { header: "Unit", key: "bleedingWithCoughDurationUnit" },
+      { header: "Status", key: "bleedingWithCoughStatus" },
 
       { header: "Chest Pain Duration", key: "chestPainDuration" },
-      { header: "Chest Pain Unit", key: "chestPainDurationUnit" },
-      { header: "Chest Pain Status", key: "chestPainStatus" },
+      { header: "Unit", key: "chestPainDurationUnit" },
+      { header: "Status", key: "chestPainStatus" },
 
       { header: "Wheeze Duration", key: "wheezeDuration" },
-      { header: "Wheeze Unit", key: "wheezeDurationUnit" },
-      { header: "Wheeze Status", key: "wheezeStatus" },
+      { header: "Unit", key: "wheezeDurationUnit" },
+      { header: "Status", key: "wheezeStatus" },
 
       { header: "Phlegm Duration", key: "phlegmDuration" },
-      { header: "Phlegm Unit", key: "phlegmDurationUnit" },
-      { header: "Phlegm Status", key: "phlegmStatus" },
+      { header: "Unit", key: "phlegmDurationUnit" },
+      { header: "Status", key: "phlegmStatus" },
 
       { header: "Nasal Congestion Duration", key: "nasalCongestionDuration" },
-      { header: "Nasal Congestion Unit", key: "nasalCongestionDurationUnit" },
-      { header: "Nasal Congestion Status", key: "nasalCongestionStatus" },
+      { header: "Unit", key: "nasalCongestionDurationUnit" },
+      { header: "Status", key: "nasalCongestionStatus" },
 
       { header: "Snoring Duration", key: "snoringDuration" },
-      { header: "Snoring Unit", key: "snoringDurationUnit" },
-      { header: "Snoring Status", key: "snoringStatus" },
+      { header: "Unit", key: "snoringDurationUnit" },
+      { header: "Status", key: "snoringStatus" },
 
       { header: "Daytime Sleepiness Duration", key: "dayTimeSleepinessDuration" },
-      { header: "Daytime Sleepiness Unit", key: "dayTimeSleepinessDurationUnit" },
-      { header: "Daytime Sleepiness Status", key: "dayTimeSleepinessStatus" },
+      { header: "Unit", key: "dayTimeSleepinessDurationUnit" },
+      { header: "Status", key: "dayTimeSleepinessStatus" },
 
       { header: "Weakness Duration", key: "weaknessDuration" },
-      { header: "Weakness Unit", key: "weaknessDurationUnit" },
-      { header: "Weakness Status", key: "weaknessStatus" },
+      { header: "Unit", key: "weaknessDurationUnit" },
+      { header: "Status", key: "weaknessStatus" },
 
       { header: "Drowsiness Duration", key: "drowsinessDuration" },
-      { header: "Drowsiness Unit", key: "drowsinessDurationUnit" },
-      { header: "Drowsiness Status", key: "drowsinessStatus" },
+      { header: "Unit", key: "drowsinessDurationUnit" },
+      { header: "Status", key: "drowsinessStatus" },
 
       { header: "Lethargy Duration", key: "lethargyDuration" },
-      { header: "Lethargy Unit", key: "lethargyDurationUnit" },
-      { header: "Lethargy Status", key: "lethargyStatus" },
+      { header: "Unit", key: "lethargyDurationUnit" },
+      { header: "Status", key: "lethargyStatus" },
 
       { header: "Low Mood Duration", key: "lowMoodDuration" },
-      { header: "Low Mood Unit", key: "lowMoodDurationUnit" },
-      { header: "Low Mood Status", key: "lowMoodStatus" },
+      { header: "Unit", key: "lowMoodDurationUnit" },
+      { header: "Status", key: "lowMoodStatus" },
 
       { header: "Diarrhoea Duration", key: "diarrheaDuration" },
-      { header: "Diarrhoea Unit", key: "diarrheaDurationUnit" },
-      { header: "Diarrhoea Status", key: "diarrheaStatus" },
+      { header: "Unit", key: "diarrheaDurationUnit" },
+      { header: "Status", key: "diarrheaStatus" },
+
+      { header: "Uncontrolled Disease", key: "uncontrolledDiseaseName" },
+      { header: "Duration", key: "uncontrolledDiseaseDuration" },
+      { header: "Unit", key: "uncontrolledDiseaseDurationUnit" },
+      { header: "Status", key: "uncontrolledDiseaseStatus" },
+
+      { header: "Others Disease", key: "othersDisease" },
+      { header: "Duration", key: "othersDuration" },
+      { header: "Unit", key: "othersDurationUnit" },
+      { header: "Status", key: "othersStatus" },
+
+      { header: "History", key: "history" },
 
     ]
 
@@ -609,7 +621,7 @@ export const excelFile = async (req, res) => {
 
         //Problem for consultation
 
-        problem :'Problem for consultation',
+        problem: 'Problem for consultation',
 
         sobDuration: visit?.visitCount[0]?.problemForConsultation?.sob?.duration?.numericValue,
         sobDurationUnit: visit?.visitCount[0]?.problemForConsultation?.sob?.duration?.unit,
@@ -680,6 +692,17 @@ export const excelFile = async (req, res) => {
         diarrheaDurationUnit: visit?.visitCount[0]?.problemForConsultation?.diarrhoea?.duration?.unit,
         diarrheaStatus: visit?.visitCount[0]?.problemForConsultation?.diarrhoea?.statusOfDisease,
 
+        uncontrolledDiseaseDuration: visit?.visitCount[0]?.problemForConsultation?.uncontrolledDisease[0]?.duration?.numericValue,
+        uncontrolledDiseaseDurationUnit: visit?.visitCount[0]?.problemForConsultation?.uncontrolledDisease[0]?.duration?.unit,
+        uncontrolledDiseaseStatus: visit?.visitCount[0]?.problemForConsultation?.uncontrolledDisease[0]?.statusOfDisease,
+        uncontrolledDiseaseName: visit?.visitCount[0]?.problemForConsultation?.uncontrolledDisease[0]?.name,
+
+        othersDisease: visit?.visitCount[0]?.problemForConsultation?.others?.disease,
+        othersDuration: visit?.visitCount[0]?.problemForConsultation?.others?.duration?.numericValue,
+        othersDurationUnit: visit?.visitCount[0]?.problemForConsultation?.others?.duration?.unit,
+        othersStatus: visit?.visitCount[0]?.problemForConsultation?.others?.statusOfDisease,
+
+        history: 'History',
 
 
       };
