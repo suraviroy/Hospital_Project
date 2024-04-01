@@ -11,15 +11,21 @@ export const login = async (req, res) => {
     if (password != existingUser.password)
       return res.json({ status: "error", message: "Invalid credentials" });
 
-    const { name, gender, age, contactNumber, bloodGroup, image } =
+    const { patientId, name, gender, age, contactNumber, bloodGroup, image } =
       existingUser;
 
-    res
-      .status(200)
-      .json({
-        status: "success",
-        result: { name, gender, age, contactNumber, bloodGroup, image },
-      });
+    res.status(200).json({
+      status: "success",
+      result: {
+        patientId,
+        name,
+        gender,
+        age,
+        contactNumber,
+        bloodGroup,
+        image,
+      },
+    });
   } catch (error) {
     res.status(500).json(error);
   }
