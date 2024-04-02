@@ -415,6 +415,7 @@ const patientSchema = new mongoose.Schema({
             ckd: {
               typeofckd: {
                 type: String,
+                default: "NA",
               },
               duration: {
                 numericValue: {
