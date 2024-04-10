@@ -12,7 +12,7 @@ const Login = () => {
 
     const handleLogin = () => {
         
-        if (username === "pulmocare2024" && password === "Pulmocare@1234") {
+        if (username === "patient" && password === "1234") {
             
             navigation.navigate('BottomNavigation');
         } else {

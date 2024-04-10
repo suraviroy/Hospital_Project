@@ -87,7 +87,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>SOB</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -115,7 +115,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Cough</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -143,7 +143,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Bleeding with cough</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -171,7 +171,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Chest pain/ chest congestion/ tightness of chest</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -199,7 +199,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Wheeze</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -227,7 +227,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Phlagm</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -255,7 +255,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Nasal congestion/ running</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -283,7 +283,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Snoring</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -311,7 +311,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Day time sleepiness</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -339,7 +339,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Weakness</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -367,7 +367,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Drowsiness</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -395,7 +395,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Lethargy/ low energy</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -423,7 +423,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Low mood</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -451,7 +451,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Diarrhoea</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration}>
@@ -479,7 +479,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Uncontrolled diseases</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration3}>
@@ -514,7 +514,7 @@ const PFCForm = () => {
               <View style={styles.problist}>
                 <Text style={styles.probheader}>Others</Text>
                 <TouchableOpacity>
-                  <Image source={require("../../../assets/images/delete.jpg")} style={styles.delete} />
+                  <Image source={require("../../../assets/images/delete.png")} style={styles.delete} />
                 </TouchableOpacity>
               </View>
               <View style={styles.duration3}>

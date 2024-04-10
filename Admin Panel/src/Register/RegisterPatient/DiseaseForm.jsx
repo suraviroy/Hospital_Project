@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect  } from 'react';
 import { View, StyleSheet, Text, Button, SafeAreaView, TextInput, TouchableOpacity, Image, Dimensions, ScrollView, FlatList } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 // import * as ImagePicker from 'expo-image-picker';
@@ -10,6 +10,9 @@ import ExiDisForm from './ExiDisForm';
 import PFCForm from './PFCForm';
 import SOSForm from './SOSForm';
 import Exposure from './Exposure';
+import { PickerIos, Picker } from '@react-native-picker/picker';
+import { backendURL } from "../../backendapi";
+
 
 const DiseaseForm = () => {
     const [selectedOption1, setSelectedOption1] = useState('Select');
@@ -39,7 +42,26 @@ const DiseaseForm = () => {
     const [isClicked15, setIsClicked15] = useState(false);
     const [isClicked16, setIsClicked16] = useState(false);
     const [isClicked17, setIsClicked17] = useState(false);
+    const [coordinators, setCoordinators] = useState([]);
     const [isClicked18, setIsClicked18] = useState(false);
+    const [selectedCoordinator, setSelectedCoordinator] = useState('Select');
+
+    useEffect(() => {
+        fetchAdminNames();
+    }, []);
+
+    const fetchAdminNames = async () => {
+        try {
+            const response = await fetch(`${backendURL}/adminListRouter/adminNames`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch coordinators');
+            }
+            const adminNames = await response.json();
+            setCoordinators(adminNames);
+        } catch (error) {
+            console.error('Error fetching coordinators:', error);
+        }
+    };
 
     const [data, setData] = useState([{ year: '', days: '', reason: '' }]);
     const [data2, setData2] = useState('');
@@ -96,7 +118,7 @@ const DiseaseForm = () => {
                     <View style={styles.problist}>
                         <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Type of Allergy :</Text>
                         <TouchableOpacity>
-                            <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                            <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity style={styles.textbox}>
@@ -151,7 +173,7 @@ const DiseaseForm = () => {
                     <View style={styles.problist}>
                         <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>What type of drugs?</Text>
                         <TouchableOpacity>
-                            <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                            <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity style={styles.textbox}>
@@ -200,7 +222,7 @@ const DiseaseForm = () => {
                     <View style={styles.problist}>
                         <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Type of Surgery :</Text>
                         <TouchableOpacity>
-                            <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                            <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity style={styles.textbox}>
@@ -252,7 +274,7 @@ const DiseaseForm = () => {
                     <View style={styles.problist}>
                         <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Type of Disease :</Text>
                         <TouchableOpacity>
-                            <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                            <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity style={styles.textbox}>
@@ -297,7 +319,7 @@ const DiseaseForm = () => {
                     <View style={styles.problist}>
                         <Text style={{ fontWeight: '700', fontSize: 16, width: '50%' }}>Type here :</Text>
                         <TouchableOpacity>
-                            <Image source={require("../../../assets/images/delete.jpg")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
+                            <Image source={require("../../../assets/images/delete.png")} style={{ width: 27, height: 30, marginLeft: windowWidth * 0.37, marginTop: -windowWidth * 0.03 }} />
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity style={styles.textbox}>
@@ -450,13 +472,16 @@ const DiseaseForm = () => {
             </TouchableOpacity>
             <View style={styles.disheader}>
                 <Text style={styles.texthead}>Choose Coordinator</Text>
-            </View>
-            <TouchableOpacity style={styles.dropdown13} onPress={() => {
-                setIsClicked18(!isClicked18);
-            }}>
-                <Text style={{ color: '#8E7D7D', fontSize: 15, width: windowWidth * 0.73 }}>Select</Text>
-                {isClicked18 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.1} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.1} />)}
-            </TouchableOpacity>
+                <Picker
+                    selectedValue={selectedCoordinator}
+                    style={styles.picker}
+                    onValueChange={(itemValue) => setSelectedCoordinator(itemValue)}>
+                    <Picker.Item label="Select" value=""/>
+                    {coordinators.map((coordinator, index) => (
+                        <Picker.Item key={index} label={coordinator} value={coordinator} />
+                    ))}
+                </Picker>
+                </View>
             <TouchableOpacity style={styles.submitButton}>
                 <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>Submit</Text>
             </TouchableOpacity>
@@ -466,6 +491,12 @@ const DiseaseForm = () => {
 };
 
 const styles = StyleSheet.create({
+    picker: {
+        width: '100%',
+        height: 30,
+        paddingHorizontal: 10,
+        backgroundColor: '#e3e3e3'
+    },
     container: {
         flex: 1,
         backgroundColor: Color.colorWhite,

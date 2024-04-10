@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Dimensions, TextInput, StyleSheet } from 'react-native'; 
-import * as DocumentPicker from 'expo-document-picker';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { useNavigation } from '@react-navigation/native';
+import { FontFamily, Color, Border, FontSize } from "../../../GlobalStyles";
+import * as DocumentPicker from 'expo-document-picker';
 
 const PastHosForm = () => {
     const [isClicked20, setIsClicked20] = useState(false);
@@ -36,7 +37,6 @@ const PastHosForm = () => {
             console.error("Error picking file:", error);
         }
     };
-
     const uploadFile = async () => {
         if (!pickedFile) {
             console.log("No file picked!");
@@ -58,7 +58,7 @@ const PastHosForm = () => {
                     setIsClicked20(!isClicked20);
                 }}>
                     <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>Select</Text>
-                    {isClicked20 ? (<Icon name="angle-up" size={15} color="#A99F9F" marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color="#A99F9F" marginLeft={windowWidth * 0.08} />)}
+                    {isClicked20 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
                 </TouchableOpacity>
             </View>
             <View style={styles.hosopt}>
@@ -67,7 +67,7 @@ const PastHosForm = () => {
                     setIsClicked21(!isClicked21);
                 }}>
                     <Text style={{ color: '#8E7D7D', fontSize: 15, width: '50%' }}>Select</Text>
-                    {isClicked21 ? (<Icon name="angle-up" size={15} color="#A99F9F" marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color="#A99F9F" marginLeft={windowWidth * 0.08} />)}
+                    {isClicked21 ? (<Icon name="angle-up" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />) : (<Icon name="angle-down" size={15} color={Color.colorGray_100} marginLeft={windowWidth * 0.08} />)}
                 </TouchableOpacity>
             </View>
             <View style={styles.hosopt}>
@@ -77,14 +77,12 @@ const PastHosForm = () => {
                 </TouchableOpacity>
             </View>
             <View style={styles.hosopt1}>
-                <Icon name="paperclip" size={22} color="#A99F9F" />
+                <Icon name="paperclip" size={22} color={Color.colorGray_100} />
                 <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
-                    {pickedFile ? pickedFile.name : 'Upload Discharge Certficate'}
-                </Text>
-                <TouchableOpacity style={styles.uploadbutton} onPress={pickFile}>
-                    <Text style={{ fontWeight: '700', fontSize: 15, color: '#2A9988', alignSelf: 'center' }}>
-                        Upload
+                {pickedFile ? pickedFile.name : 'Upload Discharge Certficate'}
                     </Text>
+                <TouchableOpacity style={styles.uploadbutton} onPress={pickFile}>
+                    <Text style={{ fontWeight: '700', fontSize: 15, color: '#2A9988', alignSelf: 'center' }}>Upload</Text>
                 </TouchableOpacity>
                 {pickedFile && (
                     <View style={styles.selectedFileContainer}>
@@ -97,11 +95,11 @@ const PastHosForm = () => {
                         File Uploaded Successfully!
                     </Text>
                 )}
+    
             </View>
         </View>
     );
 };
-
 
 const styles = StyleSheet.create({
     hosopt: {
@@ -109,6 +107,7 @@ const styles = StyleSheet.create({
         height: windowWidth * 0.12,
         alignSelf: 'center',
         marginTop: windowWidth * 0.05,
+        // backgroundColor: '#e3e3e3',
         flexDirection: 'row',
         alignItems: 'center',
         paddingLeft: 15,
@@ -132,11 +131,14 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 0.5,
         borderColor: '#A99F9F',
+        // alignSelf: 'center',
+        // marginTop: windowWidth*0.03,
         backgroundColor: '#e3e3e3',
         flexDirection: 'row',
         alignItems: 'center',
         paddingLeft: 15,
         paddingRight: 15,
+        // marginLeft: windowWidth * 0.2,
     },
     dropdown61: {
         width: windowWidth * 0.67,
@@ -144,11 +146,14 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 0.5,
         borderColor: '#A99F9F',
+        // alignSelf: 'center',
+        // marginTop: windowWidth*0.03,
         backgroundColor: '#e3e3e3',
         flexDirection: 'row',
         alignItems: 'center',
         paddingLeft: 15,
         paddingRight: 15,
+        // marginLeft: windowWidth * 0.2,
     },
     uploadbutton: {
         width: windowWidth * 0.3,
@@ -157,24 +162,8 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#2A9988',
         borderRadius: 5,
-        justifyContent: 'center',
-        marginTop: 10
-    },
-    selectedFileContainer: {
-        alignItems: 'center',
-        marginTop: 10,
-    },
-    selectedFileText: {
-        fontWeight: '700',
-        fontSize: 15,
-        color: '#2A9988',
-        alignSelf: 'center',
-    },
-    selectedFileName: {
-        fontWeight: '700',
-        fontSize: 15,
-        color: '#2A9988',
-        alignSelf: 'center',
+        justifyContent: 'center'
     },
 });
+
 export default PastHosForm;
