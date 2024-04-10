@@ -15,7 +15,7 @@ const Home = () => {
     <View style={styles.container}>
       <View style={styles.topContainer}>
         <View style={styles.header}>
-          <Image source={require('../../assets/images/top.png')} style={styles.profileImage} />
+          <Image source={require('../../assets/images/header.png')} style={styles.profileImage} />
           <View style={styles.profileText}>
             <Text style={styles.boldText}>Tiasha Mandal</Text>
             <Text style={styles.greyText}>How are you today?</Text>
