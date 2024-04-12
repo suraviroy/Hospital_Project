@@ -86,6 +86,9 @@ export const PatientProfile = async (req, res) => {
         age: 1,
         address: 1,
         state: 1,
+        status: 1,
+        date: 1,
+        time: 1,
         country: 1,
         image: 1,
         consultingDoctor: 1,
@@ -95,7 +98,7 @@ export const PatientProfile = async (req, res) => {
         _id: 0,
       }
     );
-    res.status(200).json(registeredPatientsName);
+    res.status(200).json(registeredPatientsName[0]);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
