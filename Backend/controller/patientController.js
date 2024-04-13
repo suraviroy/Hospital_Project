@@ -53,7 +53,7 @@ export const HomePageDetails = async (req, res) => {
         _id: 0,
         consultingDoctor: 1,
         date: 1,
-        time: 1
+        time: 1,
       }
     );
     res.status(200).json(registeredPatientsName);
@@ -104,8 +104,6 @@ export const PatientProfile = async (req, res) => {
   }
 };
 
-
-
 export const PatientsAllAppointments = async (req, res) => {
   try {
     const id = req.params.id;
@@ -121,20 +119,22 @@ export const PatientsAllAppointments = async (req, res) => {
         name: 1,
         patientId: 1,
         consultingDoctor: 1,
-        _id: 0
-      } 
+        _id: 0,
+      }
     );
 
     const patientAppointments = await PatientSchema.findOne(
       { patientId: id },
-      { visitCount: 1, _id: 0 } 
+      { visitCount: 1, _id: 0 }
     );
 
-    const allAppointments = patientAppointments.visitCount.map(visit => ({
+    const allAppointments = patientAppointments.visitCount.map((visit) => ({
       visitDate: visit.visitDate,
-      visitTime: visit.visitTime
+      visitTime: visit.visitTime,
     }));
-    res.status(200).json({ patientInfo: patientInfo, appointments: allAppointments });
+    res
+      .status(200)
+      .json({ patientInfo: patientInfo, appointments: allAppointments });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

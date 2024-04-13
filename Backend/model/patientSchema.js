@@ -136,7 +136,7 @@ const patientSchema = new mongoose.Schema({
                 default: "NA",
               },
             },
-            allergicRhinitis: {
+            allergicrhinitis: {
               duration: {
                 numericValue: {
                   type: Number,
@@ -280,7 +280,7 @@ const patientSchema = new mongoose.Schema({
                 default: "NA",
               },
             },
-            inflammatoryBowelDisease: {
+            inflammatoryboweldisease: {
               duration: {
                 numericValue: {
                   type: Number,
@@ -344,7 +344,7 @@ const patientSchema = new mongoose.Schema({
                 default: "NA",
               },
             },
-            collagenVascularDisease: {
+            collagenvasculardisease: {
               duration: {
                 numericValue: {
                   type: Number,
@@ -488,7 +488,7 @@ const patientSchema = new mongoose.Schema({
                 default: "NA",
               },
             },
-            bleedingWithCough: {
+            bleedingwithcough: {
               duration: {
                 numericValue: {
                   type: Number,
@@ -504,7 +504,7 @@ const patientSchema = new mongoose.Schema({
                 default: "NA",
               },
             },
-            chestPain: {
+            chestpain: {
               duration: {
                 numericValue: {
                   type: Number,
@@ -552,7 +552,7 @@ const patientSchema = new mongoose.Schema({
                 default: "NA",
               },
             },
-            nasalCongestion: {
+            nasalcongestion: {
               duration: {
                 numericValue: {
                   type: Number,
@@ -584,7 +584,7 @@ const patientSchema = new mongoose.Schema({
                 default: "NA",
               },
             },
-            dayTimeSleepiness: {
+            daytimesleepiness: {
               duration: {
                 numericValue: {
                   type: Number,
@@ -648,7 +648,7 @@ const patientSchema = new mongoose.Schema({
                 default: "NA",
               },
             },
-            lowMood: {
+            lowmood: {
               duration: {
                 numericValue: {
                   type: Number,
@@ -743,7 +743,7 @@ const patientSchema = new mongoose.Schema({
               },
             },
           },
-          drugReaction: {
+          drugreaction: {
             typeOfDrug: {
               type: String,
               default: "NA",
@@ -790,7 +790,7 @@ const patientSchema = new mongoose.Schema({
                 },
               },
             },
-            cottonDust: {
+            cottondust: {
               duration: {
                 numericValue: {
                   type: Number,
@@ -802,7 +802,7 @@ const patientSchema = new mongoose.Schema({
                 },
               },
             },
-            woodDust: {
+            wooddust: {
               duration: {
                 numericValue: {
                   type: Number,
@@ -874,7 +874,7 @@ const patientSchema = new mongoose.Schema({
                 },
               },
             },
-            stoneDust: {
+            stonedust: {
               duration: {
                 numericValue: {
                   type: Number,
