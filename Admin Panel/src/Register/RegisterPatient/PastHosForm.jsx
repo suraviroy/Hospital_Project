@@ -1,58 +1,82 @@
-import React, { useState } from 'react';
+
+import React, { useState, useRef ,useEffect} from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
 import { FontFamily, Color, Border, FontSize } from "../../../GlobalStyles";
 import { PickerIos, Picker } from '@react-native-picker/picker';
 import * as DocumentPicker from 'expo-document-picker';
+
 const windowWidth = Dimensions.get('window').width;
 
-const PastHosForm = () => {
-    const [isClicked20, setIsClicked20] = useState(false);
-    const [isClicked21, setIsClicked21] = useState(false);
+const PastHosForm = ({ onDataChange }) => {
     const [pickedFile, setPickedFile] = useState(null);
-    const [isUploaded, setIsUploaded] = useState(false);
-    const [selectedYear, setSelectedYear] = useState(null);
+    const [selectedYear, setSelectedYear] = useState('');
     const [duration, setDuration] = useState('');
     const [reason, setReason] = useState('');
+    const filePickerRef = useRef(null);
+    useEffect(() => {
+        handleDataChange();
+    }, [pickedFile]);
+
     const pickFile = async () => {
         try {
-            console.log("Attempting to pick a file...");
             const filePickResponse = await DocumentPicker.getDocumentAsync({
-                type: "/",
+                type: 'application/pdf',
             });
-            console.log("File pick response:", filePickResponse);
-
+    
             if (!filePickResponse.canceled) {
                 const fileInfo = filePickResponse.assets[0];
-                console.log("File picked successfully:", fileInfo.name);
-                console.log("File type:", fileInfo.type);
-                const pickedFileData = {
-                    name: fileInfo.name,
-                    type: fileInfo.type,
+                const formData = new FormData();
+                formData.append('file', {
                     uri: fileInfo.uri,
-                };
-                setPickedFile(pickedFileData);
-            } else {
-                console.log("File picking canceled or failed.");
+                    name: fileInfo.name,
+                    type: `application/pdf`,
+                });
+                formData.append('upload_preset', 'pulmocareapp');
+                formData.append('cloud_name', 'pulmocare01');
+    
+                try {
+                    const response = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
+                        method: 'POST',
+                        body: formData,
+                    });
+    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Cloudinary response:', data);
+    
+                        setPickedFile({
+                            name: data.original_filename || fileInfo.name,
+                            type: fileInfo.type,
+                            uri: data.secure_url,
+                        });
+                    } else {
+                        console.error('Failed to upload file to Cloudinary');
+                    }
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                }
             }
         } catch (error) {
             console.error("Error picking file:", error);
         }
     };
-
+    
+    
     const uploadFile = async () => {
-        if (!pickedFile) {
-            console.log("No file picked!");
-            return;
-        }
-
-        console.log("Uploading file:", pickedFile);
-        setIsUploaded(true);
-        console.log("isUploaded:", isUploaded);
+        // Logic for uploading file
     };
 
-    console.log("pickedFile:", pickedFile);
+    const handleDataChange = () => {
+        const data = {
+            yearOfHospitalization: selectedYear,
+            days: duration,
+            reason: reason,
+            dischargeCertificate: pickedFile ? pickedFile.uri : "NA",
+        };
+        onDataChange(data);
+    };
 
     return (
         <View style={styles.hosform}>
@@ -81,6 +105,7 @@ const PastHosForm = () => {
                     value={duration}
                     onChangeText={setDuration}
                     keyboardType="numeric"
+                    onBlur={handleDataChange} 
                 />
             </View>
             <View style={styles.hosopt}>
@@ -92,33 +117,24 @@ const PastHosForm = () => {
                         placeholderTextColor={'#8E7D7D'}
                         value={reason}
                         onChangeText={setReason}
+                        onBlur={handleDataChange} 
                     />
                 </TouchableOpacity>
             </View>
             <View style={styles.hosopt1}>
                 <Icon name="paperclip" size={22} color={Color.colorGray_100} />
                 <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
-                    {pickedFile ? pickedFile.name : 'Upload Discharge Certficate'}
+                    {pickedFile ? pickedFile.name : 'Upload Discharge Certificate'}
                 </Text>
                 <TouchableOpacity style={styles.uploadbutton} onPress={pickFile}>
                     <Text style={{ fontWeight: '700', fontSize: 15, color: '#2A9988', alignSelf: 'center' }}>Upload</Text>
                 </TouchableOpacity>
-                {pickedFile && (
-                    <View style={styles.selectedFileContainer}>
-                        <Text style={styles.selectedFileText}></Text>
-                        <Text style={styles.selectedFileName}></Text>
-                    </View>
-                )}
-                {isUploaded && (
-                    <Text style={{ fontWeight: '700', fontSize: 15, color: 'green', alignSelf: 'center', marginTop: 10 }}>
-                        File Uploaded Successfully!
-                    </Text>
-                )}
-
             </View>
         </View>
     );
 };
+export default PastHosForm;
+
 
 const styles = StyleSheet.create({
     hosopt: {
@@ -192,4 +208,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PastHosForm;
+// export default PastHosForm;
