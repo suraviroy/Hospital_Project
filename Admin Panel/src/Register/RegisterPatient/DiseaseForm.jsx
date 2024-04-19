@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef  } from 'react';
-import { View, StyleSheet, Text, Button, SafeAreaView, TextInput, TouchableOpacity, Image, Dimensions, ScrollView, FlatList } from 'react-native';
+import { View, StyleSheet, Text, Button, SafeAreaView, TextInput, TouchableOpacity, Image, Dimensions, ScrollView, FlatList,ActivityIndicator } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
 import { FontFamily, Color, Border, FontSize } from "../../../GlobalStyles";
 import PastHosForm from './PastHosForm';
 import ExiDisForm from './ExiDisForm';
+import axios from 'axios';
 import PFCForm from './PFCForm';
 import SOSForm from './SOSForm';
 import Exposure from './Exposure';
 import { PickerIos, Picker } from '@react-native-picker/picker';
 import { backendURL } from "../../backendapi";
-
 
 const DiseaseForm = ({ patientId }) => {
     const [Hosdata, setHosData] = useState([{ yearOfHospitalization: 0, days: 0, reason: "NA", dischargeCertificate: "NA" }]);
@@ -57,7 +57,8 @@ const DiseaseForm = ({ patientId }) => {
     const [coordinators, setCoordinators] = useState([]);
     const [selectedCoordinator, setSelectedCoordinator] = useState('Select');
     const [basicDetails, setBasicDetails] = useState(null);
-
+    const [isLoading, setIsLoading] = useState(false);
+    const patientDiseaseURL = `${backendURL}/adminRouter/patientEachVisitDetails/${patientId}`;
     useEffect(() => {
         fetch(`${backendURL}/patientRouter/PatientProfile/${patientId}`)
             .then(response => response.json())
@@ -93,101 +94,110 @@ const DiseaseForm = ({ patientId }) => {
         tempData[index] = newData;
         setHosData(tempData);
     };
-    const handleSave = () => {
-        const statusOfSickness = selectedOption8 === "Select" ? "NA" : selectedOption8;
-        const coordinator = selectedCoordinator === "Select" ? "NA" : selectedCoordinator;
-    
-        const visitData = {
-            visitDate: new Date().toISOString().split('T')[0], 
-            visitTime: new Date().toLocaleTimeString(), 
-            existingDiseases: {},
-            problemForConsultation: {},
-            importantHistory: {
-                allergy: {
-                    typeOfAllergy: allergyType || 'NA',
-                    duration: {
-                        numericValue: allergyDuration ? parseInt(allergyDuration) : 0,
-                        unit: selectedUnit1 || 'NA'
-                    }
-                },
-                drugReaction: {
-                    typeOfDrug: typeOfDrug || 'NA',
-                    typeOfReaction: typeOfReaction || 'NA'
-                },
-                pastSurgery: {
-                    typeOfSurgery: typeOfSurgery || 'NA',
-                    year: selectedYear || 0
-                },
-                pastDisease: {
-                    typeOfDisease: typeOfDisease || 'NA'
-                },
-                exposure: {},
-                familyHistory: familyHistory || 'NA',
-                occupation: occupation || 'NA',
+const handleSave = async () => {
+    setIsLoading(true);
+    const statusOfSickness = selectedOption8 === "Select" ? "NA" : selectedOption8;
+    const coordinator = selectedCoordinator === "Select" ? "NA" : selectedCoordinator;
+
+    const visitData = {
+        visitDate: new Date().toISOString().split('T')[0],
+        visitTime: new Date().toLocaleTimeString(),
+        existingDeseases: {}, 
+        problemForConsultation: {},
+        importantHistory: {
+            allergy: {
+                typeOfAllergy: allergyType || 'NA',
+                duration: {
+                    numericValue: allergyDuration ? parseInt(allergyDuration) : 0,
+                    unit: selectedUnit1 || 'NA'
+                }
             },
-            pastHospitalization: Hosdata,
-            statusOfSickness: statusOfSickness,
-            catScore: catScore || 0,
-        };
-    
-        const visitCount = [visitData];
-    
-        if (exiDisRef && exiDisRef.current) {
-            const exiDisData = exiDisRef.current.getData();
-            visitCount[0].existingDiseases = exiDisData;
-        }
-        if (PFCRef && PFCRef.current) {
-            const PFCData = PFCRef.current.getData();
-            visitCount[0].problemForConsultation = PFCData;
-        }
-    
-        if (exposureRef && exposureRef.current) {
-            const exposureData = exposureRef.current.getData();
-            if (Object.keys(exposureData).length > 0) {
-                visitCount[0].importantHistory.exposure = exposureData;
-            }
-        } else {
-            const defaultExposureData = {
-                chemical: { duration: { numericValue: 0, unit: 'NA' } },
-                cottondust: { duration: { numericValue: 0, unit: 'NA' } },
-                dust: { duration: { numericValue: 0, unit: 'NA' } },
-                hay: { duration: { numericValue: 0, unit: 'NA' } },
-                moulds: { duration: { numericValue: 0, unit: 'NA' } },
-                others: { duration: { numericValue: 0, unit: 'NA' }, typeOfExposure: 'NA' },
-                pigeon: { duration: { numericValue: 0, unit: 'NA' } },
-                pollen: { duration: { numericValue: 0, unit: 'NA' } },
-                stonedust: { duration: { numericValue: 0, unit: 'NA' } },
-                woodendust: { duration: { numericValue: 0, unit: 'NA' } }
-            };
-            visitCount[0].importantHistory.exposure = defaultExposureData;
-        }
-    
-        const data = {
-            name: basicDetails.name,
-            gender: basicDetails.gender,
-            age: basicDetails.age,
-            patientId: basicDetails.patientId,
-            contactNumber: basicDetails.contactNumber,
-            email: basicDetails.email,
-            bloodGroup: basicDetails.bloodGroup,
-            state: basicDetails.state,
-            country: basicDetails.country,
-            date: basicDetails.date,
-            time: basicDetails.time,
-            consultingDoctor: basicDetails.consultingDoctor,
-            localContactName: basicDetails.localContactName,
-            localContactRelation: basicDetails.localContactRelation,
-            localContactNumber: basicDetails.localContactNumber,
-            status: basicDetails.status,
-            address: basicDetails.address,
-            password: basicDetails.password,
-            image: basicDetails.image,
-            coordinator: coordinator,
-            visitCount: visitCount
-        };
-    
-        console.log(JSON.stringify(data));
+            drugReaction: {
+                typeOfDrug: typeOfDrug || 'NA',
+                typeOfReaction: typeOfReaction || 'NA'
+            },
+            pastSurgery: {
+                typeOfSurgery: typeOfSurgery || 'NA',
+                year: selectedYear || 0
+            },
+            pastDisease: {
+                typeOfDisease: typeOfDisease || 'NA'
+            },
+            exposure: {},
+            familyHistory: familyHistory || 'NA',
+            occupation: occupation || 'NA',
+        },
+        postHospitalization: Hosdata,
+        statusOfSickness: statusOfSickness,
+        catScore: catScore || 0,
     };
+    if (exiDisRef && exiDisRef.current) {
+        visitData.existingDeseases = exiDisRef.current.getData();
+    }
+    if (PFCRef && PFCRef.current) {
+        visitData.problemForConsultation = PFCRef.current.getData();
+    }
+
+    if (exposureRef && exposureRef.current) {
+        visitData.importantHistory.exposure = exposureRef.current.getData();
+    } else {
+        visitData.importantHistory.exposure = {
+            chemical: { duration: { numericValue: 0, unit: 'NA' } },
+            cottondust: { duration: { numericValue: 0, unit: 'NA' } },
+            dust: { duration: { numericValue: 0, unit: 'NA' } },
+            hay: { duration: { numericValue: 0, unit: 'NA' } },
+            moulds: { duration: { numericValue: 0, unit: 'NA' } },
+            others: { duration: { numericValue: 0, unit: 'NA' }, typeOfExposure: 'NA' },
+            pigeon: { duration: { numericValue: 0, unit: 'NA' } },
+            pollen: { duration: { numericValue: 0, unit: 'NA' } },
+            stonedust: { duration: { numericValue: 0, unit: 'NA' } },
+            woodendust: { duration: { numericValue: 0, unit: 'NA' } }
+        };
+    }
+
+    
+    const data = {
+        name: basicDetails.name,
+        gender: basicDetails.gender,
+        age: basicDetails.age,
+        patientId: basicDetails.patientId,
+        contactNumber: basicDetails.contactNumber,
+        email: basicDetails.email,
+        bloodGroup: basicDetails.bloodGroup,
+        state: basicDetails.state,
+        country: basicDetails.country,
+        date: basicDetails.date,
+        time: basicDetails.time,
+        consultingDoctor: basicDetails.consultingDoctor,
+        localContactName: basicDetails.localContactName,
+        localContactRelation: basicDetails.localContactRelation,
+        localContactNumber: basicDetails.localContactNumber,
+        status: basicDetails.status,
+        address: basicDetails.address,
+        password: basicDetails.password,
+        image: basicDetails.image,
+        coordinator: coordinator,
+        visitCount: [visitData]
+    };
+
+    console.log(JSON.stringify(data));
+    const response = await fetch(patientDiseaseURL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+        console.log('Data sent successfully');
+    } else {
+        console.error('Failed to send data:', response.status);
+    }
+
+    setIsLoading(false);
+};
+
     useEffect(() => {
         fetchAdminNames();
     }, []);
@@ -671,8 +681,13 @@ const DiseaseForm = ({ patientId }) => {
             </View>
                 <TouchableOpacity style={styles.submitButton}
                 onPress={handleSave}
+                
                 >
-                    <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>Submit</Text>
+                     {isLoading ? (
+                                <ActivityIndicator size="small" color={Color.colorWhite} />
+                            ) : (
+                                <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>Submit</Text>
+                            )}
                 </TouchableOpacity>
             </SafeAreaView>
         </View>

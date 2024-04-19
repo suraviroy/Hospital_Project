@@ -120,7 +120,8 @@ const handleUDChangeOthers = (index, text) => {
       const updatedUncontrolledDisease = [...prevData.uncontrolleddisease];
       const updatedDisease = {
         ...updatedUncontrolledDisease[index],
-        name: itemValue
+        name: itemValue,
+        disease: 'NA'
       };
       updatedUncontrolledDisease[index] = updatedDisease;
       return {
