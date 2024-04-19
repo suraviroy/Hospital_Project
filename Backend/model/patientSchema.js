@@ -680,7 +680,7 @@ const patientSchema = new mongoose.Schema({
                 default: "NA",
               },
             },
-            uncontrolledDisease: {
+            uncontrolleddisease: {
               type: [
                 {
                   name: {
@@ -743,7 +743,7 @@ const patientSchema = new mongoose.Schema({
               },
             },
           },
-          drugreaction: {
+          drugReaction: {
             typeOfDrug: {
               type: String,
               default: "NA",
