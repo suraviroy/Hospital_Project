@@ -701,6 +701,10 @@ const patientSchema = new mongoose.Schema({
                     type: String,
                     default: "NA",
                   },
+                  disease: {
+                    type: String,
+                    default: "NA",
+                  },
                 },
               ],
             },

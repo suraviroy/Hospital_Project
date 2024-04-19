@@ -59,10 +59,10 @@ const DiseaseForm = ({ patientId }) => {
     const [basicDetails, setBasicDetails] = useState(null);
 
     useEffect(() => {
-        fetch(`${backendURL}/patientRouter/HomePageDetails/${patientId}`)
+        fetch(`${backendURL}/patientRouter/PatientProfile/${patientId}`)
             .then(response => response.json())
             .then(data => {
-                setBasicDetails(data[0]);
+                setBasicDetails(data);
             })
             .catch(error => {
                 console.error('Error fetching patient basic details:', error);
