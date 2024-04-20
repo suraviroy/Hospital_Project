@@ -7,16 +7,16 @@ import { MultipleSelectList } from 'react-native-dropdown-select-list';
 
 const windowWidth = Dimensions.get('window').width;
 const defaultExposureData = {
-    chemical: { duration: { numericValue: 0, unit: 'NA' } },
-    cottondust: { duration: { numericValue: 0, unit: 'NA' } },
     dust: { duration: { numericValue: 0, unit: 'NA' } },
+    cottondust: { duration: { numericValue: 0, unit: 'NA' } },
+    wooddust: { duration: { numericValue: 0, unit: 'NA' } },
+    pigeon: { duration: { numericValue: 0, unit: 'NA' } },
     hay: { duration: { numericValue: 0, unit: 'NA' } },
     moulds: { duration: { numericValue: 0, unit: 'NA' } },
-    others: { duration: { numericValue: 0, unit: 'NA' }, typeOfExposure: 'NA' },
-    pigeon: { duration: { numericValue: 0, unit: 'NA' } },
     pollen: { duration: { numericValue: 0, unit: 'NA' } },
+    chemical: { duration: { numericValue: 0, unit: 'NA' } },
     stonedust: { duration: { numericValue: 0, unit: 'NA' } },
-    woodendust: { duration: { numericValue: 0, unit: 'NA' } }
+    others: { duration: { numericValue: 0, unit: 'NA' }, typeOfExposure: 'NA' },
 };
 
 const Exposure = forwardRef((props, ref) => {
@@ -90,7 +90,7 @@ const Exposure = forwardRef((props, ref) => {
             switch (formattedOption.toLowerCase()) {
                 case 'dust':
                 case 'cottondust':
-                case 'woodendust':
+                case 'wooddust':
                 case 'pigeon':
                 case 'hay':
                 case 'moulds':
@@ -181,7 +181,7 @@ const Exposure = forwardRef((props, ref) => {
                 data={[
                     { value: 'dust', key: 'DUS' },
                     { value: 'cotton dust', key: 'CTD' },
-                    { value: 'wooden dust', key: 'WOD' },
+                    { value: 'wood dust', key: 'WOD' },
                     { value: 'pigeon', key: 'PIG' },
                     { value: 'hay', key: 'HAY' },
                     { value: 'moulds', key: 'MLD' },

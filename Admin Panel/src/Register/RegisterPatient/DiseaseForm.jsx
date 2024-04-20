@@ -142,16 +142,16 @@ const handleSave = async () => {
         visitData.importantHistory.exposure = exposureRef.current.getData();
     } else {
         visitData.importantHistory.exposure = {
-            chemical: { duration: { numericValue: 0, unit: 'NA' } },
-            cottondust: { duration: { numericValue: 0, unit: 'NA' } },
             dust: { duration: { numericValue: 0, unit: 'NA' } },
+            cottondust: { duration: { numericValue: 0, unit: 'NA' } },
+            wooddust: { duration: { numericValue: 0, unit: 'NA' } },
+            pigeon: { duration: { numericValue: 0, unit: 'NA' } },
             hay: { duration: { numericValue: 0, unit: 'NA' } },
             moulds: { duration: { numericValue: 0, unit: 'NA' } },
-            others: { duration: { numericValue: 0, unit: 'NA' }, typeOfExposure: 'NA' },
-            pigeon: { duration: { numericValue: 0, unit: 'NA' } },
             pollen: { duration: { numericValue: 0, unit: 'NA' } },
+            chemical: { duration: { numericValue: 0, unit: 'NA' } },
             stonedust: { duration: { numericValue: 0, unit: 'NA' } },
-            woodendust: { duration: { numericValue: 0, unit: 'NA' } }
+            others: { duration: { numericValue: 0, unit: 'NA' }, typeOfExposure: 'NA' },
         };
     }
 
