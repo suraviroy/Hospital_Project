@@ -18,6 +18,7 @@ const defaultDeseaseData = {
   asthama: { duration: { numericValue: 0, unit: 'NA' }, statusOfDisease: 'NA' },
   tb: { duration: { numericValue: 0, unit: 'NA' }, statusOfDisease: 'NA' },
   copd: { duration: { numericValue: 0, unit: 'NA' }, statusOfDisease: 'NA' },
+  ild: { duration: { numericValue: 0, unit: 'NA' }, statusOfDisease: 'NA' },
   bronchiectasis: { duration: { numericValue: 0, unit: 'NA' }, statusOfDisease: 'NA' },
   osa: { duration: { numericValue: 0, unit: 'NA' }, statusOfDisease: 'NA' },
   ibs: { duration: { numericValue: 0, unit: 'NA' }, statusOfDisease: 'NA' },
@@ -111,8 +112,8 @@ const [selectedOtherDiseases, setSelectedOtherDiseases] = useState({});
    else {
       setData(prevData => ({
           ...prevData,
-          [formattedOption]: { // Use formatted option key to access state
-              ...prevData[formattedOption], // Use formatted option key here too
+          [formattedOption]: { 
+              ...prevData[formattedOption], 
               duration: {
                   numericValue: numericValue,
                   unit: unit
@@ -196,7 +197,6 @@ const renderAdditionalFields = () => {
         case 'asthama':
         case 'tb':
         case 'copd':
-        case 'cld':
         case 'ild':
         case 'bronchiectasis':
         case 'osa':
@@ -206,6 +206,7 @@ const renderAdditionalFields = () => {
         case 'anxiety':
         case 'collagenvasculardisease':
         case 'dyslipidemia':
+        case 'cld':
      return (
       <View key={option} style={styles.problems}>
         <View style={styles.problist}>
@@ -420,11 +421,13 @@ const renderAdditionalFields = () => {
           { value: "Diabetes", key: "DI" },
           { value: "Hypertension", key: "HY" },
           { value: "IHD", key: "IHD" },
+          { value: "Hypothyroidism", key: "HP"},
           { value: "Allergic Rhinitis", key: "AR" },
           { value: "Hyperuricemia", key: "HU" },
           { value: "Asthama", key: "AS" },
           { value: "TB", key: "TB" },
           { value: "COPD", key: "COPD" },
+          { value: "ILD", key: "ILD" },
           { value: "Bronchiectasis", key: "BR" },
           { value: "OSA", key: "OSA" },
           { value: "IBS", key: "IBS" },
@@ -434,8 +437,8 @@ const renderAdditionalFields = () => {
           { value: "Collagen vascular disease", key: "CVD" },
           { value: "Malignancy", key: "MAL" },
           { value: "Dyslipidemia", key: "DYS" },
-          { value: "CKD", key: "CKD" },
           { value: "CLD", key: "CLD" },
+          { value: "CKD", key: "CKD" },
           { value: "Others", key: "OTH" }
         ]}
         save="value"
