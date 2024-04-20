@@ -248,22 +248,6 @@ const patientSchema = new mongoose.Schema({
                 default: "NA",
               },
             },
-            osa: {
-              duration: {
-                numericValue: {
-                  type: Number,
-                  default: 0,
-                },
-                unit: {
-                  type: String,
-                  default: "NA",
-                },
-              },
-              statusOfDisease: {
-                type: String,
-                default: "NA",
-              },
-            },
             ibs: {
               duration: {
                 numericValue: {
@@ -908,7 +892,7 @@ const patientSchema = new mongoose.Schema({
             },
           },
         },
-        postHospitalization: {
+        pastHospitalization: {
           type: [
             {
               yearOfHospitalization: {

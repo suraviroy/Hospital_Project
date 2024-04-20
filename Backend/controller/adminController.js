@@ -257,6 +257,8 @@ export const patientEachVistDetails = async (req, res) => {
     patient.visitCount.push(newVisit);
     patient.status = "Updated";
 
+    console.log(patient)
+
     const updatedPatient = await patient.save();
 
     if (!updatedPatient) {
@@ -620,7 +622,6 @@ export const excelFile = async (req, res) => {
         othersStatus: visit?.visitCount[0]?.existingDeseases?.others?.statusOfDisease,
 
         //Problem for consultation
-
         problem: 'Problem for consultation',
 
         sobDuration: visit?.visitCount[0]?.problemForConsultation?.sob?.duration?.numericValue,
@@ -703,8 +704,6 @@ export const excelFile = async (req, res) => {
         othersStatus: visit?.visitCount[0]?.problemForConsultation?.others?.statusOfDisease,
 
         history: 'History',
-
-
       };
 
       console.log(visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.numericValue)
