@@ -50,8 +50,6 @@ const BottomNavigation = () => {
                     } else if (route.name === 'MyProfile') {
                         iconName = focused ? 'person-circle-sharp' : 'person-circle-outline';
                     }
-
-                  
                     return <Ionicons name={iconName} size={26} color={focused ? '#0E79B5' : '#706767'}
                     />;
                     
