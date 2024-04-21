@@ -11,34 +11,79 @@ const Login = () => {
     const [patientId, setPatientId] = useState('');
     const [password, setPassword] = useState('');
   
+    // const handleLogin = async () => {
+     
+    //   try {
+    //     const response = await axios.post(patientLoginURL, {
+    //       patientId : patientId,
+    //       password : patientId,
+    //     });
+        
+    //     if (response.data.status === 'success') {
+    //       const { result } = response.data;
+    //       const { patientId, name, gender, age, contactNumber, bloodGroup, image } = result;
+    //       navigation.navigate('BottomNavigation', {
+    //         patientId,
+    //         name,
+    //         gender,
+    //         age,
+    //         contactNumber,
+    //         bloodGroup,
+    //         image,
+    //       });
+    //     } else {
+    //       //Alert.alert('Error', response.data.message);
+    //     }
+    //   } catch (error) {
+    //    // Alert.alert('Error', `Network error: ${error.message}`);
+    //     console.error('Error:', error);
+    //   }
+    //   console.log("jjj",response)
+    // };
     const handleLogin = async () => {
+      console.log(patientLoginURL)
       try {
-        const response = await axios.post(patientLoginURL, {
-          patientId,
-          password,
-        });
-  
-        if (response.data.status === 'success') {
-          const { result } = response.data;
-          const { patientId, name, gender, age, contactNumber, bloodGroup, image } = result;
-          navigation.navigate('BottomNavigation', {
-            patientId,
-            name,
-            gender,
-            age,
-            contactNumber,
-            bloodGroup,
-            image,
+          const response = await fetch(patientLoginURL, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  patientId: patientId,
+                  password: password,
+              }),
           });
+          const responseData = await response.json();
+          if (response.ok) {
+            if (responseData.status === 'success') {
+                const { result } = responseData;
+                const { patientId, name, gender, age, contactNumber, bloodGroup, image } = result;
+                navigation.navigate('BottomNavigation', {
+                    patientId,
+                    name,
+                    gender,
+                    age,
+                    contactNumber,
+                    bloodGroup,
+                    image,
+                });
+            } else {
+                console.error('Error:', responseData.message);
+                // Handle error from server response
+                // Example: Alert.alert('Error', responseData.message);
+            }
         } else {
-          Alert.alert('Error', response.data.message);
+            console.error('Error:', responseData.message);
+            // Handle non-2xx HTTP response
+            // Example: Alert.alert('Error', responseData.message);
         }
-      } catch (error) {
-        Alert.alert('Error', `Network error: ${error.message}`);
+    } catch (error) {
+        // Handle network error
+        // Example: Alert.alert('Error', `Network error: ${error.message}`);
         console.error('Error:', error);
-      }
-    };
-  
+    }
+};
+
     return (
         <View style={styles.container01}>
             <View style={styles.backgroundOverlay01}></View>
