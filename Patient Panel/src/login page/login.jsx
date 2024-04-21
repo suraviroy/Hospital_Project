@@ -1,26 +1,44 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions , Alert} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
-
+import axios from "axios";
+import { backendURL } from "../backendapi";
 const { width, height } = Dimensions.get("window");
-
+const patientLoginURL = `${backendURL}/patientRouter/login`;
 const Login = () => {
     const navigation = useNavigation();
-    const [username, setUsername] = useState('');
+    const [patientId, setPatientId] = useState('');
     const [password, setPassword] = useState('');
-
-    const handleLogin = () => {
-        
-        if (username === "pulmocare2024" && password === "Pulmocare@1234") {
-            
-            navigation.navigate('BottomNavigation');
+  
+    const handleLogin = async () => {
+      try {
+        const response = await axios.post(patientLoginURL, {
+          patientId,
+          password,
+        });
+  
+        if (response.data.status === 'success') {
+          const { result } = response.data;
+          const { patientId, name, gender, age, contactNumber, bloodGroup, image } = result;
+          navigation.navigate('BottomNavigation', {
+            patientId,
+            name,
+            gender,
+            age,
+            contactNumber,
+            bloodGroup,
+            image,
+          });
         } else {
-          
-            alert('Invalid username or password');
+          Alert.alert('Error', response.data.message);
         }
+      } catch (error) {
+        Alert.alert('Error', `Network error: ${error.message}`);
+        console.error('Error:', error);
+      }
     };
-
+  
     return (
         <View style={styles.container01}>
             <View style={styles.backgroundOverlay01}></View>
@@ -31,8 +49,8 @@ const Login = () => {
                 <TextInput
                     style={styles.input01}
                     placeholder='Username'
-                    value={username}
-                    onChangeText={text => setUsername(text)}
+                    value={patientId}
+                    onChangeText={text => setPatientId(text)}
                 />
             </View>
 
