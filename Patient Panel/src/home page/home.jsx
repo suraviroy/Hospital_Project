@@ -55,13 +55,13 @@ const Home = ({ route }) => {
 
       <TouchableOpacity onPress={handleNextSlide} style={styles.imageSlider}>
         {currentIndex === 0 && (
-          <Image source={require('../../assets/images/lab1.png')} style={styles.sliderImage} />
-        )}
-        {currentIndex === 1 && (
           <Image source={require('../../assets/images/lab2.png')} style={styles.sliderImage} />
         )}
+        {currentIndex === 1 && (
+         <Image source={require('../../assets/images/lab3.png')} style={styles.sliderImage} />
+        )}
         {currentIndex === 2 && (
-          <Image source={require('../../assets/images/lab3.png')} style={styles.sliderImage} />
+          <Image source={require('../../assets/images/lab1.png')} style={styles.sliderImage} />
         )}
         <View style={styles.sliderDots}>
           {[0, 1, 2].map((index) => (
