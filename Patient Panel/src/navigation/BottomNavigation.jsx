@@ -69,17 +69,19 @@ const BottomNavigation = ({ route }) => {
       <Tab.Screen
         name="Notification"
         component={Notification}
-        options={{ tabBarLabel: 'My Requests', headerShown: false }}
+        options={{ tabBarLabel: 'Requests', headerShown: false }}
       />
       <Tab.Screen
         name="Reports"
         component={Reports}
         options={{ tabBarLabel: 'Appoinments', headerShown: false }}
+        initialParams={{ patientId: patientId }}
       />
       <Tab.Screen
         name="MyProfile"
         component={MyProfile}
         options={{ tabBarLabel: 'My Profile', headerShown: false }}
+        initialParams={{ patientId: patientId }}
       />
     </Tab.Navigator>
   );
