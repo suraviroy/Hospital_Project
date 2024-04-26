@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions , Alert} from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions , Alert, ActivityIndicator} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import axios from "axios";
+import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 import { backendURL } from "../backendapi";
 const { width, height } = Dimensions.get("window");
 const patientLoginURL = `${backendURL}/patientRouter/login`;
@@ -10,7 +11,10 @@ const Login = () => {
     const navigation = useNavigation();
     const [patientId, setPatientId] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleLogin = async () => {
+      setIsLoading(true);
       console.log(patientLoginURL)
       try {
           const response = await fetch(patientLoginURL, {
@@ -48,6 +52,9 @@ const Login = () => {
         }
     } catch (error) {
         console.error('Error:', error);
+    }finally {
+
+        setIsLoading(false);
     }
 };
 
@@ -78,7 +85,12 @@ const Login = () => {
             </View>
             <View style={styles.straightLine01}></View>
             <TouchableOpacity style={styles.loginButton01} onPress={handleLogin}>
-                <Text style={styles.loginButtonText01}>Login</Text>
+            {isLoading ? (
+                                <ActivityIndicator size="small" color={Color.colorWhite} />
+                            ) : (
+                                <Text style={styles.loginButtonText01}>Login</Text>
+                            )}
+               
             </TouchableOpacity>
         </View>
     );
