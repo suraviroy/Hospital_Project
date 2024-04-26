@@ -9,6 +9,7 @@ import {
   PatientBasicDetails,
   patientEachVistDetails,
   allpatientList,
+  patientDisease,
   excelFile
 } from "../controller/adminController.js";
 const adminRouter = express.Router();
@@ -21,6 +22,7 @@ adminRouter.get("/updateProfileNameId/:id", UpdateProfileNameId);
 adminRouter.get("/patientBasicDetails/:id", PatientBasicDetails);
 adminRouter.post("/patientEachVisitDetails/:id", patientEachVistDetails);
 adminRouter.get("/allpatientList", allpatientList);
+adminRouter.get("/patientDisease/:id", patientDisease);
 adminRouter.get("/excelFile", excelFile);
 
 export default adminRouter;

@@ -300,6 +300,31 @@ export const allpatientList = async (req, res) => {
 };
 
 
+export const patientDisease= async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const patientExists = await PatientSchema.exists({ patientId: id });
+    if (!patientExists) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const registeredPatientsName = await PatientSchema.find(
+      {
+        patientId: id,
+      },
+      {
+        visitCount:  { $arrayElemAt: ["$visitCount", 0] },
+        _id: 0,
+      }
+    );
+    res.status(200).json(registeredPatientsName);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
 export const excelFile = async (req, res) => {
   //
   try {
