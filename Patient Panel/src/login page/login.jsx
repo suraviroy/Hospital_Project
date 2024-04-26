@@ -10,36 +10,6 @@ const Login = () => {
     const navigation = useNavigation();
     const [patientId, setPatientId] = useState('');
     const [password, setPassword] = useState('');
-  
-    // const handleLogin = async () => {
-     
-    //   try {
-    //     const response = await axios.post(patientLoginURL, {
-    //       patientId : patientId,
-    //       password : patientId,
-    //     });
-        
-    //     if (response.data.status === 'success') {
-    //       const { result } = response.data;
-    //       const { patientId, name, gender, age, contactNumber, bloodGroup, image } = result;
-    //       navigation.navigate('BottomNavigation', {
-    //         patientId,
-    //         name,
-    //         gender,
-    //         age,
-    //         contactNumber,
-    //         bloodGroup,
-    //         image,
-    //       });
-    //     } else {
-    //       //Alert.alert('Error', response.data.message);
-    //     }
-    //   } catch (error) {
-    //    // Alert.alert('Error', `Network error: ${error.message}`);
-    //     console.error('Error:', error);
-    //   }
-    //   console.log("jjj",response)
-    // };
     const handleLogin = async () => {
       console.log(patientLoginURL)
       try {
@@ -58,28 +28,25 @@ const Login = () => {
             if (responseData.status === 'success') {
                 const { result } = responseData;
                 const { patientId, name, gender, age, contactNumber, bloodGroup, image } = result;
-                navigation.navigate('BottomNavigation', {
-                    patientId,
-                    name,
-                    gender,
-                    age,
-                    contactNumber,
-                    bloodGroup,
-                    image,
-                });
+                navigation.navigate('BottomNavigation', { patientId: patientId });
+
+        // fetch(`${backendURL}/patientRouter/HomePageDetails/${patientId}`)
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         navigation.navigate('BottomNavigation', { patientId: patientId });
+        //         console.log(patientId)
+        //     })
+            // .catch(error => {
+            //     console.error('Error fetching patient details:', error);
+            // });
             } else {
                 console.error('Error:', responseData.message);
-                // Handle error from server response
-                // Example: Alert.alert('Error', responseData.message);
             }
-        } else {
+        } 
+        else {
             console.error('Error:', responseData.message);
-            // Handle non-2xx HTTP response
-            // Example: Alert.alert('Error', responseData.message);
         }
     } catch (error) {
-        // Handle network error
-        // Example: Alert.alert('Error', `Network error: ${error.message}`);
         console.error('Error:', error);
     }
 };

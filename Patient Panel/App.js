@@ -8,14 +8,12 @@ import { useFonts } from 'expo-font';
 import { useCallback } from 'react';
 import Home from './src/home page/home';
 import Notification from './src/Notification/Notification';
-
+import Reports from './src/Reports/Reports';
 
 
 import BottomNavigation from './src/navigation/BottomNavigation';
 
 import MyProfile from './src/MyProfile/MyProfile';
-import Reports from './src/Reports/Reports';
-
 
 
 
@@ -34,7 +32,6 @@ function App() {
     regular: require('./assets/fonts/JuliusSansOne-Regular.ttf'),
     regular: require('./assets/fonts/Lato-Regular.ttf'),
     regular: require('./assets/fonts/Kadwa-Regular.ttf'),
-
     medium01: require('./assets/fonts/Inter-Medium.ttf'),
     medium: require('./assets/fonts/Rubik-Medium.ttf'),
     medium: require('./assets/fonts/HindGuntur-Medium.ttf'),
