@@ -1,4 +1,6 @@
 import PatientSchema from "../model/patientSchema.js";
+import RequestSchema from "../model/requestSchema.js";
+import moment from "moment-timezone";
 
 export const login = async (req, res) => {
   const { patientId, password } = req.body;
@@ -137,5 +139,43 @@ export const PatientsAllAppointments = async (req, res) => {
       .json({ patientInfo: patientInfo, appointments: allAppointments });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+export const createRequest = async (req, res) => {
+  try {
+    const desiredTimezone = 'Asia/Kolkata';
+    const currentDate = moment().tz(desiredTimezone).format('MMMM D, YYYY');
+    const currentTime = moment().tz(desiredTimezone).format('hh:mm A');
+
+    const { patientId, hospitalization, demise, ...rest } = req.body;
+    const isCritical = hospitalization || demise;
+    const status = isCritical ? 'Critical' : 'Normal';
+
+    const newRequest = {
+      date: currentDate,
+      time: currentTime,
+      patientId,
+      status,
+      hospitalization,
+      demise,
+      ...rest,
+    };
+
+    const existingRequest = await RequestSchema.findOne({ "requestCount.patientId": patientId });
+
+    if (existingRequest) {
+      existingRequest.requestCount.push(newRequest);
+      const updatedRequest = await existingRequest.save();
+      res.status(200).json(updatedRequest);
+      console.log('Request pushed to existing document');
+    } else {
+      const initialRequest = new RequestSchema({ requestCount: [newRequest] });
+      const savedRequest = await initialRequest.save();
+      res.status(201).json(savedRequest);
+      console.log('New document created');
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while creating the request' });
   }
 };
