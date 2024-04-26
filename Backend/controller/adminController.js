@@ -228,7 +228,8 @@ export const PatientBasicDetails = async (req, res) => {
 export const patientEachVistDetails = async (req, res) => {
   try {
     const id = req.params.id;
-
+    const visitData= req.body.visitData;
+    console.log("data",visitData)
     const patientExists = await PatientSchema.exists({ patientId: id });
     if (!patientExists) {
       return res.status(404).json({ message: "Patient not found" });
@@ -251,10 +252,11 @@ export const patientEachVistDetails = async (req, res) => {
       postHospitalization: req.body.postHospitalization,
       statusOfSickness: req.body.statusOfSickness,
       catScore: req.body.catScore,
+     
     };
 
     patient.coordinator = req.body.coordinator;
-    patient.visitCount.push(newVisit);
+    patient.visitCount.push(visitData);
     patient.status = "Updated";
 
     console.log(patient)

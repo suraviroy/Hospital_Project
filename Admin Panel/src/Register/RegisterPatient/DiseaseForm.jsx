@@ -179,154 +179,15 @@ const DiseaseForm = ({ patientId }) => {
         },
       };
     }
-
-    const hardcodeddata = {
-      existingDeseases: {
-        hypothyroidism: {
-          duration: {
-            numericValue: 50,
-            unit: "years",
-          },
-          statusOfDisease: "controlled",
-        },
-        diabetes: {
-          duration: {
-            numericValue: 50,
-            unit: "years",
-          },
-          statusOfDisease: "controlled",
-        },
-        malignancy: {
-          organ: "lung",
-          duration: {
-            numericValue: 50,
-            unit: "year",
-          },
-          statusOfDisease: "in remission",
-        },
-        others: {
-          disease: "asthma",
-          duration: {
-            numericValue: 50,
-            unit: "years",
-          },
-          statusOfDisease: "controlled",
-        },
-      },
-      problemForConsultation: {
-        cough: {
-          duration: {
-            numericValue: 50,
-            unit: "weeks",
-          },
-          statusOfDisease: "improving",
-        },
-        uncontrolledDisease: {
-          type: "hypertension",
-          duration: {
-            numericValue: 50,
-            unit: "months",
-          },
-          statusOfDisease: "uncontrolled",
-        },
-        others: {
-          disease: "headache",
-          duration: {
-            numericValue: 50,
-            unit: "month",
-          },
-          statusOfDisease: "stable",
-        },
-      },
-      importantHistory: {
-        allergy: {
-          typeOfAllergy: "penicillin",
-          duration: {
-            numericValue: 50,
-            unit: "years",
-          },
-        },
-        drugReaction: {
-          typeOfDrug: "aspirin",
-          typeOfReaction: "rash",
-        },
-        pastSurgery: {
-          typeOfSurgery: "appendectomy",
-          year: 2024,
-        },
-        pastDisease: {
-          typeOfDisease: "pneumonia",
-        },
-        familyHistory: "diabetes",
-        occupation: "engineer",
-        exposure: {
-          dust: {
-            duration: {
-              numericValue: 5,
-              unit: "years",
-            },
-          },
-          others: {
-            typeOfExposure: "chemicals",
-            duration: {
-              numericValue: 2,
-              unit: "years",
-            },
-          },
-        },
-      },
-      pastHospitalization: [
-        {
-          yearOfHospitalization: 2024,
-          days: 10,
-          reason: "pneumonia",
-          dischargeCertificate: "link_to_certificate",
-        },
-        {
-          yearOfHospitalization: 2021,
-          days: 5,
-          reason: "appendicitis",
-          dischargeCertificate: "link_to_certificate",
-        },
-      ],
-      statusOfSickness: "about to die",
-      catScore: 9,
-      coordinator: "Dr Jack Daniels",
-    };
-
-    const patientdata = {
-      name: basicDetails.name,
-      gender: basicDetails.gender,
-      age: basicDetails.age,
-      patientId: basicDetails.patientId,
-      contactNumber: basicDetails.contactNumber,
-      email: basicDetails.email,
-      bloodGroup: basicDetails.bloodGroup,
-      state: basicDetails.state,
-      country: basicDetails.country,
-      date: basicDetails.date,
-      time: basicDetails.time,
-      consultingDoctor: basicDetails.consultingDoctor,
-      localContactName: basicDetails.localContactName,
-      localContactRelation: basicDetails.localContactRelation,
-      localContactNumber: basicDetails.localContactNumber,
-      status: basicDetails.status,
-      address: basicDetails.address,
-      password: basicDetails.password,
-      image: basicDetails.image,
-      coordinator: coordinator,
-      visitCount: hardcodeddata,
-    };
-
-    console.log(patientdata);
-    const sendData = async (patientdata) => {
-      setIsLoading(true);
+   console.log(visitData)
+    
 
       try {
         const response = await axios.post(
-          patientDiseaseURL,
-          null,
-          { body: patientdata },
+          patientDiseaseURL,{
+            coordinator: coordinator,
+            visitData: visitData,
+          },
           {
             headers: {
               "Content-Type": "application/json",
@@ -344,9 +205,7 @@ const DiseaseForm = ({ patientId }) => {
       } finally {
         setIsLoading(false);
       }
-    };
-
-    sendData();
+   
   };
   useEffect(() => {
     fetchAdminNames();

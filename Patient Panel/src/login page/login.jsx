@@ -1,25 +1,55 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions , Alert} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
-
+import axios from "axios";
+import { backendURL } from "../backendapi";
 const { width, height } = Dimensions.get("window");
-
+const patientLoginURL = `${backendURL}/patientRouter/login`;
 const Login = () => {
     const navigation = useNavigation();
-    const [username, setUsername] = useState('');
+    const [patientId, setPatientId] = useState('');
     const [password, setPassword] = useState('');
+    const handleLogin = async () => {
+      console.log(patientLoginURL)
+      try {
+          const response = await fetch(patientLoginURL, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  patientId: patientId,
+                  password: password,
+              }),
+          });
+          const responseData = await response.json();
+          if (response.ok) {
+            if (responseData.status === 'success') {
+                const { result } = responseData;
+                const { patientId, name, gender, age, contactNumber, bloodGroup, image } = result;
+                navigation.navigate('BottomNavigation', { patientId: patientId });
 
-    const handleLogin = () => {
-        
-        if (username === "pulmocare2024" && password === "Pulmocare@1234") {
-            
-            navigation.navigate('BottomNavigation');
-        } else {
-          
-            alert('Invalid username or password');
+        // fetch(`${backendURL}/patientRouter/HomePageDetails/${patientId}`)
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         navigation.navigate('BottomNavigation', { patientId: patientId });
+        //         console.log(patientId)
+        //     })
+            // .catch(error => {
+            //     console.error('Error fetching patient details:', error);
+            // });
+            } else {
+                console.error('Error:', responseData.message);
+            }
+        } 
+        else {
+            console.error('Error:', responseData.message);
         }
-    };
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
 
     return (
         <View style={styles.container01}>
@@ -31,8 +61,8 @@ const Login = () => {
                 <TextInput
                     style={styles.input01}
                     placeholder='Username'
-                    value={username}
-                    onChangeText={text => setUsername(text)}
+                    value={patientId}
+                    onChangeText={text => setPatientId(text)}
                 />
             </View>
 
