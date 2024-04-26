@@ -69,10 +69,11 @@ const styles = StyleSheet.create({
       flexDirection: 'row'
       },
       docImage: {
-        marginLeft: windowWidth * 0.04,
+        position: 'absolute',
+        left: windowWidth*0.53,
         width: windowWidth * 0.22,
         height: windowWidth * 0.23,
-        borderRadius: windowWidth * 0.05,
+        borderRadius: windowWidth * 0.20,
       },
       bgprofile :{
       position: 'relative',
