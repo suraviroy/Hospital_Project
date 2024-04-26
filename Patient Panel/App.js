@@ -31,7 +31,7 @@ function App() {
     regular: require('./assets/fonts/Lato-Regular.ttf'),
     regular: require('./assets/fonts/JuliusSansOne-Regular.ttf'),
     regular: require('./assets/fonts/Lato-Regular.ttf'),
-    regular: require('./assets/fonts/Kadwa-Regular.ttf'),
+    regular05: require('./assets/fonts/Kadwa-Regular.ttf'),
     medium01: require('./assets/fonts/Inter-Medium.ttf'),
     medium: require('./assets/fonts/Rubik-Medium.ttf'),
     medium: require('./assets/fonts/HindGuntur-Medium.ttf'),
