@@ -228,8 +228,8 @@ export const PatientBasicDetails = async (req, res) => {
 export const patientEachVistDetails = async (req, res) => {
   try {
     const id = req.params.id;
-    const visitData= req.body.visitData;
-    console.log("data",visitData)
+    const visitData = req.body.visitData;
+    console.log("data", visitData)
     const patientExists = await PatientSchema.exists({ patientId: id });
     if (!patientExists) {
       return res.status(404).json({ message: "Patient not found" });
@@ -252,7 +252,7 @@ export const patientEachVistDetails = async (req, res) => {
       postHospitalization: req.body.postHospitalization,
       statusOfSickness: req.body.statusOfSickness,
       catScore: req.body.catScore,
-     
+
     };
 
     patient.coordinator = req.body.coordinator;
@@ -497,8 +497,63 @@ export const excelFile = async (req, res) => {
       { header: "Duration", key: "othersDuration" },
       { header: "Unit", key: "othersDurationUnit" },
       { header: "Status", key: "othersStatus" },
-
+      //History
       { header: "History", key: "history" },
+
+      { header: "Allergy Type", key: "allergyType" },
+      { header: "Allergy Duration", key: "allergyDuration" },
+      { header: "Allergy Duration Unit", key: "allergyDurationUnit" },
+
+      { header: "Drug Type", key: "drugType" },
+      { header: "Reaction Type", key: "reactionType" },
+
+      { header: "Past Surgery Type", key: "pastSurgeryType" },
+      { header: "Year of Surgery", key: "yearOfSurgery" },
+
+      { header: "Past Disease", key: "pastDisease" },
+
+      { header: "Family History", key: "familyHistory" },
+      { header: "Occupation", key: "occupation" },
+
+      { header: "Dust Exposure Duration", key: "dustExposureDuration" },
+      { header: "Dust Exposure Unit", key: "dustExposureUnit" },
+
+      { header: "Cotton Dust Exposure Duration", key: "cottonDustExposureDuration" },
+      { header: "Cotton Dust Exposure Unit", key: "cottonDustExposureUnit" },
+
+      { header: "Wood Dust Exposure Duration", key: "woodDustExposureDuration" },
+      { header: "Wood Dust Exposure Unit", key: "woodDustExposureUnit" },
+
+      { header: "Pigeon Exposure Duration", key: "pigeonExposureDuration" },
+      { header: "Pigeon Exposure Unit", key: "pigeonExposureUnit" },
+
+      { header: "Hay Exposure Duration", key: "hayExposureDuration" },
+      { header: "Hay Exposure Unit", key: "hayExposureUnit" },
+
+      { header: "Moulds Exposure Duration", key: "mouldsExposureDuration" },
+      { header: "Moulds Exposure Unit", key: "mouldsExposureUnit" },
+
+      { header: "Pollen Exposure Duration", key: "pollenExposureDuration" },
+      { header: "Pollen Exposure Unit", key: "pollenExposureUnit" },
+
+      { header: "Chemical Exposure Duration", key: "chemicalExposureDuration" },
+      { header: "Chemical Exposure Unit", key: "chemicalExposureUnit" },
+
+      { header: "Stone Dust Exposure Duration", key: "stoneDustExposureDuration" },
+      { header: "Stone Dust Exposure Unit", key: "stoneDustExposureUnit" },
+
+      { header: "Other Exposure Type", key: "otherExposureType" },
+      { header: "Other Exposure Duration", key: "otherExposureDuration" },
+      { header: "Other Exposure Unit", key: "otherExposureUnit" },
+
+      { header: "Hospitalization", key: "Hospitalization" },
+
+      { header: "Past Hospitalization Year", key: "pastHospitalizationYear" },
+      { header: "Hospitalization Days", key: "hospitalizationDays" },
+      { header: "Reason for Hospitalization", key: "hospitalizationReason" },
+
+      { header: "Status Of Sickness", key: "statusOfSickness" },
+      { header: " Cat Score", key: "catScore" },
 
     ]
 
@@ -526,6 +581,7 @@ export const excelFile = async (req, res) => {
         localContactRelation: visit.localContactRelation,
         localContactNumber: visit.localContactNumber,
         visitDate: visit?.visitCount[0]?.visitDate,
+        visitTime: visit?.visitCount[0]?.visitTime,
 
         // Existing disease
         diabetesDuration: visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.numericValue,
@@ -544,9 +600,9 @@ export const excelFile = async (req, res) => {
         hypothyroidismDurationUnit: visit?.visitCount[0]?.existingDeseases?.hypothyroidism?.duration?.unit,
         hypothyroidismStatus: visit?.visitCount[0]?.existingDeseases?.hypothyroidism?.statusOfDisease,
 
-        allergicRhinitisDuration: visit?.visitCount[0]?.existingDeseases?.allergicRhinitis?.duration?.numericValue,
-        allergicRhinitisDurationUnit: visit?.visitCount[0]?.existingDeseases?.allergicRhinitis?.duration?.unit,
-        allergicRhinitisStatus: visit?.visitCount[0]?.existingDeseases?.allergicRhinitis?.statusOfDisease,
+        allergicRhinitisDuration: visit?.visitCount[0]?.existingDeseases?.allergicrhinitis?.duration?.numericValue,
+        allergicRhinitisDurationUnit: visit?.visitCount[0]?.existingDeseases?.allergicrhinitis?.duration?.unit,
+        allergicRhinitisStatus: visit?.visitCount[0]?.existingDeseases?.allergicrhinitis?.statusOfDisease,
 
         hyperuricemiaDuration: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.numericValue,
         hyperuricemiaDurationUnit: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.unit,
@@ -580,9 +636,9 @@ export const excelFile = async (req, res) => {
         ibsDurationUnit: visit?.visitCount[0]?.existingDeseases?.ibs?.duration?.unit,
         ibsStatus: visit?.visitCount[0]?.existingDeseases?.ibs?.statusOfDisease,
 
-        inflammatoryBowelDiseaseDuration: visit?.visitCount[0]?.existingDeseases?.inflammatoryBowelDisease?.duration?.numericValue,
-        inflammatoryBowelDiseaseDurationUnit: visit?.visitCount[0]?.existingDeseases?.inflammatoryBowelDisease?.duration?.unit,
-        inflammatoryBowelDiseaseStatus: visit?.visitCount[0]?.existingDeseases?.inflammatoryBowelDisease?.statusOfDisease,
+        inflammatoryBowelDiseaseDuration: visit?.visitCount[0]?.existingDeseases?.inflammatoryboweldisease?.duration?.numericValue,
+        inflammatoryBowelDiseaseDurationUnit: visit?.visitCount[0]?.existingDeseases?.inflammatoryboweldisease?.duration?.unit,
+        inflammatoryBowelDiseaseStatus: visit?.visitCount[0]?.existingDeseases?.inflammatoryboweldisease?.statusOfDisease,
 
         depressionDuration: visit?.visitCount[0]?.existingDeseases?.depression?.duration?.numericValue,
         depressionDurationUnit: visit?.visitCount[0]?.existingDeseases?.depression?.duration?.unit,
@@ -596,9 +652,9 @@ export const excelFile = async (req, res) => {
         osaDurationUnit: visit?.visitCount[0]?.existingDeseases?.osa?.duration?.unit,
         osaStatus: visit?.visitCount[0]?.existingDeseases?.osa?.statusOfDisease,
 
-        collagenVascularDiseaseDuration: visit?.visitCount[0]?.existingDeseases?.collagenVascularDisease?.duration?.numericValue,
-        collagenVascularDiseaseDurationUnit: visit?.visitCount[0]?.existingDeseases?.collagenVascularDisease?.duration?.unit,
-        collagenVascularDiseaseStatus: visit?.visitCount[0]?.existingDeseases?.collagenVascularDisease?.statusOfDisease,
+        collagenVascularDiseaseDuration: visit?.visitCount[0]?.existingDeseases?.collagenvasculardisease?.duration?.numericValue,
+        collagenVascularDiseaseDurationUnit: visit?.visitCount[0]?.existingDeseases?.collagenvasculardisease?.duration?.unit,
+        collagenVascularDiseaseStatus: visit?.visitCount[0]?.existingDeseases?.collagenvasculardisease?.statusOfDisease,
 
         malignancyOrgan: visit?.visitCount[0]?.existingDeseases?.malignancy?.organ,
         malignancyDuration: visit?.visitCount[0]?.existingDeseases?.malignancy?.duration?.numericValue,
@@ -636,14 +692,14 @@ export const excelFile = async (req, res) => {
         coughStatus: visit?.visitCount[0]?.problemForConsultation?.cough?.statusOfDisease,
 
         // bleeding with cough
-        bleedingWithCoughDuration: visit?.visitCount[0]?.problemForConsultation?.bleedingWithCough?.duration?.numericValue,
-        bleedingWithCoughDurationUnit: visit?.visitCount[0]?.problemForConsultation?.bleedingWithCough?.duration?.unit,
-        bleedingWithCoughStatus: visit?.visitCount[0]?.problemForConsultation?.bleedingWithCough?.statusOfDisease,
+        bleedingWithCoughDuration: visit?.visitCount[0]?.problemForConsultation?.bleedingwithcough?.duration?.numericValue,
+        bleedingWithCoughDurationUnit: visit?.visitCount[0]?.problemForConsultation?.bleedingwithcough?.duration?.unit,
+        bleedingWithCoughStatus: visit?.visitCount[0]?.problemForConsultation?.bleedingwithcough?.statusOfDisease,
 
         // chest pain
-        chestPainDuration: visit?.visitCount[0]?.problemForConsultation?.chestPain?.duration?.numericValue,
-        chestPainDurationUnit: visit?.visitCount[0]?.problemForConsultation?.chestPain?.duration?.unit,
-        chestPainStatus: visit?.visitCount[0]?.problemForConsultation?.chestPain?.statusOfDisease,
+        chestPainDuration: visit?.visitCount[0]?.problemForConsultation?.chestpain?.duration?.numericValue,
+        chestPainDurationUnit: visit?.visitCount[0]?.problemForConsultation?.chestpain?.duration?.unit,
+        chestPainStatus: visit?.visitCount[0]?.problemForConsultation?.chestpain?.statusOfDisease,
 
         // wheeze
         wheezeDuration: visit?.visitCount[0]?.problemForConsultation?.wheeze?.duration?.numericValue,
@@ -656,9 +712,9 @@ export const excelFile = async (req, res) => {
         phlegmStatus: visit?.visitCount[0]?.problemForConsultation?.phlagm?.statusOfDisease,
 
         // nasal congestion
-        nasalCongestionDuration: visit?.visitCount[0]?.problemForConsultation?.nasalCongestion?.duration?.numericValue,
-        nasalCongestionDurationUnit: visit?.visitCount[0]?.problemForConsultation?.nasalCongestion?.duration?.unit,
-        nasalCongestionStatus: visit?.visitCount[0]?.problemForConsultation?.nasalCongestion?.statusOfDisease,
+        nasalCongestionDuration: visit?.visitCount[0]?.problemForConsultation?.nasalcongestion?.duration?.numericValue,
+        nasalCongestionDurationUnit: visit?.visitCount[0]?.problemForConsultation?.nasalcongestion?.duration?.unit,
+        nasalCongestionStatus: visit?.visitCount[0]?.problemForConsultation?.nasalcongestion?.statusOfDisease,
 
         // snoring
         snoringDuration: visit?.visitCount[0]?.problemForConsultation?.snoring?.duration?.numericValue,
@@ -666,9 +722,9 @@ export const excelFile = async (req, res) => {
         snoringStatus: visit?.visitCount[0]?.problemForConsultation?.snoring?.statusOfDisease,
 
         // daytime sleepiness
-        dayTimeSleepinessDuration: visit?.visitCount[0]?.problemForConsultation?.dayTimeSleepiness?.duration?.numericValue,
-        dayTimeSleepinessDurationUnit: visit?.visitCount[0]?.problemForConsultation?.dayTimeSleepiness?.duration?.unit,
-        dayTimeSleepinessStatus: visit?.visitCount[0]?.problemForConsultation?.dayTimeSleepiness?.statusOfDisease,
+        dayTimeSleepinessDuration: visit?.visitCount[0]?.problemForConsultation?.daytimesleepiness?.duration?.numericValue,
+        dayTimeSleepinessDurationUnit: visit?.visitCount[0]?.problemForConsultation?.daytimesleepiness?.duration?.unit,
+        dayTimeSleepinessStatus: visit?.visitCount[0]?.problemForConsultation?.daytimesleepiness?.statusOfDisease,
 
         // weakness
         weaknessDuration: visit?.visitCount[0]?.problemForConsultation?.weakness?.duration?.numericValue,
@@ -686,19 +742,19 @@ export const excelFile = async (req, res) => {
         lethargyStatus: visit?.visitCount[0]?.problemForConsultation?.lethargy?.statusOfDisease,
 
         // low mood
-        lowMoodDuration: visit?.visitCount[0]?.problemForConsultation?.lowMood?.duration?.numericValue,
-        lowMoodDurationUnit: visit?.visitCount[0]?.problemForConsultation?.lowMood?.duration?.unit,
-        lowMoodStatus: visit?.visitCount[0]?.problemForConsultation?.lowMood?.statusOfDisease,
+        lowMoodDuration: visit?.visitCount[0]?.problemForConsultation?.lowmood?.duration?.numericValue,
+        lowMoodDurationUnit: visit?.visitCount[0]?.problemForConsultation?.lowmood?.duration?.unit,
+        lowMoodStatus: visit?.visitCount[0]?.problemForConsultation?.lowmood?.statusOfDisease,
 
         // diarrhea
         diarrheaDuration: visit?.visitCount[0]?.problemForConsultation?.diarrhoea?.duration?.numericValue,
         diarrheaDurationUnit: visit?.visitCount[0]?.problemForConsultation?.diarrhoea?.duration?.unit,
         diarrheaStatus: visit?.visitCount[0]?.problemForConsultation?.diarrhoea?.statusOfDisease,
 
-        uncontrolledDiseaseDuration: visit?.visitCount[0]?.problemForConsultation?.uncontrolledDisease[0]?.duration?.numericValue,
-        uncontrolledDiseaseDurationUnit: visit?.visitCount[0]?.problemForConsultation?.uncontrolledDisease[0]?.duration?.unit,
-        uncontrolledDiseaseStatus: visit?.visitCount[0]?.problemForConsultation?.uncontrolledDisease[0]?.statusOfDisease,
-        uncontrolledDiseaseName: visit?.visitCount[0]?.problemForConsultation?.uncontrolledDisease[0]?.name,
+        uncontrolledDiseaseDuration: visit?.visitCount[0]?.problemForConsultation?.uncontrolleddisease[0]?.duration?.numericValue,
+        uncontrolledDiseaseDurationUnit: visit?.visitCount[0]?.problemForConsultation?.uncontrolleddisease[0]?.duration?.unit,
+        uncontrolledDiseaseStatus: visit?.visitCount[0]?.problemForConsultation?.uncontrolleddisease[0]?.statusOfDisease,
+        uncontrolledDiseaseName: visit?.visitCount[0]?.problemForConsultation?.uncontrolleddisease[0]?.name,
 
         othersDisease: visit?.visitCount[0]?.problemForConsultation?.others?.disease,
         othersDuration: visit?.visitCount[0]?.problemForConsultation?.others?.duration?.numericValue,
@@ -706,6 +762,51 @@ export const excelFile = async (req, res) => {
         othersStatus: visit?.visitCount[0]?.problemForConsultation?.others?.statusOfDisease,
 
         history: 'History',
+
+        allergyType: visit?.visitCount[0]?.importantHistory?.allergy?.typeOfAllergy,
+        allergyDuration: visit?.visitCount[0]?.importantHistory?.allergy?.duration?.numericValue,
+        allergyDurationUnit: visit?.visitCount[0]?.importantHistory?.allergy?.duration?.unit,
+        drugType: visit?.visitCount[0]?.importantHistory?.drugReaction?.typeOfDrug,
+        reactionType: visit?.visitCount[0]?.importantHistory?.drugReaction?.typeOfReaction,
+        pastSurgeryType: visit?.visitCount[0]?.importantHistory?.pastSurgery?.typeOfSurgery,
+        yearOfSurgery: visit?.visitCount[0]?.importantHistory?.pastSurgery?.year,
+
+
+        pastDisease: visit?.visitCount[0]?.importantHistory?.pastDisease?.typeOfDisease,
+
+        familyHistory: visit?.visitCount[0]?.importantHistory?.familyHistory,
+        occupation: visit?.visitCount[0]?.importantHistory?.occupation,
+        dustExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.dust?.duration?.numericValue,
+        dustExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.dust?.duration?.unit,
+        cottonDustExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.cottondust?.duration?.numericValue,
+        cottonDustExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.cottondust?.duration?.unit,
+        woodDustExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.wooddust?.duration?.numericValue,
+        woodDustExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.wooddust?.duration?.unit,
+        pigeonExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.pigeon?.duration?.numericValue,
+        pigeonExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.pigeon?.duration?.unit,
+        hayExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.hay?.duration?.numericValue,
+        hayExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.hay?.duration?.unit,
+        mouldsExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.moulds?.duration?.numericValue,
+        mouldsExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.moulds?.duration?.unit,
+        pollenExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.pollen?.duration?.numericValue,
+        pollenExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.pollen?.duration?.unit,
+        chemicalExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.chemical?.duration?.numericValue,
+        chemicalExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.chemical?.duration?.unit,
+        stoneDustExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.stonedust?.duration?.numericValue,
+        stoneDustExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.stonedust?.duration?.unit,
+        otherExposureType: visit?.visitCount[0]?.importantHistory?.exposure?.others?.typeOfExposure,
+        otherExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.others?.duration?.numericValue,
+        otherExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.others?.duration?.unit,
+
+        Hospitalization: 'Hospitalization',
+
+        pastHospitalizationYear: visit?.visitCount[0]?.pastHospitalization[0]?.yearOfHospitalization ,
+        hospitalizationDays: visit?.visitCount[0]?.pastHospitalization[0]?.days ,
+        hospitalizationReason: visit?.visitCount[0]?.pastHospitalization[0]?.reason ,
+
+        statusOfSickness: visit?.visitCount[0]?.statusOfSickness ,
+        catScore: visit?.visitCount[0]?.catScore ,
+        
       };
 
       console.log(visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.numericValue)
