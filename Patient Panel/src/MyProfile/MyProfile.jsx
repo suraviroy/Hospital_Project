@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Dimensions, SafeAreaView ,ScrollView} from 'react-native';
 import { MaterialIcons,FontAwesome6 } from '@expo/vector-icons';
 import axios from 'axios';
 import { backendURL } from "../backendapi";
@@ -7,8 +7,31 @@ const windowWidth = Dimensions.get('window').width;
 import { FontFamily, Color } from '../../GlobalStyles';
 
 const MyProfile =({ route }) => {
+  const [defaultRating, setdefaultRating] =useState(2)
+  const [maxRating, setmaxRating] =useState([1,2,3,4,5])
+  const [improvementText, setImprovementText] = useState('');
   const { patientId } = route.params;
   const [patientData, setPatientData] = useState({});
+  const starImgFilled = require('../../assets/images/star_filled.png')
+  const starImgCorner = require('../../assets/images/star_corner.png')
+  const CustomRatingBar = () => {
+    return (
+      <View style={styles.ratingBar}>
+        {maxRating.map((item, key) => (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            key={item}
+            onPress={() => setdefaultRating(item)}
+          >
+            <Image
+              style={styles.starImgStyle}
+              source={item <= defaultRating ? starImgFilled : starImgCorner}
+            />
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
     useEffect(() => {
         fetch(`${backendURL}/patientRouter/PatientProfile/${patientId}`)
             .then(response => response.json())
@@ -21,11 +44,11 @@ const MyProfile =({ route }) => {
             console.log(patientData)
     }, [patientId]);
     return (
-        <View style={styles.container01}>
+      <View style={styles.container01}>
          <View style = {styles.bgprofile}>
             <View style = {styles.textContainer}>
              <View style = {styles.profiledetails}>
-                <View styele = {styles.textbg}>
+                <View styele = {styles.textbg}>   
                 <Text style= {styles.textStyle}>Name: {patientData.name}</Text>
                 <Text style= {styles.textStyle}>Gender: {patientData.gender}</Text>
                 <Text style= {styles.textStyle}>Email: {patientData.email}</Text>
@@ -48,11 +71,25 @@ const MyProfile =({ route }) => {
         </TouchableOpacity>
         </View>
         <View style= {styles.feedpage}>
-
+            <Text style={styles.feedtext}> RATE YOUR EXPERIENCE</Text>
+            <CustomRatingBar />
+            <Text style={styles.feedtext}>Tell Us How We can Improve</Text>
+            <View style = {styles.textfeed}>
+            <TextInput
+            style={styles.inputBox}
+            multiline={true}
+            numberOfLines={4}
+            onChangeText={text => setImprovementText(text)}
+            value={improvementText}
+            placeholder="Enter your feedback..."
+          />
+            </View> 
+            <TouchableOpacity>
+            <Text style={styles.sendbutton}>Send</Text>
+            </TouchableOpacity>
         </View>
-
-</View>
-        </View>
+      </View>
+     </View>
 );
 }
 const styles = StyleSheet.create({
@@ -62,8 +99,46 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: 'white',
         flexDirection: 'column',
+      },
+      scrollViewContent: {
+        flexGrow: 1,
+    },
+      sendbutton:{
+       backgroundColor: '#5E9BF6',
+       color: 'white',
+       justifyContent: 'center',
+       alignItems: 'center',
+       fontSize: 14,
+       fontWeight: '700',
+       marginTop: windowWidth*0.02,
+       marginLeft: windowWidth*0.35,
+       width: windowWidth*0.20,
+       height: windowWidth*0.09,
+       paddingTop: windowWidth*0.02,
+       paddingLeft: windowWidth*0.05,
+       borderRadius: windowWidth*0.01,
+      },
+      ratingBar:{
+      paddingLeft: windowWidth*0.05,
+       flexDirection: 'row',
+      },
+      textfeed:{
+       backgroundColor: '#FBFBFB',
+       height: windowWidth*0.3,
+       marginLeft: windowWidth*0.045,
+       width: windowWidth*0.80,
+       borderRadius: windowWidth*0.03,
+      },
+      inputBox: {
+        borderColor: '#ccc',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
        
-
+      },
+      starImgStyle:{
+      width:40,
+      height: 40,
+      resizeMode: 'cover'
       },
       logbutton:{
       flexDirection: 'row'
@@ -116,9 +191,15 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         marginTop: 3,
       },
+      feedtext:{
+        fontFamily: "regular05",
+        fontSize: 15,
+        fontWeight: '700',
+        padding: windowWidth*0.05,
+        marginTop: 3,
+      },
       textbg:{
       flexDirection: 'column',
-    //   top: 0,
       },
       profiledetails:{
         flexDirection: 'row'
@@ -137,7 +218,7 @@ const styles = StyleSheet.create({
       },
       feedpage:{
         marginTop: windowWidth*0.09,
-        height: windowWidth*0.75,
+        height: windowWidth*0.85,
         backgroundColor: '#D1EDFC',
         borderRadius: windowWidth * 0.06,
       },
