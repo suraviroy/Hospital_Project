@@ -1,22 +1,51 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList,Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons, Ionicons } from 'react-native-vector-icons';
 import SearchAdmin from './SearchAdmin';
 import { useNavigation } from '@react-navigation/native';
 import HomeAdmin from './HomeAdmin';
+import * as FileSystem from 'expo-file-system';
+
 const windowWidth = Dimensions.get('window').width;
 
 const Home = () => {
     const navigation = useNavigation();
     const [searchText, setSearchText] = useState('');
+
     const handleAddAdmin = () => {
         navigation.navigate('AddAdmin');
     };
+
     const handleSearch = (text) => {
         setSearchText(text);
     };
 
+    const downloadFile = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/adminRouter/excelFile', {
+                method: 'GET',
+            });
+
+            const fileBlob = await response.blob();
+            const fileName = 'users.xlsx';
+
+            // Save the file to the app's document directory
+            const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+            const permissionResult = await FileSystem.requestWritePermissionsAsync();
+
+            if (permissionResult.granted) {
+                await FileSystem.writeAsStringAsync(fileUri, fileBlob, {
+                    encoding: FileSystem.EncodingType.Base64,
+                });
+                console.log('File downloaded successfully');
+            } else {
+                console.error('Write permission denied');
+            }
+        } catch (error) {
+            console.error('Error fetching file:', error);
+        }
+    };
 
     const renderHeader = () => (
         <View>
@@ -40,7 +69,7 @@ const Home = () => {
                     <Text style={styles.text567}> Add Admin</Text>
                 </TouchableOpacity>
                 <View styles={{ alignItems: "flex-end" }}>
-                    <TouchableOpacity >
+                    <TouchableOpacity onPress={downloadFile}>
                         <Ionicons name='settings-sharp' size={30} color='#5B5151' marginRight={20} />
                     </TouchableOpacity>
                 </View>
@@ -51,19 +80,19 @@ const Home = () => {
 
     return (
         <SafeAreaView style={styles.appbar033}>
-        <View style={styles.container}>
-            <View style={styles.headerContainer}>
-                {renderHeader()}
+            <View style={styles.container}>
+                <View style={styles.headerContainer}>
+                    {renderHeader()}
+                </View>
+                <FlatList
+                    data={[]}
+                    renderItem={({ item }) => null}
+                    keyExtractor={(item, index) => index.toString()}
+                    ListFooterComponent={<HomeAdmin searchText={searchText} />}
+                    style={styles.flatList}
+                />
             </View>
-            <FlatList
-                data={[]}
-                renderItem={({ item }) => null}
-                keyExtractor={(item, index) => index.toString()}
-                ListFooterComponent={<HomeAdmin searchText={searchText} />}
-                style={styles.flatList}
-            />
-        </View>
-    </SafeAreaView>
+        </SafeAreaView>
     );
 }
 

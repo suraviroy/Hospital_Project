@@ -25,7 +25,7 @@ const SearchList = ({ setSearchText }) => {
                     }}
                     value={searchTextLocal}
                     onChangeText={handleSearchChange}
-                    placeholder="Search now"
+                    placeholder="Search date"
                     clearButtonMode='always'
                 />
             </View>
@@ -40,12 +40,12 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderStyle: 'solid',
         borderWidth: 1,
-        borderColor: '#2A9988',
-        marginVertical: 16,
+        borderColor: '#35A9EA',
+        marginVertical: windowWidth*0.05,
         height: 50,
-        width: 380,
+        width: windowWidth*0.97,
         backgroundColor: "#FFFFFF",
-        marginTop: windowWidth*0.05,
+        marginTop: windowWidth*0.06,
     },
     searchWrapper012: {
         flex: 1,
