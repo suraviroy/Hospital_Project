@@ -44,7 +44,8 @@ const MyProfile =({ route }) => {
             console.log(patientData)
     }, [patientId]);
     return (
-      <View style={styles.container01}>
+      <SafeAreaView style={styles.container01}>
+        <ScrollView style={styles.scrollViewContent}>
          <View style = {styles.bgprofile}>
             <View style = {styles.textContainer}>
              <View style = {styles.profiledetails}>
@@ -89,16 +90,18 @@ const MyProfile =({ route }) => {
             </TouchableOpacity>
         </View>
       </View>
-     </View>
+      </ScrollView>
+     </SafeAreaView>
 );
 }
 const styles = StyleSheet.create({
     container01: {
         flex:1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        // alignItems: 'center',
+        // justifyContent: 'center',
         backgroundColor: 'white',
-        flexDirection: 'column',
+        // flexDirection: 'column',
+        marginBottom: windowWidth*0.05
       },
       scrollViewContent: {
         flexGrow: 1,
@@ -151,6 +154,7 @@ const styles = StyleSheet.create({
         borderRadius: windowWidth * 0.20,
       },
       bgprofile :{
+      marginTop: windowWidth*0.5,
       position: 'relative',
       height: windowWidth*0.80,
       top: -windowWidth*0.50,
@@ -195,7 +199,10 @@ const styles = StyleSheet.create({
         fontFamily: "regular05",
         fontSize: 15,
         fontWeight: '700',
-        padding: windowWidth*0.05,
+        paddingTop: windowWidth*0.03,
+        paddingLeft: windowWidth*0.03,
+        paddingRight: windowWidth*0.03,
+        paddingBottom: windowWidth*0.01,
         marginTop: 3,
       },
       textbg:{
@@ -205,6 +212,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
       },
       logout:{
+        marginLeft: windowWidth*0.05,
         height: windowWidth*0.10,
         backgroundColor:'#F5F4F4',
         borderRadius: windowWidth * 0.04,
@@ -221,13 +229,14 @@ const styles = StyleSheet.create({
         height: windowWidth*0.85,
         backgroundColor: '#D1EDFC',
         borderRadius: windowWidth * 0.06,
+        marginLeft: windowWidth*0.05,
       },
       feedprofile:{
-         height: windowWidth*0.75,
-         width: '90%',
+         height: windowWidth*0.96,
+         width: '95%',
          backgroundColor: 'white',
          marginTop: -windowWidth*0.40,
-        borderRadius: windowWidth * 0.06,
+         borderRadius: windowWidth * 0.05,
       },
 })
 export default MyProfile;
