@@ -8,6 +8,7 @@ import { backendURL } from "../backendapi";
 
 
 const ViewListURL = `${backendURL}/adminRouter/allpatientList`;
+const BasicDetailsURL = `${backendURL}/adminRouter/UpdateProfileNameId`;
 
 const PatientList = ({ searchText }) => {
     const navigation = useNavigation();
@@ -43,7 +44,14 @@ const PatientList = ({ searchText }) => {
     }, [searchText, patients]);
 
     const handleViewDetails = (patientId) => {
-        navigation.navigate('PatientDetails');
+        fetch(`${BasicDetailsURL}/${patientId}`)
+        .then(response => response.json())
+        .then(data => {
+            navigation.navigate('PatientNavigation', { details: data[0] });
+        })
+        .catch(error => {
+            console.error('Error fetching patient details:', error);
+        });
     };
 
     const renderPatientItem = ({ item }) => (
@@ -64,7 +72,7 @@ const PatientList = ({ searchText }) => {
             </View>
             <TouchableOpacity
                 style={styles.viewButton2451}
-                onPress={() => handleViewDetails(item.id)}
+                onPress={() => handleViewDetails(item.patientId)}
             >
                 <Text style={styles.viewDetails}>View Details</Text>
             </TouchableOpacity>

@@ -197,6 +197,8 @@ const DiseaseForm = ({ patientId }) => {
 
         if (response.status === 200) {
           console.log("Data sent successfully");
+          alert('Patient Disease Updated Successfully');
+          navigation.navigate('ViewList');
         } else {
           console.error("Failed to send data:", response.status);
         }
