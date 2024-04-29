@@ -18,6 +18,7 @@ import BasicDetails from './src/Register/RegisterPatient/BasicDetails';
 import PatientBasicDetails from './src/Registration Panel/PatientBasicDetails';
 import RegisteredPatient from './src/Register/RegisterPatient/RegisteredPatient';
 import DiseaseForm from './src/Register/RegisterPatient/DiseaseForm';
+import PatientDetails from './src/ViewList/PatientDetails';
 
 
 const Stack = createNativeStackNavigator();
@@ -74,7 +75,7 @@ function App() {
         <Stack.Screen name="PatientBasicDetails" component={PatientBasicDetails}/>
         <Stack.Screen name="RegisterPatient" component={RegisteredPatient}/>
         <Stack.Screen name="DiseaseForm" component={DiseaseForm}/>
-
+        <Stack.Screen name="PatientDetails" component={PatientDetails}/>
 
 
       </Stack.Navigator>

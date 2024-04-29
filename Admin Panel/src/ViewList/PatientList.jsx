@@ -42,8 +42,8 @@ const PatientList = ({ searchText }) => {
         setFilteredPatients(filtered);
     }, [searchText, patients]);
 
-    const handleViewDetails = (id) => {
-        navigation.navigate('#');
+    const handleViewDetails = (patientId) => {
+        navigation.navigate('PatientDetails');
     };
 
     const renderPatientItem = ({ item }) => (
