@@ -489,8 +489,8 @@ const UpdatedDetails = ({patientId}) => {
               </Text>
             )}
             {importantHistory.pastSurgery.typeOfSurgery !== "NA" && (
-              <Text style={styles.subHead2}>Past Surgery: {importantHistory.pastSurgery.typeOfSurgery}
-              {' '}  Year Of Surgery:  {importantHistory.pastSurgery.year}  </Text>
+              <Text style={styles.subHead3}>Past Surgery: {importantHistory.pastSurgery.typeOfSurgery}
+              {'\n'}Year Of Surgery:  {importantHistory.pastSurgery.year}  </Text>
            )}
              {importantHistory.pastDisease.typeOfDisease !== "NA" && (
               <Text style={styles.subHead2}>Past Disease: {importantHistory.pastDisease.typeOfDisease}
@@ -505,7 +505,7 @@ const UpdatedDetails = ({patientId}) => {
                </Text>
            )}
              {importantHistory.exposure.dust.duration.numericValue !== 0 && (
-              <Text style={styles.subHead2}>Exposure: Dust{"\n"}
+              <Text style={styles.subHead3}>Exposure: Dust{"\n"}
                 Duration:  {importantHistory.exposure.dust.duration.numericValue}
                 {' '} Unit:  {importantHistory.exposure.dust.duration.unit}  
                </Text>
