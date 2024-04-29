@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList,Dimensions, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList,Dimensions, ScrollView,Linking } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,20 +12,19 @@ const PatientDetails = () => {
     const [existingDeseases,setexistingDeseases] = useState(null)
     const [problemForConsultation,setproblemForConsultation] = useState(null)
     const [pastHospitalization,setpastHospitalization] = useState(null)
+    const [statusOfSickness, setStatusOfSickness] = useState(null);
+   const [catScore, setCatScore] = useState(0);
     useEffect(() => {
-      // Fetch data from the API
+      
       fetchData();
     }, []);
-  const openPDF = async (pdfUrl) => {
-  try {
-    await Linking.openURL(pdfUrl);
-  } catch (error) {
-    console.error('Error opening PDF:', error);
-  }
-};
+    const handleDischargeCertificatePress = (url) => {
+      Linking.openURL(url);
+    };
+  
     const fetchData = async () => {
       try {
-        // Fetch data from the API
+        
         const response = await fetch(`${backendURL}/adminRouter/patientDisease/4504`);
         const data = await response.json();
   
@@ -34,10 +33,14 @@ const PatientDetails = () => {
         const existingDeseasesData = data[0]?.visitCount[0]?.existingDeseases;
         const problemForConsultationData = data[0]?.visitCount[0]?.problemForConsultation;
         const pastHospitalizationData = data[0]?.visitCount[0]?.pastHospitalization;
+        const statusOfSicknessData = data[0]?.visitCount[0]?.statusOfSickness;
+        const catScoreData = data[0]?.visitCount[0]?.catScore;
         setImportantHistory(importantHistoryData);
         setexistingDeseases(existingDeseasesData);
         setproblemForConsultation(problemForConsultationData);
         setpastHospitalization(pastHospitalizationData)
+        setStatusOfSickness(statusOfSicknessData);
+        setCatScore(catScoreData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -559,27 +562,34 @@ const PatientDetails = () => {
               {' '}  Unit :  {importantHistory.exposure.chemical.duration.unit}  
                </Text>
            )}
-            {/* Continue checking other fields as needed */}
           </View>
         )}
          </View>
          <View style={styles.exiDisContainer}>
-         {pastHospitalization && pastHospitalization.length > 0 &&(
-         <Text style={styles.texthead2}>Past Hospitalization</Text>)}
-         {pastHospitalization && pastHospitalization.length > 0 && (
-      <View style={styles.backField}>
-    {pastHospitalization.map((hospitalization, index) => (
-      <View key={index} style={styles.hospitalizationItem}>
-        <Text style={styles.subHead5}>Year of Hospitalization: {hospitalization.yearOfHospitalization}
-        Days Hospitalized: {hospitalization.days}
-        Reason: {hospitalization.reason}
-        Discharge Certificate: {hospitalization.dischargeCertificate}</Text>
-      </View>
-    ))}
-  </View>
-)}
-</View>
-         </View>
+        {pastHospitalization && pastHospitalization.length > 0 && (
+          <Text style={styles.texthead2}>Past Hospitalization</Text>
+        )}
+        {pastHospitalization && pastHospitalization.length > 0 && (
+          <View style={styles.backField}>
+            {pastHospitalization.map((hospitalization, index) => (
+              <View key={index} style={styles.hospitalizationItem}>
+                <Text style={styles.subHead5}>
+                  Year of Hospitalization: {hospitalization.yearOfHospitalization}{'\n'}
+                  Hospitalized for : {hospitalization.days}  Days{'\n'}
+                  Reason: {hospitalization.reason}{'\n'}
+                  Discharge Certificate:{'       '}
+                  <TouchableOpacity onPress={() => handleDischargeCertificatePress(hospitalization.dischargeCertificate)}>
+                    <Text style={{backgroundColor: '#B21515', borderRadius: 4,padding: 7, color: 'white', fontSize: 12, fontWeight: '700'}}>Open PDF</Text>
+                  </TouchableOpacity>
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
+   </View>
+        <Text style={styles.subHead6}>Status of Sickness: {statusOfSickness}</Text>
+        <Text style={styles.subHead6}>CAT Score: {catScore}</Text>
+        </View>
         </ScrollView>
       </SafeAreaView>
     );
@@ -619,6 +629,13 @@ texthead2: {
   fontSize: 17,
   marginTop: windowWidth*0.02,
   marginBottom: windowWidth*0.02,
+},
+texthead3: {
+  marginLeft: windowWidth*0.03,
+  fontWeight: "600",
+  fontFamily: 'extrabold01',
+  fontSize: 14,
+  marginTop: windowWidth*0.01,
 },
 subHead:{
     width: "95%",
@@ -691,6 +708,24 @@ subHead5:{
   marginTop: windowWidth*0.01,
   width: "95%",
   height: windowWidth * 0.28,
+  backgroundColor: "#e3e3e3",
+  paddingTop: windowWidth * 0.02,
+  borderRadius: windowWidth*0.01,
+  borderWidth: 1.5,
+  borderColor: '#1E7568',
+  backgroundColor: "#D3F1ED",
+  paddingLeft: 15,
+  paddingRight: 15,
+  fontFamily: 'bold02',
+  fontWeight: "700",
+  paddingBottom: windowWidth * 0.01,
+  fontSize: 15,   
+},
+subHead6:{
+  marginTop: windowWidth*0.01,
+  width: "95%",
+  height: windowWidth * 0.10,
+  marginLeft: windowWidth*0.01,
   backgroundColor: "#e3e3e3",
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
