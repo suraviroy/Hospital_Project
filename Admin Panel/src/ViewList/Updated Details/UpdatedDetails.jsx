@@ -14,6 +14,7 @@ const UpdatedDetails = ({patientId}) => {
     const [pastHospitalization,setpastHospitalization] = useState(null)
     const [statusOfSickness, setStatusOfSickness] = useState(null);
    const [catScore, setCatScore] = useState(0);
+   const [coordinator,setcoordinator]=useState(null);
     useEffect(() => {
       
       fetchData();
@@ -35,12 +36,14 @@ const UpdatedDetails = ({patientId}) => {
         const pastHospitalizationData = data[0]?.visitCount[0]?.pastHospitalization;
         const statusOfSicknessData = data[0]?.visitCount[0]?.statusOfSickness;
         const catScoreData = data[0]?.visitCount[0]?.catScore;
+        const coordinatordata = data[0]?.coordinator;
         setImportantHistory(importantHistoryData);
         setexistingDeseases(existingDeseasesData);
         setproblemForConsultation(problemForConsultationData);
         setpastHospitalization(pastHospitalizationData)
         setStatusOfSickness(statusOfSicknessData);
         setCatScore(catScoreData);
+        setcoordinator(coordinatordata);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -50,6 +53,7 @@ const UpdatedDetails = ({patientId}) => {
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollContent}>
         <View style={styles.profileContainer}>
+        <Text style={styles.subHead6}>Coordinator : {coordinator}</Text>
         <View style={styles.exiDisContainer}>
         {existingDeseases && (
           <View>
@@ -611,7 +615,7 @@ const styles = StyleSheet.create({
     profileContainer: {
         // alignItems: 'center',
         marginLeft: windowWidth*0.01,
-        // marginTop: windowWidth*0.3,
+        marginTop: windowWidth*0.05,
     },
 backField: {
     marginLeft: windowWidth*0.02,
@@ -640,14 +644,11 @@ texthead3: {
 subHead:{
     width: "95%",
     height: windowWidth * 0.10,
-    backgroundColor: "#e3e3e3",
+    
     marginTop: windowWidth * 0.01,
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
-    borderWidth: 1.5,
-    borderColor: '#1E7568',
-    // alignSelf: "center",
-    backgroundColor: "#D3F1ED",
+    backgroundColor: "#D9D9D9",
     paddingLeft: 15,
     paddingRight: 15,
     fontFamily: 'bold02',
@@ -658,12 +659,9 @@ subHead2:{
     marginTop: windowWidth*0.01,
     width: "95%",
     height: windowWidth * 0.10,
-    backgroundColor: "#e3e3e3",
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
-    borderWidth: 1.5,
-    borderColor: '#1E7568',
-    backgroundColor: "#D3F1ED",
+    backgroundColor: "#D9D9D9",
     paddingLeft: 15,
     paddingRight: 15,
     fontFamily: 'bold02',
@@ -677,9 +675,7 @@ subHead3:{
     backgroundColor: "#e3e3e3",
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
-    borderWidth: 1.5,
-    borderColor: '#1E7568',
-    backgroundColor: "#D3F1ED",
+    backgroundColor: "#D9D9D9",
     paddingLeft: 15,
     paddingRight: 15,
     fontFamily: 'bold02',
@@ -694,9 +690,7 @@ subHead4:{
   backgroundColor: "#e3e3e3",
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
-  borderWidth: 1.5,
-  borderColor: '#1E7568',
-  backgroundColor: "#D3F1ED",
+  backgroundColor: "#D9D9D9",
   paddingLeft: 15,
   paddingRight: 15,
   fontFamily: 'bold02',
@@ -711,9 +705,7 @@ subHead5:{
   backgroundColor: "#e3e3e3",
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
-  borderWidth: 1.5,
-  borderColor: '#1E7568',
-  backgroundColor: "#D3F1ED",
+  backgroundColor: "#D9D9D9",
   paddingLeft: 15,
   paddingRight: 15,
   fontFamily: 'bold02',
@@ -726,15 +718,14 @@ subHead6:{
   width: "95%",
   height: windowWidth * 0.10,
   marginLeft: windowWidth*0.01,
-  backgroundColor: "#e3e3e3",
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
-  borderWidth: 1.5,
-  borderColor: '#1E7568',
-  backgroundColor: "#D3F1ED",
+  // borderWidth: 1,
+  // borderColor: '#000000',
+  backgroundColor: "#D9D9D9",
   paddingLeft: 15,
   paddingRight: 15,
-  fontFamily: 'bold02',
+  fontFamily: 'regular89',
   fontWeight: "700",
   paddingBottom: windowWidth * 0.01,
   fontSize: 15,   
