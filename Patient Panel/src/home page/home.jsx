@@ -25,7 +25,6 @@ const Home = ({ route }) => {
         .catch(error => {
             console.error('Error fetching patient basic details:', error);
         });
-        console.log(patientData)
 }, [patientId]);
   return (
     <View style={styles.container}>
