@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Start from './src/starting page/start';
 import Login from './src/login page/login';
@@ -9,13 +8,11 @@ import { useCallback } from 'react';
 import Home from './src/home page/home';
 import Notification from './src/Notification/Notification';
 import Reports from './src/Reports/reports';
-
-
 import BottomNavigation from './src/navigation/BottomNavigation';
-
 import MyProfile from './src/MyProfile/MyProfile';
-
-
+import RequestDetails from './src/Request page/RequestDetails';
+import ActionOk from './src/Request page/ActionOk';
+import ActionError from './src/Request page/ActionError';
 
 const Stack = createNativeStackNavigator();
 
@@ -46,36 +43,34 @@ function App() {
     bold01: require('./assets/fonts/Lato-Bold.ttf'),
     black: require('./assets/fonts/Lato-Black.ttf'),
     light: require('./assets/fonts/Lato-Light.ttf'),
-    
   });
+
   const onLayoutRootView = useCallback(async () => {
-    if(fontsLoaded){
+    if (fontsLoaded) {
       await Splashscreen.hideAsync();
     }
   }, [fontsLoaded]);
-  if(!fontsLoaded){
+
+  if (!fontsLoaded) {
     return null;
   }
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Start" component={Start}/>
+        <Stack.Screen name="Start" component={Start} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Notification" component={Notification}  />
-        
+        <Stack.Screen name="Notification" component={Notification} />
         <Stack.Screen name="MyProfile" component={MyProfile} />
         <Stack.Screen name="Reports" component={Reports} />
-        <Stack.Screen name="BottomNavigation" component={BottomNavigation}/>
-        
-       
-
-
+        <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+        <Stack.Screen name="RequestDetails" component={RequestDetails} />
+        <Stack.Screen name="ActionOk" component={ActionOk} />
+        <Stack.Screen name="ActionError" component={ActionError} />
       </Stack.Navigator>
     </NavigationContainer>
-   
   );
 }
 
 export default App;
-

@@ -1,51 +1,83 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert, Platform, PermissionsAndroid } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons, Ionicons } from 'react-native-vector-icons';
 import SearchAdmin from './SearchAdmin';
 import { useNavigation } from '@react-navigation/native';
 import HomeAdmin from './HomeAdmin';
 import * as FileSystem from 'expo-file-system';
+import { backendURL } from "../backendapi";
+import { fromByteArray } from 'base64-js';
+import * as Permissions from 'expo-permissions';
 
 const windowWidth = Dimensions.get('window').width;
 
 const Home = () => {
     const navigation = useNavigation();
     const [searchText, setSearchText] = useState('');
-
     const handleAddAdmin = () => {
         navigation.navigate('AddAdmin');
     };
-
     const handleSearch = (text) => {
         setSearchText(text);
     };
-
-    const downloadFile = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/adminRouter/excelFile', {
-                method: 'GET',
-            });
-
-            const fileBlob = await response.blob();
-            const fileName = 'users.xlsx';
-
-            // Save the file to the app's document directory
-            const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-            const permissionResult = await FileSystem.requestWritePermissionsAsync();
-
-            if (permissionResult.granted) {
-                await FileSystem.writeAsStringAsync(fileUri, fileBlob, {
-                    encoding: FileSystem.EncodingType.Base64,
-                });
-                console.log('File downloaded successfully');
-            } else {
-                console.error('Write permission denied');
-            }
-        } catch (error) {
-            console.error('Error fetching file:', error);
+    const requestStoragePermission = async () => {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status !== 'granted') {
+            Alert.alert('Permission not granted to access storage');
         }
     };
+
+    const downloadExcel = async () => {
+        try {
+            console.log("Backend URL:", backendURL);
+            const response = await fetch(`${backendURL}/adminRouter/excelFile`);
+            if (!response.ok) {
+                throw new Error('Failed to download Excel file');
+            }
+
+            const fileData = await response.arrayBuffer();
+            const fileName = 'users.xlsx'; // Change the file name as needed
+
+            // Save the file to the device's Downloads directory
+            const downloadDirectory = FileSystem.downloadDirectoryUri ? FileSystem.downloadDirectoryUri : FileSystem.documentDirectory + 'Download/';
+            await FileSystem.makeDirectoryAsync(downloadDirectory, { intermediates: true });
+
+            const fileUri = `${downloadDirectory}${fileName}`;
+            console.log("File URI:", fileUri);
+
+            const bytes = new Uint8Array(fileData);
+            const base64Data = fromByteArray(bytes);
+
+            await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+                encoding: FileSystem.EncodingType.Base64,
+                //name: useScrollToTop.xlsx
+            });
+
+            // Open the downloaded file with a compatible app
+            if (Platform.OS === 'android') {
+                const granted = await PermissionsAndroid.requestMultiple([
+                    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                    PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+                ]);
+
+                if (
+                    granted['android.permission.WRITE_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED &&
+                    granted['android.permission.READ_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED
+                ) {
+                    Alert.alert('Download Successful', 'Excel file has been downloaded to your device\'s Downloads directory.');
+                } else {
+                    Alert.alert('Permission Denied', 'You need to grant permission to access the Downloads directory.');
+                }
+            } else {
+                Alert.alert('Download Successful', 'Excel file has been downloaded. You can find it in the Downloads directory.');
+            }
+        } catch (error) {
+            console.error('Error downloading Excel file:', error);
+            Alert.alert('Download Failed', 'Failed to download Excel file.');
+        }
+    };
+
 
     const renderHeader = () => (
         <View>
@@ -53,10 +85,12 @@ const Home = () => {
                 <View style={styles.appBar012}>
                     <MaterialIcons name='local-hospital' size={40} color={'#730404'} />
                     <Text style={styles.text012}>Institute of Pulmocare & {'\n'}Research</Text>
-                    <View styles={{ alignItems: "flex-end" }}>
-                        <TouchableOpacity styles={{ marginLeft: 50 }}>
+                    <View style={{ alignItems: "flex-end" }}>
+                        <TouchableOpacity style={{ marginLeft: 50 }}>
                             <Ionicons name='chatbubble-ellipses-sharp' size={30} color='#2A9988' />
                         </TouchableOpacity>
+
+
                         <View style={styles.ChatCount012}>
                             <Text style={styles.chatNumber012}>8</Text>
                         </View>
@@ -68,8 +102,8 @@ const Home = () => {
                 <TouchableOpacity style={styles.button456} onPress={handleAddAdmin}>
                     <Text style={styles.text567}> Add Admin</Text>
                 </TouchableOpacity>
-                <View styles={{ alignItems: "flex-end" }}>
-                    <TouchableOpacity onPress={downloadFile}>
+                <View style={{ alignItems: "flex-end" }}>
+                    <TouchableOpacity onPress={downloadExcel}>
                         <Ionicons name='settings-sharp' size={30} color='#5B5151' marginRight={20} />
                     </TouchableOpacity>
                 </View>
@@ -101,7 +135,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
-        
+
     },
     headerContainer: {
         paddingHorizontal: 3,
