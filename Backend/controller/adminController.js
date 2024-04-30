@@ -1,4 +1,5 @@
 import PatientSchema from "../model/patientSchema.js";
+import RequestSchema from "../model/requestSchema.js";
 import moment from "moment-timezone";
 import excelJS from 'exceljs';
 
@@ -300,7 +301,7 @@ export const allpatientList = async (req, res) => {
 };
 
 
-export const patientDisease= async (req, res) => {
+export const patientDisease = async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -314,7 +315,7 @@ export const patientDisease= async (req, res) => {
         patientId: id,
       },
       {
-        visitCount:  { $arrayElemAt: ["$visitCount", 0] },
+        visitCount: { $arrayElemAt: ["$visitCount", 0] },
         coordinator: 1,
         _id: 0,
       }
@@ -324,6 +325,58 @@ export const patientDisease= async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+
+export const notification = async (req, res) => {
+  try {
+    const requestedPatients = await RequestSchema.find({},
+      {
+        requestId: 1,
+        patientId: 1,
+        status: 1,
+        date: 1,
+        time: 1,   
+        request: 1,
+        _id: 0
+      });
+
+    // Array to hold details for all patients
+    const patientDetailsArray = [];
+
+    // Iterate through each requested patient
+    for (const patient of requestedPatients) {
+      const patientId = patient.patientId;
+
+      // Fetch details for the current patient ID from another schema (assuming PatientSchema)
+      const patientDetails = await PatientSchema.findOne({ patientId });
+
+      if (patientDetails) {
+
+        const patientObject = {
+          requestId: patient.requestId,
+          patientId: patient.patientId,
+          status: patient.status,
+          date: patient.date,
+          time: patient.time,
+          request: patient.request,
+          name: patientDetails.name,
+          image: patientDetails.image
+        };
+
+        // Push the patient object to the array
+        patientDetailsArray.push(patientObject);
+      }
+    }
+
+    // Send the array of patient details as the response
+    patientDetailsArray.reverse();
+    res.status(200).json(patientDetailsArray);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 
 
 export const excelFile = async (req, res) => {
@@ -828,13 +881,13 @@ export const excelFile = async (req, res) => {
 
         Hospitalization: 'Hospitalization',
 
-        pastHospitalizationYear: visit?.visitCount[0]?.pastHospitalization[0]?.yearOfHospitalization ,
-        hospitalizationDays: visit?.visitCount[0]?.pastHospitalization[0]?.days ,
-        hospitalizationReason: visit?.visitCount[0]?.pastHospitalization[0]?.reason ,
+        pastHospitalizationYear: visit?.visitCount[0]?.pastHospitalization[0]?.yearOfHospitalization,
+        hospitalizationDays: visit?.visitCount[0]?.pastHospitalization[0]?.days,
+        hospitalizationReason: visit?.visitCount[0]?.pastHospitalization[0]?.reason,
 
-        statusOfSickness: visit?.visitCount[0]?.statusOfSickness ,
-        catScore: visit?.visitCount[0]?.catScore ,
-        
+        statusOfSickness: visit?.visitCount[0]?.statusOfSickness,
+        catScore: visit?.visitCount[0]?.catScore,
+
       };
 
       console.log(visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.numericValue)
