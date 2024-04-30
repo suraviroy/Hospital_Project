@@ -38,12 +38,17 @@ export const login = async (req, res) => {
   try {
     const existingUser = await PatientSchema.findOne({ patientId });
     if (!existingUser)
-      return res.status(404).json({ status: "error", message: "Patient does not exist" });
+      return res
+        .status(404)
+        .json({ status: "error", message: "Patient does not exist" });
 
     if (password !== existingUser.password)
-      return res.status(401).json({ status: "error", message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ status: "error", message: "Invalid credentials" });
 
-    const { name, gender, age, contactNumber, bloodGroup, image } = existingUser;
+    const { name, gender, age, contactNumber, bloodGroup, image } =
+      existingUser;
 
     res.status(200).json({
       status: "success",
@@ -61,7 +66,6 @@ export const login = async (req, res) => {
     res.status(500).json({ status: "error", message: "Internal server error" });
   }
 };
-
 
 export const HomePageDetails = async (req, res) => {
   try {
@@ -177,17 +181,16 @@ export const createRequest = async (req, res) => {
     const desiredTimezone = 'Asia/Kolkata';
     const currentDate = moment().tz(desiredTimezone).format('MMMM D, YYYY');
     const currentTime = moment().tz(desiredTimezone).format('hh:mm A');
-
-    const { patientId, hospitalization, demise, ...rest } = req.body.requestCount;
-
-    const isCritical = hospitalization || demise;
+    
+    const { patientId, hospitalization, demise, ...rest } = req.body;
+    const isCritical = hospitalization?.type || demise?.type;
     const status = isCritical ? 'Critical' : 'Normal';
 
-    // Find the highest existing requestId
-    const highestRequestId = await RequestSchema.findOne().sort('-requestCount.requestId');
+    // Get the total count of documents in the collection
+    const documentCount = await RequestSchema.countDocuments();
 
     // Determine the next requestId
-    const nextRequestId = highestRequestId ? highestRequestId.requestCount.requestId + 1 : 1;
+    const nextRequestId = documentCount + 1;
 
     const newRequest = {
       date: currentDate,
@@ -201,10 +204,10 @@ export const createRequest = async (req, res) => {
     };
 
     // Create a new document with the new request
-    const requestDocument = new RequestSchema({ requestCount: newRequest });
+    const requestDocument = new RequestSchema(newRequest);
     const savedRequest = await requestDocument.save();
 
-    res.status(201).json(savedRequest);
+    res.status(200).json(savedRequest);
     console.log('New document created');
   } catch (error) {
     res.status(500).json({ error: error.message });
