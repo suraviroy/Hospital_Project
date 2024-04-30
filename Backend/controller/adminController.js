@@ -315,6 +315,7 @@ export const patientDisease= async (req, res) => {
       },
       {
         visitCount:  { $arrayElemAt: ["$visitCount", 0] },
+        coordinator: 1,
         _id: 0,
       }
     );
@@ -349,6 +350,7 @@ export const excelFile = async (req, res) => {
       { header: "Local Contact Name", key: "localContactName" },
       { header: "Local Contact Relation", key: "localContactRelation" },
       { header: "Local Contact Number", key: "localContactNumber" },
+      { header: "Coordinator", key: "coordinator" },
 
       { header: "Visit Date", key: "visitDate" },
       { header: "Visit Time", key: "visitTime" },
@@ -604,6 +606,7 @@ export const excelFile = async (req, res) => {
         consultingDoctor: visit.consultingDoctor,
         localContactName: visit.localContactName,
         localContactRelation: visit.localContactRelation,
+        coordinator: visit.coordinator,
         localContactNumber: visit.localContactNumber,
         visitDate: visit?.visitCount[0]?.visitDate,
         visitTime: visit?.visitCount[0]?.visitTime,
