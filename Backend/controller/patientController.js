@@ -178,13 +178,21 @@ export const createRequest = async (req, res) => {
     const currentDate = moment().tz(desiredTimezone).format('MMMM D, YYYY');
     const currentTime = moment().tz(desiredTimezone).format('hh:mm A');
 
-    const { patientId, hospitalization, demise, ...rest } = req.body;
+    const { patientId, hospitalization, demise, ...rest } = req.body.requestCount;
+
     const isCritical = hospitalization || demise;
     const status = isCritical ? 'Critical' : 'Normal';
+
+    // Find the highest existing requestId
+    const highestRequestId = await RequestSchema.findOne().sort('-requestCount.requestId');
+
+    // Determine the next requestId
+    const nextRequestId = highestRequestId ? highestRequestId.requestCount.requestId + 1 : 1;
 
     const newRequest = {
       date: currentDate,
       time: currentTime,
+      requestId: nextRequestId,
       patientId,
       status,
       hospitalization,
@@ -192,20 +200,13 @@ export const createRequest = async (req, res) => {
       ...rest,
     };
 
-    const existingRequest = await RequestSchema.findOne({ "requestCount.patientId": patientId });
+    // Create a new document with the new request
+    const requestDocument = new RequestSchema({ requestCount: newRequest });
+    const savedRequest = await requestDocument.save();
 
-    if (existingRequest) {
-      existingRequest.requestCount.push(newRequest);
-      const updatedRequest = await existingRequest.save();
-      res.status(200).json(updatedRequest);
-      console.log('Request pushed to existing document');
-    } else {
-      const initialRequest = new RequestSchema({ requestCount: [newRequest] });
-      const savedRequest = await initialRequest.save();
-      res.status(201).json(savedRequest);
-      console.log('New document created');
-    }
+    res.status(201).json(savedRequest);
+    console.log('New document created');
   } catch (error) {
-    res.status(500).json({ error: 'An error occurred while creating the request' });
+    res.status(500).json({ error: error.message });
   }
 };
