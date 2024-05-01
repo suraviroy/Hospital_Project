@@ -377,6 +377,24 @@ export const notification = async (req, res) => {
   }
 };
 
+export const action = async (req, res) => {
+  try {
+    const id = req.params.rid;
+    const action = req.body.action;
+
+    const requestExists = await RequestSchema.exists({ requestId: id });
+    if (!requestExists) {
+      return res.status(404).json({ message: "Patient request not found" });
+    }
+
+    const updatedRequest =await RequestSchema.updateOne({ requestId: id }, { action: action } );
+    
+    res.status(200).json({ message: "updated" });
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 
 export const excelFile = async (req, res) => {

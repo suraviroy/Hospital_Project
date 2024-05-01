@@ -183,7 +183,7 @@ export const createRequest = async (req, res) => {
     const currentTime = moment().tz(desiredTimezone).format('hh:mm A');
     
     const { patientId, hospitalization, demise, ...rest } = req.body;
-    const isCritical = hospitalization?.type || demise?.type;
+    const isCritical = hospitalization?.isSelected === "yes" || demise?.isSelected === "yes";
     const status = isCritical ? 'Critical' : 'Normal';
 
     // Get the total count of documents in the collection
@@ -203,13 +203,79 @@ export const createRequest = async (req, res) => {
       ...rest,
     };
 
-    // Create a new document with the new request
-    const requestDocument = new RequestSchema(newRequest);
-    const savedRequest = await requestDocument.save();
+    //this console.log prints the new request object perfectly with all the fields
+    console.log(newRequest)
 
-    res.status(200).json(savedRequest);
+    // Create a new document with the new request
+    const requestDocument = await RequestSchema.create(newRequest);
+    // const savedRequest = await requestDocument.save();
+
+    res.status(200).json(requestDocument);
     console.log('New document created');
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const allrequest = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const patientExists = await RequestSchema.exists({ patientId: id });
+    if (!patientExists) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const patientRequest = await RequestSchema.find(
+      {
+        patientId: id,
+      },
+      {
+        date:1,
+        time: 1,
+        requestId: 1,
+        request: 1,
+        _id: 0,
+      }
+    );
+    res.status(200).json(patientRequest);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const request = async (req, res) => {
+  try {
+    const id = req.params.rid;
+
+    const requestExists = await RequestSchema.exists({ requestId: id });
+    if (!requestExists) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+
+    const patientRequest = await RequestSchema.find(
+      {
+        requestId: id,
+      },
+      {
+        date:1,
+        time: 1,
+        exacrebation: 1,
+        newProblem: 1,
+        newConsultation: 1,
+        hospitalization:1,
+        disabilities: 1,
+        demise: 1,
+        report: 1,
+        request: 1,
+        action: 1,
+        _id: 0,
+      }
+    );
+    res.status(200).json(patientRequest);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
