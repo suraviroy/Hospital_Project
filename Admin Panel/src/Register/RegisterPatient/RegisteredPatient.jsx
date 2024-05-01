@@ -32,6 +32,7 @@ const RegisteredPatient = ({ searchText }) => {
     const navigation = useNavigation();
     const [patients, setPatients] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetch(PatientListURL)
@@ -39,6 +40,7 @@ const RegisteredPatient = ({ searchText }) => {
             .then(data => {
                 setPatients(data);
                 setFilteredPatients(data); 
+                setLoading(false);
             })
             .catch(error => {
                 console.error('Error fetching Patient list:', error);
@@ -63,6 +65,13 @@ const RegisteredPatient = ({ searchText }) => {
                 console.error('Error fetching patient details:', error);
             });
     };
+    if (loading) {
+        return <Text style={styles.text45}>Loading...</Text>;
+    }
+    
+    if (filteredPatients.length === 0) {
+        return <Text style={styles.text45}>No Patients Left to update!!</Text>;
+    }
 
     return (
         <SafeAreaView style={styles.regPatCon13}>
@@ -89,8 +98,14 @@ const styles = StyleSheet.create({
         paddingTop: -windowWidth*0.13,
         
     },
+    text45:{
+        marginTop: windowWidth*0.05,
+        fontSize:18,
+        fontFamily: 'bold01',
+        marginLeft: 20,
+    },
     regpatView13: {
-        width: windowWidth * 1,
+        width: windowWidth * 0.95,
         height: windowWidth * 0.27,
         backgroundColor: '#fff',
         alignContent: 'center',
@@ -98,6 +113,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderRadius: 10,
         elevation: 5,
+        marginLeft: windowWidth*0.03
     },
     regpatImage13: {
         width: 80,
@@ -135,7 +151,7 @@ const styles = StyleSheet.create({
         height: 34,
         borderRadius: 5,
         marginTop: 30,
-        marginLeft: windowWidth*0.7,
+        marginLeft: windowWidth*0.65,
         backgroundColor: '#2A9988',
     },
     update13: {

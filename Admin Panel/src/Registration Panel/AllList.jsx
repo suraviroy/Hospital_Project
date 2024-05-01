@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
         
     },
     patientView2451: {
-        width: windowWidth - 15, 
+        width: windowWidth * 0.95,  
         height: windowWidth * 0.4,
         backgroundColor: '#fff',
         alignSelf: 'center',
@@ -112,12 +112,12 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     patientId2451: {
-        width: windowWidth*0.29,
+        width: windowWidth*0.26,
         height: 30,
         backgroundColor: '#85DBCD',
         borderTopLeftRadius: 12,
         borderBottomLeftRadius: 12,
-        marginLeft: 0,
+        marginLeft: windowWidth*0.020,
         marginTop: 7,
         alignContent: 'center',
         textAlignVertical: 'center',
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderRadius: 5,
         marginTop: 70,
-        marginLeft: 260,
+        marginLeft: windowWidth*0.65,
     },
     viewDetails: {
         color: '#077547',

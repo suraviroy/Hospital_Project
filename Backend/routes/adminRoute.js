@@ -10,7 +10,8 @@ import {
   patientEachVistDetails,
   allpatientList,
   patientDisease,
-  excelFile
+  excelFile,
+  notification
 } from "../controller/adminController.js";
 const adminRouter = express.Router();
 
@@ -24,5 +25,6 @@ adminRouter.post("/patientEachVisitDetails/:id", patientEachVistDetails);
 adminRouter.get("/allpatientList", allpatientList);
 adminRouter.get("/patientDisease/:id", patientDisease);
 adminRouter.get("/excelFile", excelFile);
+adminRouter.get("/notification", notification);
 
 export default adminRouter;
