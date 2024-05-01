@@ -215,7 +215,6 @@ export const createRequest = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-<<<<<<< HEAD
 };
 
 export const allrequest = async (req, res) => {
@@ -278,6 +277,5 @@ export const request = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-=======
-};
->>>>>>> 6eaaabbf659ed87314286ed478ddf9ee98df38aa
+
+
