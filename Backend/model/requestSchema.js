@@ -55,6 +55,7 @@ const requestSchema = new mongoose.Schema({
       default: "NA",
     },
     details: { type: String, default: "NA" },
+    certificate :{type: String, default: "NA"},
   },
   request: { type: String, default: "NA" },
   action: { type: String, default: "NA" },
