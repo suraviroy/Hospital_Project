@@ -10,9 +10,6 @@ const Action = () => {
   const navigation = useNavigation();
   const [selectedOption, setSelectedOption] = useState(null);
 
-  const buttonMargin = windowWidth * 0.02; 
-  const leftRightMargin = windowWidth * 0.04; 
-
   const options = [
     "Start oxygen inhalation",
     "Rush to nearest emergency and hospitalization & inform",
@@ -57,28 +54,6 @@ const Action = () => {
         <Text style={styles.title}>Request Details</Text>
       </View>
       <ScrollView style={{ flex: 1 }}>
-        {/* <View style={styles.userInfo}>
-          <View style={styles.nameContainer}>
-            <Text style={styles.userInfoText}>Name: Michael Denil</Text>
-          </View>
-          <View style={styles.idBox}>
-            <Text style={[styles.userInfoText, { color: '#000' }]}>ID: </Text>
-            <Text style={[styles.userInfoText, { color: '#000', marginTop: 2 }]}>12345</Text>
-          </View>
-        </View>  */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={[styles.basicButton, { flex: 1, marginRight: buttonMargin, marginLeft: leftRightMargin, backgroundColor: '#D9D9D980' }]}>
-            <Text style={[styles.buttonText, { color: '#000' }]}>Basic Details</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.requestButton, { flex: 1, marginHorizontal: buttonMargin, backgroundColor: '#D9D9D980' }]}>
-            <Text style={[styles.buttonText, { color: '#000' }]}>Request</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.actionButton, { flex: 1, marginLeft: buttonMargin, marginRight: leftRightMargin, backgroundColor: '#2A9988' }]}
-          >
-            <Text style={[styles.buttonText, { color: '#fff' }]}>Action</Text>
-          </TouchableOpacity>
-        </View>
         <View style={styles.bottomContainer}>
           <Image source={require('../../assets/images/action.png')} style={styles.bottomImage} />
           <Text style={[styles.bottomText, { fontWeight: 'bold' }]}>What action do you want to take?</Text>
@@ -113,62 +88,13 @@ const styles = StyleSheet.create({
     marginLeft: 70,
     fontFamily: 'bold01',
   },
-  userInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginBottom: -2,
-    marginTop: 8,
-  },
-  userInfoText: {
-    fontSize: 16,
-  },
-  nameContainer: {
-    marginTop: 4, 
-  },
-  idBox: {
-    flexDirection: 'row',
-    backgroundColor: '#ACF6EB',
-    borderRadius: 5,
-    alignItems: 'center',
-    paddingVertical: 1,
-    paddingHorizontal: 28,
-    borderTopLeftRadius: 20, 
-    borderBottomLeftRadius: 20,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  requestButton: {
-    paddingVertical: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actionButton: {
-    paddingVertical: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: 16,
-  },
-  basicButton: {
-    paddingVertical: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   bottomContainer: {
     alignItems: 'center',
     marginTop: 20,
   },
   bottomImage: {
-    width: 200, 
-    height: 200, 
+    width: 200,
+    height: 200,
     marginBottom: 10,
     marginTop: -8,
   },
