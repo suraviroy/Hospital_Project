@@ -216,3 +216,66 @@ export const createRequest = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const allrequest = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const patientExists = await RequestSchema.exists({ patientId: id });
+    if (!patientExists) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const patientRequest = await RequestSchema.find(
+      {
+        patientId: id,
+      },
+      {
+        date:1,
+        time: 1,
+        requestId: 1,
+        request: 1,
+        _id: 0,
+      }
+    );
+    res.status(200).json(patientRequest);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const request = async (req, res) => {
+  try {
+    const id = req.params.rid;
+
+    const requestExists = await RequestSchema.exists({ requestId: id });
+    if (!requestExists) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+
+    const patientRequest = await RequestSchema.find(
+      {
+        requestId: id,
+      },
+      {
+        date:1,
+        time: 1,
+        exacrebation: 1,
+        newProblem: 1,
+        newConsultation: 1,
+        hospitalization:1,
+        disabilities: 1,
+        demise: 1,
+        report: 1,
+        request: 1,
+        action: 1,
+        _id: 0,
+      }
+    );
+    res.status(200).json(patientRequest);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
