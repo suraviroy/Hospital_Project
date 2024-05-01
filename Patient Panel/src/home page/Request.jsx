@@ -287,6 +287,8 @@ const Request = () => {
                 setIsLoading2(false);
                 setIsLoading3(false);
                 setIsLoading4(false);
+                alert('Request Sent Successfully');
+                navigation.goBack();
             } else {
                 
                 console.error('Failed to send request:', response.status);
@@ -353,7 +355,7 @@ const Request = () => {
                                     <TouchableOpacity
                                         style={{ width: "180%" }}
                                         onPress={() => {
-                                            setSelectedOption1("Yes");
+                                            setSelectedOption1("yes");
                                             setIsClicked1(false);
                                             setIsClicked9(true);
                                         }}
@@ -427,7 +429,7 @@ const Request = () => {
                                     <TouchableOpacity
                                         style={{ width: "180%" }}
                                         onPress={() => {
-                                            setSelectedOption2("Yes");
+                                            setSelectedOption2("yes");
                                             setIsClicked2(false);
                                             setIsClicked10(true);
                                         }}
@@ -501,7 +503,7 @@ const Request = () => {
                                     <TouchableOpacity
                                         style={{ width: "180%" }}
                                         onPress={() => {
-                                            setSelectedOption3("Yes");
+                                            setSelectedOption3("yes");
                                             setIsClicked3(false);
                                             setIsClicked11(true);
                                         }}
@@ -591,7 +593,7 @@ const Request = () => {
                                     <TouchableOpacity
                                         style={{ width: "180%" }}
                                         onPress={() => {
-                                            setSelectedOption4("Yes");
+                                            setSelectedOption4("yes");
                                             setIsClicked4(false);
                                             setIsClicked12(true);
                                         }}
@@ -665,7 +667,7 @@ const Request = () => {
                                     <TouchableOpacity
                                         style={{ width: "180%" }}
                                         onPress={() => {
-                                            setSelectedOption5("Yes");
+                                            setSelectedOption5("yes");
                                             setIsClicked5(false);
                                             setIsClicked13(true);
                                         }}
@@ -739,7 +741,7 @@ const Request = () => {
                                     <TouchableOpacity
                                         style={{ width: "180%" }}
                                         onPress={() => {
-                                            setSelectedOption6("Yes");
+                                            setSelectedOption6("yes");
                                             setIsClicked6(false);
                                             setIsClicked14(true);
                                         }}
@@ -811,7 +813,7 @@ const Request = () => {
                                     <TouchableOpacity
                                         style={{ width: "180%" }}
                                         onPress={() => {
-                                            setSelectedOption7("Yes");
+                                            setSelectedOption7("yes");
                                             setIsClicked7(false);
                                             setIsClicked15(true);
                                         }}

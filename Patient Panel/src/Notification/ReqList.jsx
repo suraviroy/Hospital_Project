@@ -11,6 +11,7 @@ const ReqList = ({ searchText }) => {
     const { patientId } = route.params;
     const navigation = useNavigation();
     const [filteredDate, setFilteredDate] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -19,8 +20,10 @@ const ReqList = ({ searchText }) => {
                 if (response.ok) {
                     const requestData = await response.json();
                     setFilteredDate(requestData);
+                    setLoading(false);
                 } else {
-                    console.error('Failed to fetch request data');
+                    // console.error('Failed to fetch request data');
+                    setLoading(false);
                 }
             } catch (error) {
                 console.error('Error fetching request data:', error);
@@ -28,11 +31,19 @@ const ReqList = ({ searchText }) => {
         };
 
         fetchData();
-    }, [patientId]);
+    }, [filteredDate]);
 
     const handleViewDetails = (requestId) => {
         navigation.navigate('NotificationNavbar', {requestId})
     };
+    if (loading) {
+        return <Text style={styles.text45}>Loading...</Text>;
+    }
+    
+    if (filteredDate.length === 0) {
+        return <Text style={styles.text45}>You have made no Request yet!!</Text>;
+    }
+
 
     const renderRequestItem = ({ item }) => (
         <View style={styles.reqView}>
@@ -70,6 +81,12 @@ const styles = StyleSheet.create({
         flex: 1,
         marginBottom: 85,
         paddingTop: -windowWidth * 0.14,
+    },
+    text45:{
+        marginTop: windowWidth*0.05,
+        fontSize:18,
+        fontFamily: 'bold01',
+        marginLeft: 20,
     },
     reqView: {
         width: windowWidth * 0.97,

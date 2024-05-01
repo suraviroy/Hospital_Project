@@ -60,7 +60,6 @@ const Action = () => {
         const response = await fetch(`${backendURL}/adminRouter/action/${requestId}`, requestOptions);
         const data = await response.json();
         navigation.navigate('BottomNavigation');
-        console.log(data);
       } catch (error) {
         console.error('Error:', error);
       }

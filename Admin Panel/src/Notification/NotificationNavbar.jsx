@@ -29,7 +29,6 @@ const NotificationNavbar = () => {
             });
     }, [patientId]);
 
-console.log(patientId)
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -104,10 +103,12 @@ const styles = StyleSheet.create({
     },
     backButton: {
         marginRight: 10,
+        marginLeft: windowWidth*0.05
     },
     title: {
         fontWeight: "bold",
         fontSize: 25,
+        marginLeft: windowWidth*0.05
     },
     details: {
         marginLeft: windowWidth * 0.03,
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
         marginHorizontal: windowWidth * 0.03,
     },
     tabButton: {
-        width: '30%',
+        width: '32%',
         height: 50,
         backgroundColor: '#DBF4F1',
         borderRadius: 10,

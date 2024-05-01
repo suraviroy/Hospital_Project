@@ -40,7 +40,7 @@ const NotiRequests = () => {
         <Text style={styles.subHead3}>Request: {requestDetails.request}</Text>
         <Text style={styles.subHead4}>Action: {requestDetails.action}</Text>
         {requestDetails.report && requestDetails.report.isSelected !== "NA" && (
-            <Text style={styles.subHead3}>New Report: {requestDetails.report.isSelected} {" "}Type:{"   "}{requestDetails.report.details}
+            <Text style={styles.subHead4}>New Report: {requestDetails.report.isSelected} {" "}Type:{"   "}{requestDetails.report.details}
             {requestDetails.report.certificate !== "NA" && (
                     <TouchableOpacity onPress={() => handleDischargeCertificatePress(requestDetails.report.certificate)}>
                         <Text style={{top: windowWidth*0.015,width: windowWidth*0.2,marginLeft: windowWidth*0.05,backgroundColor: '#B21515', borderRadius: 4,padding: 5, color: 'white', fontSize: 12, fontWeight: '700'}}>  Open PDF</Text>
