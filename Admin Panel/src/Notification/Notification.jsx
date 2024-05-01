@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList,Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, Modal } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { backendURL } from "../backendapi";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
-
 
 const ViewListURL = `${backendURL}/adminRouter/notification`;
 const BasicDetailsURL = `${backendURL}/adminRouter/UpdateProfileNameId`;
@@ -15,6 +14,7 @@ const Notification = ({}) => {
     const navigation = useNavigation();
     const [patients, setPatients] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState([]);
+    const [selectedRequest, setSelectedRequest] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,7 +29,7 @@ const Notification = ({}) => {
         };
 
         fetchData();
-    }, [patients]);
+    }, []);
 
     const handleViewDetails = (patientId) => {
         fetch(`${BasicDetailsURL}/${patientId}`)
@@ -41,13 +41,17 @@ const Notification = ({}) => {
             console.error('Error fetching patient details:', error);
         });
     };
+    
+    const handleViewMore = (request) => {
+        setSelectedRequest(request);
+    };
+
     const handleBack = () => {
         navigation.goBack();
     };
+
     const renderPatientItem = ({ item }) => (
-        <TouchableOpacity 
-            onPress={() => handleViewDetails(item.patientId)}
-        >
+        <TouchableOpacity onPress={() => handleViewDetails(item.patientId)}>
             <View style={[styles.patientView, { backgroundColor: item.status === 'Critical' ? '#FFD5D5' : '#E4FAEF' }]}>
                 {item.image ? (
                     <Image source={{ uri: item.image }} style={styles.patientImage2451} />
@@ -56,7 +60,12 @@ const Notification = ({}) => {
                 )}
                 <View style={styles.patientDetails13}>
                     <Text style={styles.patientDetails2451}>{item.name} sent you a request</Text>
-                    <Text style={styles.patientMessage}>{item.request}</Text>
+                    <Text style={styles.patientMessage} numberOfLines={2}>{item.request.length > 25 ? `${item.request.slice(0, 25)}...` : item.request}</Text>
+                    {item.request.length > 25 && (
+                        <TouchableOpacity onPress={() => handleViewDetails(item.patientId)}>
+                            <Text style={styles.viewMore}>View More</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
                 <View style={styles.patientId2451}>
                     <Text style={styles.patientId13}>{item.patientId}</Text>
@@ -65,7 +74,7 @@ const Notification = ({}) => {
                     <Text style={styles.appointment2451}><Text style={styles.time2451}>{item.date},  {item.time}</Text></Text>
                 </View>
             </View>
-        </TouchableOpacity>       
+        </TouchableOpacity>
     );
 
     return (
@@ -82,10 +91,24 @@ const Notification = ({}) => {
                 renderItem={renderPatientItem}
                 keyExtractor={item => item.requestId}
             />
+            {/* <Modal
+                visible={selectedRequest !== null}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setSelectedRequest(null)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text>{selectedRequest}</Text>
+                        <TouchableOpacity onPress={() => setSelectedRequest(null)}>
+                            <Text style={styles.closeButton}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal> */}
         </SafeAreaView>
     );
 };
-
 export default Notification;
 
 
@@ -95,6 +118,22 @@ const styles = StyleSheet.create({
         paddingTop: windowWidth*0.1,
         backgroundColor: '#fff',
         paddingBottom: windowWidth*0.3,
+    },
+    viewMore:{
+        fontWeight: 'bold',
+        alignItems: 'center',
+        marginLeft:  windowWidth*0.01,
+        fontSize: 12,
+        fontFamily: FontFamily.font_bold,
+        marginTop: windowWidth*0.01,
+        // backgroundColor: '#35A9EA',
+        width: windowWidth*0.15,
+        borderRadius: windowWidth*0.01,
+        borderBottomWidth: 1,
+        borderBottomColor: '#1D1B88',
+        // padding: windowWidth*0.01,
+         color:'#1D1B88'
+
     },
     header2451: {
         flexDirection: 'row',
