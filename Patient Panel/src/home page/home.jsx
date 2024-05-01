@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { backendURL } from "../backendapi";
 const windowWidth = Dimensions.get('window').width;
 import { FontFamily, Color } from '../../GlobalStyles';
 
 const Home = ({ route }) => {
+  const navigation = useNavigation();
   const { patientId } = route.params;
   const [patientData, setPatientData] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
-  const handleViewDetails = (id) => {
-    navigation.navigate('#');
+
+const handleViewDetails = (patientId) => {
+  navigation.navigate('Request', { patientId});
 };
   const handleNextSlide = () => {
     setCurrentIndex((currentIndex + 1) % 3);
@@ -82,7 +85,7 @@ const Home = ({ route }) => {
           <Image source={require('../../assets/images/doctor.png')} style={styles.buttonImage} />
           <Text style={styles.buttonText}>Book Appointment</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.buttonShadow]}>
+        <TouchableOpacity style={[styles.button, styles.buttonShadow]}  onPress={() => handleViewDetails(patientId)}>
           <Image source={require('../../assets/images/hand.png')} style={styles.buttonImage} />
           <Text style={styles.buttonText}>Contact/Help</Text>
         </TouchableOpacity>
@@ -108,7 +111,7 @@ const Home = ({ route }) => {
                 </View>
                 <TouchableOpacity
                     style={styles.viewButton2451}
-                    onPress={() => handleViewDetails()}
+                    // onPress={() => handleViewDetails()}
                 >
                     <Text style={styles.viewDetails}>View Details</Text>
                 </TouchableOpacity>

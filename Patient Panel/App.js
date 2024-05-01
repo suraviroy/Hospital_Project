@@ -14,6 +14,7 @@ import Reports from './src/Reports/reports';
 import BottomNavigation from './src/navigation/BottomNavigation';
 
 import MyProfile from './src/MyProfile/MyProfile';
+import Request from './src/home page/Request';
 
 
 
@@ -67,7 +68,7 @@ function App() {
         <Stack.Screen name="MyProfile" component={MyProfile} />
         <Stack.Screen name="Reports" component={Reports} />
         <Stack.Screen name="BottomNavigation" component={BottomNavigation}/>
-        
+        <Stack.Screen name="Request" component={Request}/>
        
 
 
