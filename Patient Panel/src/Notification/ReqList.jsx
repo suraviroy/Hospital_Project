@@ -31,7 +31,6 @@ const ReqList = ({ searchText }) => {
     }, [patientId]);
 
     const handleViewDetails = (requestId) => {
-        console.log(requestId)
         navigation.navigate('NotificationNavbar', {requestId})
     };
 
