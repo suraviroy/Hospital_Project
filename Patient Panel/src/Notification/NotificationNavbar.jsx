@@ -1,11 +1,13 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import NotiReq from './NotiReq';
-import NotiAction from './NotiAction';
 import { backendURL } from "../backendapi";
+import ActionOk from './ActionOK';
+import ActionError from './ActionError';
+
 const windowWidth = Dimensions.get('window').width;
 
 const NotificationNavbar = () => {
@@ -13,9 +15,23 @@ const NotificationNavbar = () => {
     const route = useRoute();
     const { requestId } = route.params;
     const [selectedTab, setSelectedTab] = useState(0);
+    const [action, setAction] = useState(null);
+
+    useEffect(() => {
+        // Fetch data from backend
+        fetch(`${backendURL}/patientRouter/request/${requestId}`)
+            .then(response => response.json())
+            .then(data => {
+                const { action } = data[0];
+                setAction(action);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }, []);
+
     const handleBack = () => {
         navigation.goBack();
     };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -34,11 +50,19 @@ const NotificationNavbar = () => {
                     </TouchableOpacity>
                 </View>
                 {selectedTab === 0 && <NotiReq requestId={requestId} />}
-                {selectedTab === 1 && <NotiAction requestId={requestId} />}
+                {selectedTab === 1 && (
+                    // Render appropriate action component based on the value of "action"
+                    action !== null && action !== 'NA' ? (
+                        <ActionOk navigation={navigation} />
+                    ) : (
+                        <ActionError navigation={navigation} />
+                    )
+                )}
             </ScrollView>
         </SafeAreaView>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
