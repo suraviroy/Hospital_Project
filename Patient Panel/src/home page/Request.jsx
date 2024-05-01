@@ -50,7 +50,7 @@ const Request = () => {
     const [pickedFile1, setPickedFile1] = useState(null);
     const [pickedFile2, setPickedFile2] = useState(null);
     const [pickedFile3, setPickedFile3] = useState(null);
-    const patientRequestURL = `${backendURL}/patientRouter/RegiseterNewPatientRequest`;
+    const patientRequestURL =`${backendURL}/patientRouter/RegiseterNewPatientRequest`;
 
     const Req_Options = [
         {
@@ -86,7 +86,8 @@ const Request = () => {
         }
     };
 
-    const pickFile = async (setPickedFile) => {
+    const pickFile1 = async () => {
+        setIsLoading1(true);
         try {
             const filePickResponse = await DocumentPicker.getDocumentAsync({
                 type: 'application/pdf',
@@ -98,7 +99,7 @@ const Request = () => {
                 formData.append('file', {
                     uri: fileInfo.uri,
                     name: fileInfo.name,
-                    type: `application/pdf`,
+                    type: 'application/pdf',
                 });
                 formData.append('upload_preset', 'pulmocareapp');
                 formData.append('cloud_name', 'pulmocare01');
@@ -113,7 +114,7 @@ const Request = () => {
                         const data = await response.json();
                         console.log('Cloudinary response:', data);
 
-                        setPickedFile({
+                        setPickedFile1({
                             name: data.original_filename || fileInfo.name,
                             type: fileInfo.type,
                             uri: data.secure_url,
@@ -128,49 +129,146 @@ const Request = () => {
         } catch (error) {
             console.error("Error picking file:", error);
         }
+        finally {
+            setIsLoading1(false);
+        }
+    };
+
+    const pickFile2 = async () => {
+        setIsLoading2(true);
+        try {
+            const filePickResponse = await DocumentPicker.getDocumentAsync({
+                type: 'application/pdf',
+            });
+
+            if (!filePickResponse.canceled) {
+                const fileInfo = filePickResponse.assets[0];
+                const formData = new FormData();
+                formData.append('file', {
+                    uri: fileInfo.uri,
+                    name: fileInfo.name,
+                    type: 'application/pdf',
+                });
+                formData.append('upload_preset', 'pulmocareapp');
+                formData.append('cloud_name', 'pulmocare01');
+
+                try {
+                    const response = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Cloudinary response:', data);
+
+                        setPickedFile2({
+                            name: data.original_filename || fileInfo.name,
+                            type: fileInfo.type,
+                            uri: data.secure_url,
+                        });
+                    } else {
+                        console.error('Failed to upload file to Cloudinary');
+                    }
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                }
+            }
+        } catch (error) {
+            console.error("Error picking file:", error);
+        }
+        finally {
+            setIsLoading2(false);
+        }
+    };
+
+    const pickFile3 = async () => {
+        setIsLoading4(true);
+        try {
+            const filePickResponse = await DocumentPicker.getDocumentAsync({
+                type: 'application/pdf',
+            });
+
+            if (!filePickResponse.canceled) {
+                const fileInfo = filePickResponse.assets[0];
+                const formData = new FormData();
+                formData.append('file', {
+                    uri: fileInfo.uri,
+                    name: fileInfo.name,
+                    type: 'application/pdf',
+                });
+                formData.append('upload_preset', 'pulmocareapp');
+                formData.append('cloud_name', 'pulmocare01');
+
+                try {
+                    const response = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Cloudinary response:', data);
+
+                        setPickedFile3({
+                            name: data.original_filename || fileInfo.name,
+                            type: fileInfo.type,
+                            uri: data.secure_url,
+                        });
+                    } else {
+                        console.error('Failed to upload file to Cloudinary');
+                    }
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                }
+            }
+        } catch (error) {
+            console.error("Error picking file:", error);
+        }
+        finally {
+            setIsLoading4(false);
+        }
     };
 
     const handleSave = async () => {
-        setIsLoading1(true);
-        setIsLoading2(true);
         setIsLoading3(true);
-        setIsLoading4(true);
         const requestText =
             selectedRequest === "Select" ? "NA" : (selectedRequest === "Others" ? otherText : selectedRequest);
-        const reqData = {
-            patientId: patientId,
-            exacrebation: {
-                isSelected: selectedOption1  === "Select" ? "NA" : selectedOption1,
-                details: selectedDetails1 || "NA",
-            },
-            newProblem: {
-                isSelected: selectedOption2 === "Select" ? "NA" : selectedOption2,
-                details: selectedDetails2 || "NA",
-            },
-            newConsultation: {
-                isSelected: selectedOption3 === "Select" ? "NA" : selectedOption3,
-                details: selectedDetails3 || "NA",
-                dischargeCertificate: pickedFile1 || "NA",
-            },
-            hospitalization: {
-                isSelected: selectedOption4 === "Select" ? "NA" : selectedOption4,
-                records: selectedDetails4 || "NA",
-            },
-            disabilities: {
-                isSelected: selectedOption5 === "Select" ? "NA" : selectedOption5,
-                details: selectedDetails5 || "NA",
-            },
-            demise: {
-                isSelected: selectedOption6 === "Select" ? "NA" : selectedOption6,
-                deathCertificate: pickedFile2 || "NA",
-            },
-            report: {
-                isSelected: selectedOption7 === "Select" ? "NA" : selectedOption7,
-                details: selectedDetails7 || "NA",
-                certificate: pickedFile3 || "NA",
-            },
-            request: requestText,
-        };
+            const reqData = {
+                patientId: patientId,
+                exacrebation: {
+                    isSelected: selectedOption1 === "Select" ? "NA" : selectedOption1,
+                    details: selectedDetails1 || "NA",
+                },
+                newProblem: {
+                    isSelected: selectedOption2 === "Select" ? "NA" : selectedOption2,
+                    details: selectedDetails2 || "NA",
+                },
+                newConsultation: {
+                    isSelected: selectedOption3 === "Select" ? "NA" : selectedOption3,
+                    details: selectedDetails3 || "NA",
+                    dischargeCertificate: pickedFile1? pickedFile1.uri : "NA",
+                },
+                hospitalization: {
+                    isSelected: selectedOption4 === "Select" ? "NA" : selectedOption4,
+                    records: selectedDetails4 || "NA",
+                },
+                disabilities: {
+                    isSelected: selectedOption5 === "Select" ? "NA" : selectedOption5,
+                    details: selectedDetails5 || "NA",
+                },
+                demise: {
+                    isSelected: selectedOption6 === "Select" ? "NA" : selectedOption6,
+                    deathCertificate: pickedFile2 ? pickedFile2.uri : "NA",
+                },
+                report: {
+                    isSelected: selectedOption7 === "Select" ? "NA" : selectedOption7,
+                    details: selectedDetails7 || "NA",
+                    certificate: pickedFile3 ? pickedFile3.uri : "NA",
+                },
+                request: requestText,
+                action:"NA"
+            };
         console.log(reqData)
         try {
             const response = await fetch(patientRequestURL, {
@@ -449,7 +547,7 @@ const Request = () => {
                                     <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
                                         {pickedFile1 ? pickedFile1.name : 'Upload Discharge Certificate'}
                                     </Text>
-                                    <TouchableOpacity style={styles.uploadbutton} onPress={() => pickFile(setPickedFile1)}>
+                                    <TouchableOpacity style={styles.uploadbutton} onPress={pickFile1}>
                                         {isLoading1 ? (
                                             <ActivityIndicator size="small" color={'#35A9EA'} />
                                         ) : (
@@ -670,7 +768,7 @@ const Request = () => {
                                 <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
                                     {pickedFile2 ? pickedFile2.name : 'Upload Discharge Certificate'}
                                 </Text>
-                                <TouchableOpacity style={styles.uploadbutton} onPress={() => pickFile(setPickedFile2)}>
+                                <TouchableOpacity style={styles.uploadbutton} onPress={pickFile2}>
                                     {isLoading2 ? (
                                         <ActivityIndicator size="small" color={'#35A9EA'} />
                                     ) : (
@@ -758,7 +856,7 @@ const Request = () => {
                                     <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
                                         {pickedFile3 ? pickedFile3.name : 'Upload Discharge Certificate'}
                                     </Text>
-                                    <TouchableOpacity style={styles.uploadbutton} onPress={() => pickFile(setPickedFile3)}>
+                                    <TouchableOpacity style={styles.uploadbutton} onPress={pickFile3}>
                                         {isLoading4 ? (
                                             <ActivityIndicator size="small" color={'#35A9EA'} />
                                         ) : (

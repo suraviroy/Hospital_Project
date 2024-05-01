@@ -582,9 +582,13 @@ const UpdatedDetails = ({patientId}) => {
                   Hospitalized for : {hospitalization.days}  Days{'\n'}
                   Reason: {hospitalization.reason}{'\n'}
                   Discharge Certificate:{'       '}
-                  <TouchableOpacity onPress={() => handleDischargeCertificatePress(hospitalization.dischargeCertificate)}>
-                    <Text style={{backgroundColor: '#B21515', borderRadius: 4,padding: 7, color: 'white', fontSize: 12, fontWeight: '700'}}>Open PDF</Text>
-                  </TouchableOpacity>
+                  {hospitalization.dischargeCertificate === 'NA' ? (
+              <Text style={{ borderRadius: 4, padding: 7, fontSize: 13, fontWeight: '700' }}>Not Uploaded</Text>
+            ) : (
+              <TouchableOpacity onPress={() => handleDischargeCertificatePress(hospitalization.dischargeCertificate)}>
+                <Text style={{ backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open PDF</Text>
+              </TouchableOpacity>
+            )}
                 </Text>
               </View>
             ))}

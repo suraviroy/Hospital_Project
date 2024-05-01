@@ -30,8 +30,9 @@ const ReqList = ({ searchText }) => {
         fetchData();
     }, [patientId]);
 
-    const handleViewDetails = (id) => {
-        navigation.navigate('#');
+    const handleViewDetails = (requestId) => {
+        console.log(requestId)
+        navigation.navigate('NotificationNavbar', {requestId})
     };
 
     const renderRequestItem = ({ item }) => (
@@ -138,6 +139,7 @@ const styles = StyleSheet.create({
         marginTop: windowWidth * 0.005
     },
     dateText: {
+        padding: windowWidth*0.02,
         fontSize: 25,
         fontWeight: 'bold',
         color: '#fff',

@@ -6,7 +6,7 @@ import { FontFamily } from '../../GlobalStyles';
 import { backendURL } from "../backendapi";
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const NotiRequests = () => {
+const NotiReq = () => {
     const route = useRoute();
     const { requestId } = route.params;
     const [requestDetails, setRequestDetails] = useState(null);
@@ -90,7 +90,7 @@ const NotiRequests = () => {
         </SafeAreaView>
     );
 }
-export default NotiRequests;
+export default NotiReq;
 
 const styles = StyleSheet.create({
     container: {

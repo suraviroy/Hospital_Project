@@ -15,6 +15,9 @@ import BottomNavigation from './src/navigation/BottomNavigation';
 
 import MyProfile from './src/MyProfile/MyProfile';
 import Request from './src/home page/Request';
+import NotificationNavbar from './src/Notification/NotificationNavbar';
+import NotiReq from './src/Notification/NotiReq';
+import NotiAction from './src/Notification/NotiAction';
 
 
 
@@ -31,7 +34,7 @@ function App() {
     regular: require('./assets/fonts/Judson-Regular.ttf'),
     regular: require('./assets/fonts/Lato-Regular.ttf'),
     regular: require('./assets/fonts/JuliusSansOne-Regular.ttf'),
-    regular: require('./assets/fonts/Lato-Regular.ttf'),
+    regular89: require('./assets/fonts/Lato-Regular.ttf'),
     regular05: require('./assets/fonts/Kadwa-Regular.ttf'),
     medium01: require('./assets/fonts/Inter-Medium.ttf'),
     medium: require('./assets/fonts/Rubik-Medium.ttf'),
@@ -69,8 +72,9 @@ function App() {
         <Stack.Screen name="Reports" component={Reports} />
         <Stack.Screen name="BottomNavigation" component={BottomNavigation}/>
         <Stack.Screen name="Request" component={Request}/>
-       
-
+        <Stack.Screen name="NotificationNavbar" component={NotificationNavbar}/>
+        <Stack.Screen name="NotiReq" component={NotiReq}/>
+        <Stack.Screen name="NotiAction" component={NotiAction}/>
 
       </Stack.Navigator>
     </NavigationContainer>
