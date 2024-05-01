@@ -22,6 +22,10 @@ import PatientDetails from './src/ViewList/PatientDetails';
 import UpdatedDetails from './src/ViewList/Updated Details/UpdatedDetails';
 import UpdatedBasicDetails from './src/ViewList/Updated Details/UpdatedBasicDetails';
 import PatientNavigation from './src/ViewList/Updated Details/PatientNavigation';
+import NotificationNavbar from './src/Notification/NotificationNavbar';
+import NotificationDetails from './src/Notification/NotificationDetails';
+import NotiRequests from './src/Notification/NotiRequests';
+import Actions from './src/Notification/Actions';
 
 
 const Stack = createNativeStackNavigator();
@@ -82,6 +86,11 @@ function App() {
         <Stack.Screen name="UpdatedDetails" component={UpdatedDetails}/>
         <Stack.Screen name="UpdatedBasicDetails" component={UpdatedBasicDetails}/>
         <Stack.Screen name="PatientNavigation" component={PatientNavigation}/>
+        <Stack.Screen name="NotificationNavbar" component={NotificationNavbar}/>
+        <Stack.Screen name="NotificationDetails" component={NotificationDetails}/>
+        <Stack.Screen name="NotiRequests" component={NotiRequests}/>
+        <Stack.Screen name="Actions" component={Actions}/>
+        
       </Stack.Navigator>
     </NavigationContainer>
    

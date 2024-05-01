@@ -29,19 +29,11 @@ const Notification = ({}) => {
         };
 
         fetchData();
-    }, []);
+    }, [patients]);
 
-    const handleViewDetails = (patientId) => {
-        fetch(`${BasicDetailsURL}/${patientId}`)
-        .then(response => response.json())
-        .then(data => {
-            navigation.navigate('PatientNavigation', { details: data[0] });
-        })
-        .catch(error => {
-            console.error('Error fetching patient details:', error);
-        });
+    const handleViewDetails = (patientId, requestId) => {
+        navigation.navigate('NotificationNavbar', { patientId, requestId });
     };
-    
     const handleViewMore = (request) => {
         setSelectedRequest(request);
     };
@@ -51,7 +43,7 @@ const Notification = ({}) => {
     };
 
     const renderPatientItem = ({ item }) => (
-        <TouchableOpacity onPress={() => handleViewDetails(item.patientId)}>
+        <TouchableOpacity onPress={() => handleViewDetails(item.patientId, item.requestId)}>
             <View style={[styles.patientView, { backgroundColor: item.status === 'Critical' ? '#FFD5D5' : '#EAF9FE' }]}>
                 {item.image ? (
                     <Image source={{ uri: item.image }} style={styles.patientImage2451} />
@@ -62,7 +54,7 @@ const Notification = ({}) => {
                     <Text style={styles.patientDetails2451}>{item.name} sent you a request</Text>
                     <Text style={styles.patientMessage} numberOfLines={2}>{item.request.length > 25 ? `${item.request.slice(0, 25)}...` : item.request}</Text>
                     {item.request.length > 25 && (
-                        <TouchableOpacity onPress={() => handleViewDetails(item.patientId)}>
+                        <TouchableOpacity onPress={() => handleViewDetails(item.patientId, item.requestId)}>
                             <Text style={styles.viewMore}>View More</Text>
                         </TouchableOpacity>
                     )}
