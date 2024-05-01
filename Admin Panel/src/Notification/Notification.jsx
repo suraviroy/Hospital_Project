@@ -143,13 +143,12 @@ const styles = StyleSheet.create({
     },
     text2451: {
         fontSize: 25,
-        marginLeft: 30,
+        marginLeft: windowWidth*0.13,
         fontFamily: "bold01",
     },
     backButton13: {
-        marginRight: 10,
+        marginLeft: windowWidth*0.03,
         position: 'absolute',
-        left: 0,
     },
     patientView: {
         width: windowWidth - 15, 
