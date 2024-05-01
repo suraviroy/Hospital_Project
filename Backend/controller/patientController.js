@@ -203,11 +203,14 @@ export const createRequest = async (req, res) => {
       ...rest,
     };
 
-    // Create a new document with the new request
-    const requestDocument = new RequestSchema(newRequest);
-    const savedRequest = await requestDocument.save();
+    //this console.log prints the new request object perfectly with all the fields
+    console.log(newRequest)
 
-    res.status(200).json(savedRequest);
+    // Create a new document with the new request
+    const requestDocument = await RequestSchema.create(newRequest);
+    // const savedRequest = await requestDocument.save();
+
+    res.status(200).json(requestDocument);
     console.log('New document created');
   } catch (error) {
     res.status(500).json({ error: error.message });
