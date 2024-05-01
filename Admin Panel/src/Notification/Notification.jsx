@@ -52,7 +52,7 @@ const Notification = ({}) => {
 
     const renderPatientItem = ({ item }) => (
         <TouchableOpacity onPress={() => handleViewDetails(item.patientId)}>
-            <View style={[styles.patientView, { backgroundColor: item.status === 'Critical' ? '#FFD5D5' : '#E4FAEF' }]}>
+            <View style={[styles.patientView, { backgroundColor: item.status === 'Critical' ? '#FFD5D5' : '#EAF9FE' }]}>
                 {item.image ? (
                     <Image source={{ uri: item.image }} style={styles.patientImage2451} />
                 ) : (
