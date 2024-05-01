@@ -36,7 +36,7 @@ console.log(patientId)
                 <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                     <Icon name="angle-left" size={30} color="#000" />
                 </TouchableOpacity>
-                <Text style={styles.title}>Update Profile</Text>
+                <Text style={styles.title}>Patient Profile</Text>
             </View>
             <ScrollView contentContainerStyle={styles.scroll}>
             <View style={styles.det14}>
@@ -56,7 +56,7 @@ console.log(patientId)
                 </View>
                 {selectedTab === 0 && <NotificationDetails patientId={patientId} />}
                 {selectedTab === 1 && <NotiRequests requestId={requestId} />}
-                {selectedTab === 2 && <Actions patientId={patientId} />}
+                {selectedTab === 2 && <Actions requestId={requestId} />}
             </ScrollView>
         </SafeAreaView>
     );
