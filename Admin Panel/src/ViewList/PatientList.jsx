@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         paddingTop: -windowWidth*0.14,
     },
     patientView2451: {
-        width: windowWidth - 15, 
+        width: windowWidth*0.95,
         height: windowWidth * 0.4,
         backgroundColor: '#fff',
         alignSelf: 'center',
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     patientId2451: {
-        width: windowWidth*0.29,
+        width: windowWidth*0.28,
         height: 30,
         backgroundColor: '#85DBCD',
         borderTopLeftRadius: 12,

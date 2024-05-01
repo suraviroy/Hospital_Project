@@ -11,6 +11,7 @@ import SearchPatient from './SearchPatient';
 const RegisterNotifications =() => {
     const navigation = useNavigation();
     const [searchText, setSearchText] = useState('');
+    const [loading, setLoading] = useState(true);
 
     const handleBack = () => {
     navigation.goBack();
