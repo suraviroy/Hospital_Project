@@ -183,7 +183,7 @@ export const createRequest = async (req, res) => {
     const currentTime = moment().tz(desiredTimezone).format('hh:mm A');
     
     const { patientId, hospitalization, demise, ...rest } = req.body;
-    const isCritical = hospitalization?.type || demise?.type;
+    const isCritical = hospitalization?.isSelected === "yes" || demise?.isSelected === "yes";
     const status = isCritical ? 'Critical' : 'Normal';
 
     // Get the total count of documents in the collection

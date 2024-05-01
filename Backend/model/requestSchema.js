@@ -7,45 +7,52 @@ const requestSchema = new mongoose.Schema({
   patientId: { type: String },
   status: { type: String },
   exacrebation: {
-    type: {
-      type: Boolean,
+    isSelected: {
+      type: String,
+      default: "NA",
     },
     details: { type: String, default: "NA" },
   },
   newProblem: {
-    type: {
-      type: Boolean,
+    isSelected: {
+      type: String,
+      default: "NA",
     },
     details: { type: String, default: "NA" },
   },
   newConsultation: {
-    type: {
-      type: Boolean,
+    isSelected: {
+      type: String,
+      default: "NA",
     },
     details: { type: String, default: "NA" },
     dischargeCertificate: { type: String, default: "NA" },
   },
   hospitalization: {
-    type: {
-      type: Boolean,
+    isSelected: {
+      type: String,
+      default: "NA",
     },
     records: { type: String, default: "NA" },
   },
   disabilities: {
-    type: {
-      type: Boolean,
+    isSelected: {
+      type: String,
+      default: "NA",
     },
     details: { type: String, default: "NA" },
   },
   demise: {
-    type: {
-      type: Boolean,
+    isSelected: {
+      type: String,
+      default: "NA",
     },
     deathCertificate: { type: String, default: "NA" },
   },
   report: {
-    type: {
+    isSelected: {
       type: String,
+      default: "NA",
     },
     details: { type: String, default: "NA" },
   },
