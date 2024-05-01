@@ -4,7 +4,9 @@ import {
     HomePageDetails,
     PatientProfile,
     PatientsAllAppointments,
-    createRequest
+    createRequest,
+    allrequest,
+    request
 } from '../controller/patientController.js'
 const patientRouter = express.Router()
 
@@ -13,5 +15,7 @@ patientRouter.get("/HomePageDetails/:id", HomePageDetails);
 patientRouter.get("/PatientProfile/:id", PatientProfile);
 patientRouter.get("/PatientsAllAppointments/:id", PatientsAllAppointments);
 patientRouter.post("/RegiseterNewPatientRequest", createRequest);
+patientRouter.get("/allrequest/:id", allrequest);
+patientRouter.get("/request/:rid", request);
 
 export default patientRouter
