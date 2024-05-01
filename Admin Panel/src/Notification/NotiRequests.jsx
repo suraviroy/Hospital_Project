@@ -38,19 +38,19 @@ const NotiRequests = () => {
         <Text style={styles.subHead6}>Date: {requestDetails.date}</Text>
         <Text style={styles.subHead6}>Time: {requestDetails.time}</Text>
         <Text style={styles.subHead3}>Request: {requestDetails.request}</Text>
-        <Text style={styles.subHead2}>Action: {requestDetails.action}</Text>
+        <Text style={styles.subHead4}>Action: {requestDetails.action}</Text>
         {requestDetails.report && requestDetails.report.type !== "NA" && (
             <Text style={styles.subHead2}>Report Type: {requestDetails.report.type}</Text>
         )}
-        {requestDetails.exacrebation && requestDetails.exacrebation.type !== "false" && (
-            <Text style={styles.subHead2}>Exacerbation: {requestDetails.exacrebation.type} {" "}{requestDetails.exacrebation.details}</Text>
+        {requestDetails.exacrebation && requestDetails.exacrebation.isSelected !== "NA" && (
+            <Text style={styles.subHead2}>Exacerbation: {requestDetails.exacrebation.isSelected} {" "}{requestDetails.exacrebation.details}</Text>
         )}
-        {requestDetails.newProblem && requestDetails.newProblem.details !== "NA" && (
-            <Text style={styles.subHead2}>New Problem: {requestDetails.newProblem.details}</Text>
+        {requestDetails.newProblem && requestDetails.newProblem.isSelected !== "NA" && (
+            <Text style={styles.subHead2}>New Problem: {requestDetails.newProblem.isSelected} {" "}{requestDetails.newProblem.details}</Text>
         )}
-        {requestDetails.newConsultation && requestDetails.newConsultation.details !== "NA" && (
+        {requestDetails.newConsultation && requestDetails.newConsultation.isSelected !== "NA" && (
             <View>
-                <Text style={styles.subHead2}>New Consultation: {requestDetails.newConsultation.details}</Text>
+                <Text style={styles.subHead2}>New Consultation: {requestDetails.newConsultation.isSelected} {" "}{requestDetails.newConsultation.details}</Text>
                 {requestDetails.newConsultation.dischargeCertificate !== "NA" && (
                     <TouchableOpacity onPress={() => handleDischargeCertificatePress(requestDetails.newConsultation.dischargeCertificate)}>
                         <Text style={{ backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open Discharge Certificate</Text>
@@ -58,11 +58,11 @@ const NotiRequests = () => {
                 )}
             </View>
         )}
-        {requestDetails.hospitalization && requestDetails.hospitalization.records !== "NA" && (
-            <Text style={styles.subHead2}>Hospitalization: {requestDetails.hospitalization.records}</Text>
+        {requestDetails.hospitalization && requestDetails.hospitalization.isSelected !== "NA" && (
+            <Text style={styles.subHead2}>Hospitalization: {requestDetails.hospitalization.isSelected} {" "}{requestDetails.hospitalization.records}</Text>
         )}
-        {requestDetails.disabilities && requestDetails.disabilities.details !== "NA" && (
-            <Text style={styles.subHead2}>Disabilities: {requestDetails.disabilities.details}</Text>
+        {requestDetails.disabilities && requestDetails.disabilities.isSelected !== "NA" && (
+            <Text style={styles.subHead2}>Disabilities: {requestDetails.hospitalization.isSelected} {" "}{requestDetails.disabilities.details}</Text>
         )}
         {requestDetails.demise && requestDetails.demise.deathCertificate !== "NA" && (
             <Text style={styles.subHead2}>Demise: Death Certificate Available - Yes</Text>
@@ -134,6 +134,20 @@ const styles = StyleSheet.create({
         marginTop: windowWidth * 0.01,
         width: "95%",
         height: windowWidth * 0.15,
+        paddingTop: windowWidth * 0.02,
+        borderRadius: windowWidth * 0.01,
+        backgroundColor: "#D9D9D9",
+        paddingLeft: 15,
+        paddingRight: 15,
+        fontFamily: 'bold02',
+        fontWeight: "700",
+        fontSize: 15,
+
+    },
+    subHead4:{
+        marginTop: windowWidth * 0.01,
+        width: "95%",
+        height: windowWidth * 0.20,
         paddingTop: windowWidth * 0.02,
         borderRadius: windowWidth * 0.01,
         backgroundColor: "#D9D9D9",
