@@ -18,7 +18,7 @@ const appdata = [
         id: 1
     },
     {
-        docname: 'XYZ',
+        docname: 'Dr Amlan Chowdhury',
         docdeg: 'mbbs',
         doclang: 'hindi',
         docexp: '18 years exp',
@@ -28,30 +28,9 @@ const appdata = [
         apptime: '5:30 PM',
         id: 2
     },
+   
     {
-        docname: 'ABC',
-        docdeg: 'mbbs',
-        doclang: 'hindi',
-        docexp: '18 years exp',
-        appdate: '20',
-        appmon: 'Dec',
-        appyear: '2023',
-        apptime: '12:30 PM',
-        id: 3
-    },
-    {
-        docname: 'ABC',
-        docdeg: 'mbbs',
-        doclang: 'hindi',
-        docexp: '18 years exp',
-        appdate: '30',
-        appmon: 'May',
-        appyear: '2023',
-        apptime: '1:30 PM',
-        id: 4
-    },
-    {
-        docname: 'Dr. Sneha Ghosh',
+        docname: 'Dr. Satyabrata Ghosh',
         docdeg: 'mbbs',
         doclang: 'hindi',
         docexp: '18 years exp',
@@ -59,7 +38,7 @@ const appdata = [
         appmon: 'Jun',
         appyear: '2023',
         apptime: '4:30 PM',
-        id: 5
+        id: 3
     }
 ];
 

@@ -32,7 +32,7 @@ const NotiReq = () => {
         <SafeAreaView style={styles.container}>
             <ScrollView style={styles.scrollContent}>
                 <View style={styles.profileContainer}>
-                    <Text style={styles.texthead2}>Request Details</Text>
+                    <Text style={styles.texthead2}>Your Request</Text>
                     {requestDetails && (
     <View style={styles.backField}>
         <Text style={styles.subHead6}>Date: {requestDetails.date}</Text>

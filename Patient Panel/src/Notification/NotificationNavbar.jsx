@@ -18,7 +18,6 @@ const NotificationNavbar = () => {
     const [action, setAction] = useState(null);
 
     useEffect(() => {
-        // Fetch data from backend
         fetch(`${backendURL}/patientRouter/request/${requestId}`)
             .then(response => response.json())
             .then(data => {
@@ -38,7 +37,7 @@ const NotificationNavbar = () => {
                 <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                     <Icon name="angle-left" size={30} color="#000" />
                 </TouchableOpacity>
-                <Text style={styles.title}>Patient Profile</Text>
+                <Text style={styles.title}>Request Details</Text>
             </View>
             <ScrollView contentContainerStyle={styles.scroll}>
                 <View style={styles.switchButtons}>
@@ -51,9 +50,8 @@ const NotificationNavbar = () => {
                 </View>
                 {selectedTab === 0 && <NotiReq requestId={requestId} />}
                 {selectedTab === 1 && (
-                    // Render appropriate action component based on the value of "action"
                     action !== null && action !== 'NA' ? (
-                        <ActionOk navigation={navigation} />
+                        <ActionOk navigation={navigation} action={action} />
                     ) : (
                         <ActionError navigation={navigation} />
                     )
@@ -130,13 +128,14 @@ const styles = StyleSheet.create({
     tabButton: {
         width: '48%',
         height: 50,
-        backgroundColor: '#DBF4F1',
+        backgroundColor: '#CFEDFE',
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
     },
     selectedTab: {
-        backgroundColor: '#2A9988',
+        backgroundColor: '#35A9EA',
+    
     },
     tabButtonText: {
         color: '#000',

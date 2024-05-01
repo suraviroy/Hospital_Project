@@ -61,10 +61,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   description: {
-    fontSize: 15,
+    fontSize: 16,
     textAlign: 'center',
     marginBottom: 60,
     color: '#676464',
+    fontWeight:'700'
   },
 });
 

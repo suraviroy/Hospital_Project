@@ -117,13 +117,13 @@ const styles = StyleSheet.create({
     requeston: {
         fontWeight: 'bold',
         alignItems: 'center',
-        marginLeft: windowWidth * 0.02,
+        marginLeft: windowWidth * 0.03,
         marginTop: windowWidth * 0.07,
         fontSize: 20,
         fontFamily: FontFamily.font_bold,
     },
     reqdate: {
-        marginLeft: windowWidth * 0.02,
+        marginLeft: windowWidth * 0.03,
         alignItems: 'center',
         color: '#011411',
         fontSize: 14,
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
         marginTop: windowWidth * 0.005,
     },
     reqtime: {
-        marginLeft: windowWidth * 0.02,
+        marginLeft: windowWidth * 0.03,
         alignItems: 'center',
         color: '#011411',
         fontSize: 14,
