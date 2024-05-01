@@ -9,6 +9,7 @@ import * as FileSystem from 'expo-file-system';
 import { backendURL } from "../backendapi";
 import { fromByteArray } from 'base64-js';
 import * as Permissions from 'expo-permissions';
+import Action from '../Request page/Action';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -85,12 +86,10 @@ const Home = () => {
                 <View style={styles.appBar012}>
                     <MaterialIcons name='local-hospital' size={40} color={'#730404'} />
                     <Text style={styles.text012}>Institute of Pulmocare & {'\n'}Research</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Action')}>
+                        <Ionicons name='chatbubble-ellipses-sharp' size={30} color='#2A9988' />
+                    </TouchableOpacity>
                     <View style={{ alignItems: "flex-end" }}>
-                        <TouchableOpacity style={{ marginLeft: 50 }}>
-                            <Ionicons name='chatbubble-ellipses-sharp' size={30} color='#2A9988' />
-                        </TouchableOpacity>
-
-
                         <View style={styles.ChatCount012}>
                             <Text style={styles.chatNumber012}>8</Text>
                         </View>
