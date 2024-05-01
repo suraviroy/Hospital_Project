@@ -82,9 +82,9 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     dateBlock: {
-        marginLeft: windowWidth * 0.02,
-        width: windowWidth * 0.23,
-        height: windowWidth * 0.25,
+        marginLeft: windowWidth * 0.03,
+        width: windowWidth * 0.26,
+        height: windowWidth * 0.28,
         borderRadius: 10,
         backgroundColor: '#35A9EA',
         alignSelf: 'center',
@@ -116,13 +116,13 @@ const styles = StyleSheet.create({
     requeston: {
         fontWeight: 'bold',
         alignItems: 'center',
-        marginLeft: windowWidth * 0.03,
+        marginLeft: windowWidth * 0.05,
         marginTop: windowWidth * 0.07,
         fontSize: 20,
         fontFamily: FontFamily.font_bold,
     },
     reqdate: {
-        marginLeft: windowWidth * 0.03,
+        marginLeft: windowWidth * 0.05,
         alignItems: 'center',
         color: '#011411',
         fontSize: 14,
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
         marginTop: windowWidth * 0.005,
     },
     reqtime: {
-        marginLeft: windowWidth * 0.03,
+        marginLeft: windowWidth * 0.05,
         alignItems: 'center',
         color: '#011411',
         fontSize: 14,
