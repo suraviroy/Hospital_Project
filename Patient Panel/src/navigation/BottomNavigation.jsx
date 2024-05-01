@@ -70,6 +70,7 @@ const BottomNavigation = ({ route }) => {
         name="Notification"
         component={Notification}
         options={{ tabBarLabel: 'Requests', headerShown: false }}
+        initialParams={{ patientId: patientId }}
       />
       <Tab.Screen
         name="Reports"

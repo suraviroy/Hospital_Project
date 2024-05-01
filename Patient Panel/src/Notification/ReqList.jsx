@@ -1,84 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
-import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily, Color } from '../../GlobalStyles';
-
-const reqdata = [
-    {
-        reqdate: '15',
-        reqmon: 'October',
-        reqyear: '2024',
-        reqtime: '2.00pm',
-        id: 1
-    },
-    {
-        reqdate: '25',
-        reqmon: 'November',
-        reqyear: '2024',
-        reqtime: '3.30pm',
-        id: 2
-    },
-    {
-        reqdate: '08',
-        reqmon: 'August',
-        reqyear: '2024',
-        reqtime: '2.20pm',
-        id: 3
-    },
-    {
-        reqdate: '20',
-        reqmon: 'May',
-        reqyear: '2024',
-        reqtime: '4.00pm',
-        id: 4
-    },
-    {
-        reqdate: '23',
-        reqmon: 'July',
-        reqyear: '2024',
-        reqtime: '6.30pm',
-        id: 5
-    },
-];
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { backendURL } from "../backendapi";
 
 const ReqList = ({ searchText }) => {
+    const route = useRoute();
+    const { patientId } = route.params;
     const navigation = useNavigation();
     const [filteredDate, setFilteredDate] = useState([]);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`${backendURL}/patientRouter/allrequest/${patientId}`);
+                if (response.ok) {
+                    const requestData = await response.json();
+                    setFilteredDate(requestData);
+                } else {
+                    console.error('Failed to fetch request data');
+                }
+            } catch (error) {
+                console.error('Error fetching request data:', error);
+            }
+        };
+
+        fetchData();
+    }, [patientId]);
 
     const handleViewDetails = (id) => {
         navigation.navigate('#');
     };
 
-    useEffect(() => {
-        if (!searchText) {
-            setFilteredDate(reqdata);
-            return;
-        }
-
-        const filtered = reqdata.filter(doctor =>
-            doctor.reqdate.toLowerCase().includes(searchText.toLowerCase()) ||
-            doctor.reqmon.toLowerCase().includes(searchText.toLowerCase())
-        );
-        setFilteredDate(filtered);
-    }, [searchText, reqdata]);
-
-    const renderDoctorItem = ({ item }) => (
+    const renderRequestItem = ({ item }) => (
         <View style={styles.reqView}>
             <View style={styles.dateBlock}>
-                <Text style={styles.dateText}>{item.reqdate}</Text>
-                <Text style={styles.monText}>{item.reqmon}</Text>
+                <Text style={styles.dateText}>{item.date}</Text>
             </View>
             <View style={styles.reqdet}>
                 <Text style={styles.requeston}>Request on</Text>
-                <Text style={styles.reqdate}>Date: {item.reqdate} {item.reqmon} {item.reqyear}</Text>
-                <Text style={styles.reqtime}>Time: {item.reqtime}</Text>
+                <Text style={styles.reqdate}>Date: {item.date}</Text>
+                <Text style={styles.reqtime}>Time: {item.time}</Text>
             </View>
             <TouchableOpacity
                 style={styles.viewButton2451}
-                onPress={() => handleViewDetails()}
+                onPress={() => handleViewDetails(item.requestId)}
             >
                 <Text style={styles.viewDetails}>View</Text>
             </TouchableOpacity>
@@ -90,12 +58,13 @@ const ReqList = ({ searchText }) => {
             <FlatList
                 nestedScrollEnabled
                 data={filteredDate}
-                renderItem={renderDoctorItem}
-                keyExtractor={item => item.id}
+                renderItem={renderRequestItem}
+                keyExtractor={item => item.requestId.toString()} 
             />
         </SafeAreaView>
     );
-}
+};
+
 const styles = StyleSheet.create({
     reqcon: {
         flex: 1,
@@ -110,14 +79,10 @@ const styles = StyleSheet.create({
         marginTop: 10,
         flexDirection: 'row',
         borderRadius: 10,
-        // borderWidth: 1,
-        // borderStyle: 'solid',
         elevation: 5,
     },
     dateBlock: {
-        // marginTop: windowWidth * 0.02,
         marginLeft: windowWidth * 0.02,
-        // marginRight: 10,
         width: windowWidth * 0.23,
         height: windowWidth * 0.25,
         borderRadius: 10,
@@ -163,7 +128,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: FontFamily.font_bold,
         marginTop: windowWidth * 0.005,
-        // width: windowWidth * 0.28
     },
     reqtime: {
         marginLeft: windowWidth * 0.02,
@@ -174,7 +138,7 @@ const styles = StyleSheet.create({
         marginTop: windowWidth * 0.005
     },
     dateText: {
-        fontSize: 45,
+        fontSize: 25,
         fontWeight: 'bold',
         color: '#fff',
         alignSelf: 'center'
@@ -186,4 +150,5 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     }
 })
+
 export default ReqList;

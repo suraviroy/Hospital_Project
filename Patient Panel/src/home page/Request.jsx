@@ -150,7 +150,7 @@ const Request = () => {
             newConsultation: {
                 isSelected: selectedOption3 === "Select" ? "NA" : selectedOption3,
                 details: selectedDetails3 || "NA",
-                dischargeCertificate: pickedFile1.uri || "NA",
+                dischargeCertificate: pickedFile1 || "NA",
             },
             hospitalization: {
                 isSelected: selectedOption4 === "Select" ? "NA" : selectedOption4,
@@ -162,12 +162,12 @@ const Request = () => {
             },
             demise: {
                 isSelected: selectedOption6 === "Select" ? "NA" : selectedOption6,
-                deathCertificate: pickedFile2.uri || "NA",
+                deathCertificate: pickedFile2 || "NA",
             },
             report: {
                 isSelected: selectedOption7 === "Select" ? "NA" : selectedOption7,
                 details: selectedDetails7 || "NA",
-                certificate: pickedFile3.uri || "NA",
+                certificate: pickedFile3 || "NA",
             },
             request: requestText,
         };
