@@ -117,20 +117,25 @@ const styles = StyleSheet.create({
         marginLeft: windowWidth*0.03,
         fontFamily: 'regular01',
         marginTop: windowWidth*0.1,
+        width: windowWidth*0.5
     },
     patientId2451: {
-        width: windowWidth*0.3,
+        width: windowWidth*0.36,
         height: windowWidth*0.08,
         backgroundColor: '#85DBCD',
         borderTopLeftRadius: 15,
         borderBottomLeftRadius: 15,
-        marginLeft: windowWidth*0.28,
+        right: -windowWidth*0.1,
         marginTop: windowWidth*0.09,
+
     },
     patientId13: {
         alignSelf: 'center',
         marginTop: 4,
-        marginLeft: 3,
+        marginLeft: windowWidth*0.025,
+        fontFamily: 'bold02',
+        fontWeight: '800',
+        fontSize: 15,
     },
     det14: {
         display: 'flex',

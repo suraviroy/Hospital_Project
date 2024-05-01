@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         marginVertical: 16,
         marginTop: 60,
         height: 50,
-        width: 380,
+        width: windowWidth*0.95,
         backgroundColor: "#FFFFFF",
         marginTop: windowWidth*0.40,
 
