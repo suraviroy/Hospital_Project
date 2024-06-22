@@ -98,7 +98,7 @@ const Home = () => {
                     <Text style={styles.text012}>Institute of Pulmocare & {'\n'}Research</Text>
                     <View style={{ alignItems: "flex-end" }}>
                         <TouchableOpacity style={{ marginLeft: 50 }}>
-                            <Ionicons name='chatbubble-ellipses-sharp' size={30} color='#2A9988' />
+                            <Ionicons name='chatbubble-ellipses-sharp' size={30} color='#096759' />
                         </TouchableOpacity>
                         <View style={styles.ChatCount012}>
                             <Text style={styles.chatNumber012}>8</Text>
@@ -183,12 +183,12 @@ const styles = StyleSheet.create({
     button456: {
         marginLeft: 110,
         borderWidth: 2,
-        borderColor: "#2A9988",
+        borderColor: "#096759",
         padding: 5,
         borderRadius: 6,
     },
     text567: {
-        color: "#2A9988",
+        color: "#096759",
         fontFamily: "bold01",
         fontSize: 14,
     },

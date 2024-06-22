@@ -154,9 +154,9 @@ const PastHosForm = ({ onDataChange }) => {
         <TouchableOpacity style={styles.uploadbutton} onPress={pickFile}>
         
           {uploading ? (
-        <ActivityIndicator size="small" color={'#2A9988'} />
+        <ActivityIndicator size="small" color={'#096759'} />
             ) : (
-        <Text style={{ fontWeight: '700', fontSize: 15, color: '#2A9988', alignSelf: 'center' }}>Upload</Text>
+        <Text style={{ fontWeight: '700', fontSize: 15, color: '#096759', alignSelf: 'center' }}>Upload</Text>
         )}</TouchableOpacity>
       </View>
     </View>
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     height: windowWidth * 0.1,
     backgroundColor: '#fff',
     borderWidth: 2,
-    borderColor: '#2A9988',
+    borderColor: '#096759',
     borderRadius: 5,
     justifyContent: 'center',
   },

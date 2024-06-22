@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     selectedTab: {
-        backgroundColor: '#2A9988',
+        backgroundColor: '#096759',
     },
     tabButtonText: {
         color: '#000',

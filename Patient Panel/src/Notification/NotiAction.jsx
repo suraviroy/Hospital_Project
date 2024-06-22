@@ -36,13 +36,13 @@ const NotiAction = () => {
         style={[
           styles.optionBox,
           selectedOption === index && {
-            backgroundColor: '#2A998880',
+            backgroundColor: '#09675980',
             color: '#fff',
           },
         ]}
         onPress={() => handleOptionSelect(index)}
       >
-        <View style={[styles[`circle${index + 1}`], selectedOption === index && { backgroundColor: '#2A9988' }]}></View>
+        <View style={[styles[`circle${index + 1}`], selectedOption === index && { backgroundColor: '#096759' }]}></View>
         <Text style={styles.optionText}>{option}</Text>
       </TouchableOpacity>
     ));
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     top: 16,
   },
   sendButton: {
-    backgroundColor: '#2A9988',
+    backgroundColor: '#096759',
     borderRadius: 6,
     paddingVertical: 10,
     paddingHorizontal: 140,

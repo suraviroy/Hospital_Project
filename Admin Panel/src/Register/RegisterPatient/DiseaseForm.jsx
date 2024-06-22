@@ -872,7 +872,7 @@ const DiseaseForm = ({ patientId }) => {
                 style={{
                   fontWeight: "700",
                   fontSize: 15,
-                  color: "#2A9988",
+                  color: "#096759",
                   alignSelf: "center",
                 }}
               >
@@ -1068,7 +1068,7 @@ const styles = StyleSheet.create({
     paddingRight: 15,
   },
   submitButton: {
-    backgroundColor: "#2A9988",
+    backgroundColor: "#096759",
     width: windowWidth * 0.95,
     height: windowWidth * 0.13,
     marginTop: windowWidth * 0.1,
@@ -1362,7 +1362,7 @@ const styles = StyleSheet.create({
     height: windowWidth * 0.13,
     backgroundColor: "#DBF4F1",
     borderWidth: 1.24,
-    borderColor: "#2A9988",
+    borderColor: "#096759",
     borderRadius: 5,
     justifyContent: "center",
     alignSelf: "center",

@@ -13,7 +13,7 @@
 //         <View style={styles.imageSliderContainer}>
 //             <SliderBox
 //                 images={slides}
-//                 dotColor="#2A9988"
+//                 dotColor="#096759"
 //                 inactiveDotColor="#706767"
 //                 ImageComponentStyle={{ borderRadius: 15, width: "95%", marginTop: 15}}
 //             />

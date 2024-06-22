@@ -27,7 +27,7 @@ const Start = (props) => {
                 onPress={handleGetStarted}
             >
                 <Text style={styles.buttonText}>Get Started</Text>
-                <Icon name="arrow-right" size={20} color='#35A9EA' style={styles.icon} />
+                <Icon name="arrow-right" size={20} color='#357EEA' style={styles.icon} />
             
             </TouchableOpacity>
         </View>
@@ -38,7 +38,7 @@ const windowWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
     startingPage: {
-        backgroundColor: '#35A9EA',
+        backgroundColor: '#357EEA',
         flex: 1,
         height: "100%",
         overflow: "hidden",
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "700",
        
-        color: '#35A9EA',
+        color: '#357EEA',
     },
     icon: {
         marginLeft: 10,

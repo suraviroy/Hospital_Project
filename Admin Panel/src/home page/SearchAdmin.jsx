@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         marginVertical: 16,
         marginHorizontal: width * 0.04,
         borderWidth: 1.5,
-        borderColor: "#2A9988",
+        borderColor: "#096759",
         marginTop: windowWidth*0.08,
     },
     searchIcon: {

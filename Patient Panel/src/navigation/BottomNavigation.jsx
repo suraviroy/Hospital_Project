@@ -5,7 +5,7 @@ import Home from '../home page/home';
 import { Ionicons, FontAwesome,FontAwesome6 ,Fontisto} from 'react-native-vector-icons';
 import MyProfile from '../MyProfile/MyProfile';
 import Notification from '../Notification/Notification';
-import Reports from '../Reports/reports';
+import Reports from '../Reports/Reports';
 
 const Tab = createBottomTabNavigator();
 

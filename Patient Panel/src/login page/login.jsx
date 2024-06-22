@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         left: 30,
         width: 3,
         height: 230, 
-        backgroundColor: '#35A9EA',
+        backgroundColor: '#357EEA',
     },
     container01: {
         flex:1,
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
 
       },
       backgroundOverlay01: {
-        backgroundColor: '#35A9EA',
+        backgroundColor: '#357EEA',
         top: -height / 2,
         position: 'absolute',
         height: height * 0.88,
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
         top: height*0.1,
         fontSize: 40,
         fontFamily: 'extrabold01',
-        color: '#35A9EA',
+        color: '#357EEA',
         alignItems: "center",
     },
     inputContainer01: {
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderBottomWidth: 2,
-        borderBottomColor: '#35A9EA',
+        borderBottomColor: '#357EEA',
         marginVertical: 13,
         backgroundColor: '#EEE9E9',
         borderRadius: 5,
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
         fontWeight:'300',
     },
     loginButton01: {
-        backgroundColor: '#35A9EA',
+        backgroundColor: '#357EEA',
         top: height*0.15,
         width: "60%",
         borderRadius: 5,

@@ -44,7 +44,7 @@ const PatientNavigation = () => {
                     <TouchableOpacity style={{
                         width: '50%',
                         height: 50,
-                        backgroundColor: selectedTab == 0 ? '#2A9988' : '#DBF4F1',
+                        backgroundColor: selectedTab == 0 ? '#096759' : '#DBF4F1',
                         borderRadius: 10,
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -58,7 +58,7 @@ const PatientNavigation = () => {
                     <TouchableOpacity style={{
                         width: '50%',
                         height: 50,
-                        backgroundColor: selectedTab == 1 ? '#2A9988' : '#DBF4F1',
+                        backgroundColor: selectedTab == 1 ? '#096759' : '#DBF4F1',
                         borderRadius: 10,
                         justifyContent: 'center',
                         alignItems: 'center',

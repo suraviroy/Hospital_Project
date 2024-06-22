@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderStyle: 'solid',
         borderWidth: 1,
-        borderColor: '#35A9EA',
+        borderColor: '#357EEA',
         marginVertical: windowWidth*0.05,
         height: 50,
         width: windowWidth*0.97,

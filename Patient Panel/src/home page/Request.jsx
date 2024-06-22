@@ -551,9 +551,9 @@ const Request = () => {
                                     </Text>
                                     <TouchableOpacity style={styles.uploadbutton} onPress={pickFile1}>
                                         {isLoading1 ? (
-                                            <ActivityIndicator size="small" color={'#35A9EA'} />
+                                            <ActivityIndicator size="small" color={'#357EEA'} />
                                         ) : (
-                                            <Text style={{ fontWeight: '700', fontSize: 15, color: '#35A9EA', alignSelf: 'center' }}>Upload</Text>
+                                            <Text style={{ fontWeight: '700', fontSize: 15, color: '#357EEA', alignSelf: 'center' }}>Upload</Text>
                                         )}
                                     </TouchableOpacity>
                                 </View>
@@ -772,9 +772,9 @@ const Request = () => {
                                 </Text>
                                 <TouchableOpacity style={styles.uploadbutton} onPress={pickFile2}>
                                     {isLoading2 ? (
-                                        <ActivityIndicator size="small" color={'#35A9EA'} />
+                                        <ActivityIndicator size="small" color={'#357EEA'} />
                                     ) : (
-                                        <Text style={{ fontWeight: '700', fontSize: 15, color: '#35A9EA', alignSelf: 'center' }}>Upload</Text>
+                                        <Text style={{ fontWeight: '700', fontSize: 15, color: '#357EEA', alignSelf: 'center' }}>Upload</Text>
                                     )}
                                 </TouchableOpacity>
                             </View>
@@ -860,9 +860,9 @@ const Request = () => {
                                     </Text>
                                     <TouchableOpacity style={styles.uploadbutton} onPress={pickFile3}>
                                         {isLoading4 ? (
-                                            <ActivityIndicator size="small" color={'#35A9EA'} />
+                                            <ActivityIndicator size="small" color={'#357EEA'} />
                                         ) : (
-                                            <Text style={{ fontWeight: '700', fontSize: 15, color: '#35A9EA', alignSelf: 'center' }}>Upload</Text>
+                                            <Text style={{ fontWeight: '700', fontSize: 15, color: '#357EEA', alignSelf: 'center' }}>Upload</Text>
                                         )}
                                     </TouchableOpacity>
                                 </View>
@@ -976,7 +976,7 @@ const styles = StyleSheet.create({
         paddingRight: 15,
     },
     submitButton: {
-        backgroundColor: "#35A9EA",
+        backgroundColor: "#357EEA",
         width: windowWidth * 0.95,
         height: windowWidth * 0.13,
         marginTop: windowWidth * 0.1,
@@ -1050,7 +1050,7 @@ const styles = StyleSheet.create({
         height: windowWidth * 0.1,
         backgroundColor: '#fff',
         borderWidth: 2,
-        borderColor: '#35A9EA',
+        borderColor: '#357EEA',
         borderRadius: 5,
         justifyContent: 'center'
     },

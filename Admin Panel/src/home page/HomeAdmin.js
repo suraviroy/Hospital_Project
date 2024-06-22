@@ -60,7 +60,7 @@ const HomeAdmin = ({ searchText }) => {
 <View style={styles.rightContent}>
               <View style={styles.buttonsRow}>
               {/* <TouchableOpacity style={styles.button01}>
-                  <Ionicons name='chatbubble-ellipses-sharp' size={20} color='#2A9988' />
+                  <Ionicons name='chatbubble-ellipses-sharp' size={20} color='#096759' />
                   </TouchableOpacity> */}
                   <TouchableOpacity style={styles.button02} onPress={()=>openDial(phNumber)}>
                   <Ionicons name="call-sharp" size={20} style={styles.callIcon} />
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
         height: windowWidth * 0.4,
         borderRadius: 15,
         borderWidth: 1,
-        borderColor: "#2A9988",
+        borderColor: "#096759",
         elevation: 5,
     },
     name: {
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     idNumberContainer: {
-        backgroundColor: '#2A9988',
+        backgroundColor: '#096759',
         borderTopLeftRadius: 25,
         borderBottomLeftRadius: 25,
         top: 45,
@@ -185,10 +185,10 @@ const styles = StyleSheet.create({
     detailsButtonText02: {
         borderWidth: 1.5,
         padding: 5,
-        color: "#2A9988",
+        color: "#096759",
         borderRadius: 5,
         fontSize: 12,
-        borderColor: "#2A9988",
+        borderColor: "#096759",
     },
     registeredOnContainer: {
         position: 'absolute',
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
         fontSize: 11,
     },
     callIcon:{
-        color:'#2A9988'
+        color:'#096759'
     },
     datetime:{
     color: '#011411',

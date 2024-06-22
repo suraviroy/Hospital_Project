@@ -8,7 +8,7 @@ import { useFonts } from 'expo-font';
 import { useCallback } from 'react';
 import Home from './src/home page/home';
 import Notification from './src/Notification/Notification';
-import Reports from './src/Reports/reports';
+import Reports from './src/Reports/Reports';
 
 
 import BottomNavigation from './src/navigation/BottomNavigation';

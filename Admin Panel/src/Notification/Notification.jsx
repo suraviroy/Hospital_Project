@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontFamily: FontFamily.font_bold,
         marginTop: windowWidth*0.01,
-        // backgroundColor: '#35A9EA',
+        // backgroundColor: '#357EEA',
         width: windowWidth*0.15,
         borderRadius: windowWidth*0.01,
         borderBottomWidth: 1,
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     patientId2451: {
         width: windowWidth*0.26,
         height: windowWidth*0.07,
-        backgroundColor: '#2A9988',
+        backgroundColor: '#096759',
         borderTopLeftRadius: 12,
         borderBottomLeftRadius: 12,
         marginLeft: windowWidth*0.01,

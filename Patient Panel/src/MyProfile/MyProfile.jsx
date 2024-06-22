@@ -66,9 +66,9 @@ const MyProfile =({ route }) => {
          <View style={styles.feedprofile}>
          <View style={styles.logout}>
          <TouchableOpacity style={styles.logbutton} >
-        <MaterialIcons name='logout' size={25} color='#35A9EA' marginRight={20} paddingLeft= {20} paddingTop={5}/>
+        <MaterialIcons name='logout' size={25} color='#357EEA' marginRight={20} paddingLeft= {20} paddingTop={5}/>
         <Text style={styles.textbutton}>Logout</Text>
-        <FontAwesome6 name='arrow-right-long' size={25} color='#35A9EA' marginRight={20} paddingLeft= {windowWidth*0.5} paddingTop={5}/>
+        <FontAwesome6 name='arrow-right-long' size={25} color='#357EEA' marginRight={20} paddingLeft= {windowWidth*0.5} paddingTop={5}/>
         </TouchableOpacity>
         </View>
         <View style= {styles.feedpage}>
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
       height: windowWidth*0.80,
       top: -windowWidth*0.50,
       width: '100%',
-      backgroundColor: '#35A9EA',
+      backgroundColor: '#357EEA',
       borderRadius: windowWidth * 0.05,
       borderTopLeftRadius: 0,
       borderTopRightRadius: 0,

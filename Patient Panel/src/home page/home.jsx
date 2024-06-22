@@ -71,7 +71,7 @@ const handleViewDetails = (patientId) => {
               key={index}
               style={[
                 styles.dot,
-                index === currentIndex && { backgroundColor: '#35A9EA' },
+                index === currentIndex && { backgroundColor: '#357EEA' },
               ]}
             />
           ))}
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderStyle: 'solid',
-    borderColor: '#35A9EA',
+    borderColor: '#357EEA',
     elevation: 5,
 },
 docImage: {
@@ -176,7 +176,7 @@ viewButton2451: {
   position: "absolute",
   width: windowWidth * 0.28,
   height: 34,
-  borderColor: '#35A9EA',
+  borderColor: '#357EEA',
   borderWidth: 2,
   borderStyle: 'solid',
   borderRadius: 5,
@@ -184,7 +184,7 @@ viewButton2451: {
   marginLeft: windowWidth * 0.65,
 },
 viewDetails: {
-  color: '#35A9EA',
+  color: '#357EEA',
   fontSize: 12,
   alignContent: 'center',
 },
@@ -218,7 +218,7 @@ doclang: {
   marginTop: windowWidth * 0.005
 },
 docexp: {
-  color: '#35A9EA',
+  color: '#357EEA',
   marginLeft: windowWidth * 0.17,
   alignItems: 'center',
   fontSize: 12,
@@ -261,7 +261,7 @@ docexp: {
     alignItems: 'center',
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#35A9EA',
+    borderColor: '#357EEA',
     borderRadius: 8,
     paddingHorizontal: 8,
     marginTop: -8,
@@ -331,7 +331,7 @@ docexp: {
     fontWeight: 'bold',
   },
   viewAll: {
-    color: '#35A9EA',
+    color: '#357EEA',
     textDecorationLine: 'underline',
   },
   sliderImage: {

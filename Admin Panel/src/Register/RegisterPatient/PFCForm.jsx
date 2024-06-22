@@ -392,7 +392,7 @@ case 'uncontrolleddisease':
           uncontrolleddisease: [...prevData.uncontrolleddisease, newUncontrolledDisease]
         }));
       }}>
-        <Text style={{ fontWeight: '700', fontSize: 15, color: '#2A9988', alignSelf: 'center' }}>Add More</Text>
+        <Text style={{ fontWeight: '700', fontSize: 15, color: '#096759', alignSelf: 'center' }}>Add More</Text>
       </TouchableOpacity>
     </View>
   );
@@ -450,7 +450,7 @@ addmore: {
   height: windowWidth * 0.13,
   backgroundColor: '#DBF4F1',
   borderWidth: 1.24,
-  borderColor: '#2A9988',
+  borderColor: '#096759',
   borderRadius: 5,
   justifyContent: 'center',
   alignSelf: 'center',

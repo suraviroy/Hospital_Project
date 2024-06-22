@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginTop: 30,
         marginLeft: windowWidth*0.65,
-        backgroundColor: '#2A9988',
+        backgroundColor: '#096759',
     },
     update13: {
         color: '#fff',
