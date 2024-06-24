@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, Button, SafeAreaView, TextInput, TouchableOpacity, Image, Dimensions, ScrollView, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, SafeAreaView, TextInput, TouchableOpacity, Image, Dimensions, FlatList, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
 import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
-import { PickerIos, Picker } from '@react-native-picker/picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import axios from 'axios';
 import { backendURL } from "../backendapi";
 import * as FileSystem from 'expo-file-system';
+
 const adminRegistrationURL = `${backendURL}/adminListRouter/adminregistration`;
 
 const AddAdmin = () => {
@@ -25,14 +26,12 @@ const AddAdmin = () => {
     const [genderError, setGenderError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleRegister = () => {
-        console.log('Name:', name);
-        console.log('Phone Number:', phoneNumber);
-        console.log('Educational Qualification:', education);
-        console.log('Gender:', gender);
-        console.log('ID Number:', idNumber);
-        console.log('Picture:', image)
-    };
+    const [open, setOpen] = useState(false);
+    const [items, setItems] = useState([
+        {label: 'Male', value: 'male'},
+        {label: 'Female', value: 'female'},
+        {label: 'Other', value: 'other'}
+    ]);
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -76,6 +75,7 @@ const AddAdmin = () => {
         } else {
             setGenderError(false);
         }
+
         if (name === '' || phoneNumber === '' || education === '' || gender === '') {
             alert('Please fill in all required fields');
             return;
@@ -107,11 +107,7 @@ const AddAdmin = () => {
                 if (response.ok) {
                     const data = await response.json();
                     console.log('Cloudinary response:', data);
-    
-                   
                     data && data.secure_url && setImage(data.secure_url);
-    
-                    
                     saveDataToBackend(data.secure_url); 
                 } else {
                     console.error('Failed to upload image to Cloudinary');
@@ -120,7 +116,6 @@ const AddAdmin = () => {
                 console.error('Error uploading image:', error);
             }
         } else {
-            
             saveDataToBackend('');
         }
     };
@@ -152,7 +147,6 @@ const AddAdmin = () => {
             console.error('Error registering admin:', error);
             alert('Registration Failed');
         } finally {
-
             setIsLoading(false);
         }
     };
@@ -161,9 +155,81 @@ const AddAdmin = () => {
         navigation.goBack();
     };
 
+    const renderHeader = () => (
+        <View style={styles.innerContainer}>
+            <View style={styles.imagePickerContainer}>
+                {!image && <Image source={require("../../assets/images/user.png")} style={styles.backgroundImage} />}
+                {image && <Image source={{ uri: image }} style={styles.selectedImage} />}
+                <TouchableOpacity onPress={pickImage}>
+                    <Text style={styles.buttonText}>Add Picture</Text>
+                </TouchableOpacity>
+            </View>
+            <Text style={styles.label}>Your Name*</Text>
+            <TextInput
+                style={[styles.input, nameError && styles.inputError]}
+                placeholder="Enter here"
+                value={name}
+                onChangeText={setName}
+            />
+            {nameError && <Text style={styles.errorText}>*Required field</Text>}
+            <Text style={styles.label}>Your Phone Number*</Text>
+            <TextInput
+                style={[styles.input, phoneError && styles.inputError]}
+                placeholder="Enter here"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                keyboardType="phone-pad"
+            />
+            {phoneError && <Text style={styles.errorText}>*Required field</Text>}
+            <Text style={styles.label}>Educational Qualification*</Text>
+            <TextInput
+                style={[styles.input, educationError && styles.inputError]}
+                placeholder="Enter here"
+                value={education}
+                onChangeText={setEducation}
+            />
+            {educationError && <Text style={styles.errorText}>*Required field</Text>}
+            <Text style={styles.label}>Gender*</Text>
+            <View style={[styles.inputContainer, genderError && styles.inputError]}>
+                <DropDownPicker
+                    open={open}
+                    value={gender}
+                    items={items}
+                    setOpen={setOpen}
+                    setValue={setGender}
+                    setItems={setItems}
+                    placeholder="Select Gender"
+                    style={styles.dropdown}
+                    dropDownContainerStyle={styles.dropdownContainer}
+                />
+            </View>
+            {genderError && <Text style={styles.errorText}>*Required field</Text>}
+            <Text style={styles.label}>ID Number</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Enter here"
+                value={idNumber}
+                onChangeText={setIdNumber}
+                keyboardType="numeric"
+            />
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
+                    <Text style={[styles.buttonText, styles.cancelText]}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
+                    {isLoading ? (
+                        <ActivityIndicator size="small" color={Color.colorWhite} />
+                    ) : (
+                        <Text style={[styles.buttonText, styles.saveText]}>Save</Text>
+                    )}
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header} nestedScrollEnabled>
+            <View style={styles.header}>
                 <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                     <Text><Icon name="angle-left" size={34} color={Color.colorBlack} /></Text>
                 </TouchableOpacity>
@@ -174,81 +240,15 @@ const AddAdmin = () => {
                     </View>
                 </View>
             </View>
-            <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                <View style={styles.innerContainer}>
-                    <View style={styles.imagePickerContainer}>
-                        {!image && <Image source={require("../../assets/images/user.png")} style={styles.backgroundImage} />}
-                        {image && <Image source={{ uri: image, base64: true }} style={styles.selectedImage} />}
-                        <TouchableOpacity onPress={pickImage}>
-                            <Text style={styles.buttonText}>Add Picture</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <Text style={styles.label}>Your Name*</Text>
-                    <TextInput
-                        style={[styles.input, nameError && styles.inputError]}
-                        placeholder="Enter here"
-                        value={name}
-                        onChangeText={setName}
-                    />
-                    {nameError && <Text style={styles.errorText}>*Required field</Text>}
-                    <Text style={styles.label}>Your Phone Number*</Text>
-                    <TextInput
-                        style={[styles.input, phoneError && styles.inputError]}
-                        placeholder="Enter here"
-                        value={phoneNumber}
-                        onChangeText={setPhoneNumber}
-                        keyboardType="phone-pad"
-                    />
-                    {phoneError && <Text style={styles.errorText}>*Required field</Text>}
-                    <Text style={styles.label}>Educational Qualification*</Text>
-                    <TextInput
-                        style={[styles.input, educationError && styles.inputError]}
-                        placeholder="Enter here"
-                        value={education}
-                        onChangeText={setEducation}
-                    />
-                    {educationError && <Text style={styles.errorText}>*Required field</Text>}
-                    <Text style={styles.label}>Gender*</Text>
-                    <View style={[styles.inputContainer, genderError && styles.inputError]}>
-                        <Picker
-                            selectedValue={gender}
-                            style={styles.picker}
-                            onValueChange={(itemValue, itemIndex) => setGender(itemValue)}
-                        >
-                            <Picker.Item label="Select" value="" />
-                            <Picker.Item label="Male" value="male" />
-                            <Picker.Item label="Female" value="female" />
-                            <Picker.Item label="Other" value="other" />
-                        </Picker>
-                    </View>
-                    {genderError && <Text style={styles.errorText}>*Required field</Text>}
-                    <Text style={styles.label}>ID Number</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter here"
-                        value={idNumber}
-                        onChangeText={setIdNumber}
-                        keyboardType="numeric"
-                    />
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
-                            <Text style={[styles.buttonText, styles.cancelText]}>Cancel</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
-                            {isLoading ? (
-                                <ActivityIndicator size="small" color={Color.colorWhite} />
-                            ) : (
-                                <Text style={[styles.buttonText, styles.saveText]}>Save</Text>
-                            )}
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </ScrollView>
+            <FlatList
+                data={[]}
+                renderItem={null}
+                ListHeaderComponent={renderHeader}
+                contentContainerStyle={styles.scrollViewContent}
+            />
         </SafeAreaView>
     );
 };
-
-
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -292,6 +292,9 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         paddingBottom: 20,
     },
+    innerContainer: {
+        padding: 10,
+    },
     label: {
         color: Color.colorBlack,
         alignSelf: 'flex-start',
@@ -312,19 +315,18 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         width: '95%',
+        marginBottom: 10,
+        marginLeft: 10,
+    },
+    dropdown: {
         borderColor: 'gray',
         borderWidth: 1,
         borderRadius: Border.br_5xs,
-        marginBottom: 10,
-        justifyContent: 'center',
-        marginLeft: 10,
-        paddingRight: 10,
     },
-    picker: {
-        width: '100%',
-        height: 40,
-        paddingHorizontal: 10,
-        color: Color.colorGray_200,
+    dropdownContainer: {
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: Border.br_5xs,
     },
     inputError: {
         borderColor: Color.colorRed,
@@ -382,6 +384,7 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         marginVertical: 10,
+        borderRadius: 20,
     },
 });
 
