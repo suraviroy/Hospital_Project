@@ -12,7 +12,8 @@ import {
   patientDisease,
   excelFile,
   notification,
-  action
+  action,
+  coordinatorPatients
 } from "../controller/adminController.js";
 const adminRouter = express.Router();
 
@@ -28,5 +29,6 @@ adminRouter.get("/patientDisease/:id", patientDisease);
 adminRouter.get("/excelFile", excelFile);
 adminRouter.get("/notification", notification);
 adminRouter.post("/action/:rid", action);
+adminRouter.get("/coordinatorPatients/:coname", coordinatorPatients);
 
 export default adminRouter;

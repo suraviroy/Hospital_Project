@@ -1,5 +1,6 @@
 import PatientSchema from "../model/patientSchema.js";
 import RequestSchema from "../model/requestSchema.js";
+import AdminSchema from "../model/adminSchema.js";
 import moment from "moment-timezone";
 import excelJS from 'exceljs';
 
@@ -393,6 +394,35 @@ export const action = async (req, res) => {
   } catch (err) {
     console.error("Error:", err);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+export const coordinatorPatients = async (req, res) => {
+  try {
+    const coname = req.params.coname;
+
+    const adminExists = await AdminSchema.exists({ name: coname });
+    if (!adminExists) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    const coordinatorPatientsName = await PatientSchema.find(
+      {
+        coordinator: coname,
+      },
+      {
+        name: 1,
+        patientId: 1,
+        image: 1,
+        gender: 1,
+        age: 1,
+        visitDate: { $arrayElemAt: ["$visitCount.visitDate", -1] },
+        visitTime: { $arrayElemAt: ["$visitCount.visitTime", -1] },
+        _id: 0,
+      }
+    );
+    res.status(200).json(coordinatorPatientsName);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
