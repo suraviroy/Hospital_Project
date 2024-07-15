@@ -9,12 +9,12 @@ const Start = (props) => {
 
   const handleGetStarted = () => {
   
-    navigation.navigate('Login');
+    navigation.navigate('Alert');
   };
     return (
         <View style={styles.startingPage}>
             <Image
-                source={require("../../assets/images/frontpic.png")}
+                source={require("../../assets/images/back.png")}
                 style={styles.backgroundImage}
             />
             <Text style={[styles.getStartedFlexBox]}>
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     },
     backgroundImage: {
         top: 69,
-        left: 10,
+        //left: 10,
         borderRadius: 45,
         width: 386,
         height: 426,

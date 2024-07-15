@@ -15,7 +15,7 @@ const Start = (props) => {
     return (
         <View style={styles.startingPage}>
             <Image
-                source={require("../../assets/images/frontpic.png")}
+                source={require("../../assets/images/back.png")}
                 style={styles.backgroundImage}
             />
             <Text style={[styles.getStartedFlexBox]}>

@@ -8,7 +8,7 @@ import { useFonts } from 'expo-font';
 import { useCallback } from 'react';
 import Home from './src/home page/home';
 import Notification from './src/Notification/Notification';
-import Reports from './src/Reports/Reports';
+import Reports from './src/Reports/reports';
 
 
 import BottomNavigation from './src/navigation/BottomNavigation';
@@ -18,6 +18,7 @@ import Request from './src/home page/Request';
 import NotificationNavbar from './src/Notification/NotificationNavbar';
 import NotiReq from './src/Notification/NotiReq';
 import NotiAction from './src/Notification/NotiAction';
+import AlertNoti from './src/alert/alert';
 
 
 
@@ -64,6 +65,7 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Start" component={Start}/>
+        <Stack.Screen name="Alert" component={AlertNoti} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Notification" component={Notification}  />
@@ -75,6 +77,7 @@ function App() {
         <Stack.Screen name="NotificationNavbar" component={NotificationNavbar}/>
         <Stack.Screen name="NotiReq" component={NotiReq}/>
         <Stack.Screen name="NotiAction" component={NotiAction}/>
+
 
       </Stack.Navigator>
     </NavigationContainer>
