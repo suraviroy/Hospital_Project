@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from "axios";
 import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 import { backendURL } from "../backendapi";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width, height } = Dimensions.get("window");
 const patientLoginURL = `${backendURL}/patientRouter/login`;
 const Login = () => {
@@ -32,7 +33,16 @@ const Login = () => {
             if (responseData.status === 'success') {
                 const { result } = responseData;
                 const { patientId, name, gender, age, contactNumber, bloodGroup, image } = result;
-                navigation.navigate('BottomNavigation', { patientId: patientId });
+                AsyncStorage.setItem('token', patientId.toString())
+                .then(() => {
+                    console.log('token saved successfully');
+                    navigation.navigate('BottomNavigation', { patientId: patientId });
+                })
+                .catch(error => {
+                    console.error('Failed to save patientId', error);
+                });
+               
+                
 
         // fetch(`${backendURL}/patientRouter/HomePageDetails/${patientId}`)
         //     .then(response => response.json())

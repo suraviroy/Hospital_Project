@@ -27,8 +27,10 @@ const tabBarLabelStyle = {
   paddingBottom: 10,
 };
 
-const BottomNavigation = ({ route }) => {
-  const { patientId} = route.params;
+const BottomNavigation = ({ token }) => {
+  // const { patientId} = route.params;
+  const  patientId = token;
+  console.log("BottomNavigation page", patientId)
   return (
     <Tab.Navigator
       initialRouteName='Home'

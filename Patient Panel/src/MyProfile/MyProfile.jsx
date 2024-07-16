@@ -5,6 +5,8 @@ import axios from 'axios';
 import { backendURL } from "../backendapi";
 const windowWidth = Dimensions.get('window').width;
 import { FontFamily, Color } from '../../GlobalStyles';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MyProfile =({ route }) => {
   const [defaultRating, setdefaultRating] =useState(2)
@@ -43,6 +45,21 @@ const MyProfile =({ route }) => {
             });
             console.log(patientData)
     }, [patientId]);
+
+    const navigation = useNavigation();
+
+    const handleLogout = async () => {
+      try {
+        await AsyncStorage.removeItem('token');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'LoginUser' }],
+        });
+      } catch (error) {
+        console.error('Failed to log out:', error);
+      }
+    };
+
     return (
       <SafeAreaView style={styles.container01}>
         <ScrollView style={styles.scrollViewContent}>
@@ -65,7 +82,7 @@ const MyProfile =({ route }) => {
          </View>
          <View style={styles.feedprofile}>
          <View style={styles.logout}>
-         <TouchableOpacity style={styles.logbutton} >
+         <TouchableOpacity style={styles.logbutton} onPress={handleLogout}>
         <MaterialIcons name='logout' size={25} color='#357EEA' marginRight={20} paddingLeft= {20} paddingTop={5}/>
         <Text style={styles.textbutton}>Logout</Text>
         <FontAwesome6 name='arrow-right-long' size={25} color='#357EEA' marginRight={20} paddingLeft= {windowWidth*0.5} paddingTop={5}/>

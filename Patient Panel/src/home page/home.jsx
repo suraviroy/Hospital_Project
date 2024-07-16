@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Dimensions, BackHandler, AppState } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { backendURL } from "../backendapi";
 const windowWidth = Dimensions.get('window').width;
 import { FontFamily, Color } from '../../GlobalStyles';
@@ -13,22 +13,67 @@ const Home = ({ route }) => {
   const [patientData, setPatientData] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
 
-const handleViewDetails = (patientId) => {
-  navigation.navigate('Request', { patientId});
-};
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (navigation.isFocused()) {
+          BackHandler.exitApp(); // Exit the app only if on the Home page
+          return true; // Prevent default behavior (going back to login page)
+        }
+        return false; // Allow normal back navigation for other screens
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [navigation])
+  );
+
+  useEffect(() => {
+    // Fetch patient data when component mounts or token changes
+    fetchPatientData(patientId);
+  }, [patientId]);
+
+  useEffect(() => {
+    // Handle app state changes (background/foreground)
+    AppState.addEventListener('change', handleAppStateChange);
+
+    // Clean up listener on unmount
+    return () => {
+      AppState.removeEventListener('change', handleAppStateChange);
+    };
+  }, []);
+
+  const fetchPatientData = (patientId) => {
+    fetch(`${backendURL}/patientRouter/HomePageDetails/${patientId}`)
+      .then(response => response.json())
+      .then(data => {
+        setPatientData(data[0]);
+      })
+      .catch(error => {
+        console.error('Error fetching patient basic details:', error);
+      });
+  };
+
+  const handleAppStateChange = (nextAppState) => {
+    if (nextAppState === 'active') {
+      // App is coming back from background
+      fetchPatientData(patientId); // Fetch patient data again to refresh if needed
+      if (!navigation.isFocused()) {
+        // Navigate to Home page if not already focused
+        navigation.navigate('Home');
+      }
+    }
+  };
+
+  const handleViewDetails = (patientId) => {
+    navigation.navigate('Request', { patientId });
+  };
+
   const handleNextSlide = () => {
     setCurrentIndex((currentIndex + 1) % 3);
   };
-  useEffect(() => {
-    fetch(`${backendURL}/patientRouter/HomePageDetails/${patientId}`)
-        .then(response => response.json())
-        .then(data => {
-          setPatientData(data[0]);
-        })
-        .catch(error => {
-            console.error('Error fetching patient basic details:', error);
-        });
-}, [patientId]);
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
