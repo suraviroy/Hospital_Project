@@ -1,146 +1,52 @@
-// import * as React from 'react';
-// import { NavigationContainer } from '@react-navigation/native';
-// import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
-// import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// import Start from './src/starting page/start';
-// import Login from './src/login page/login';
-// import { useFonts } from 'expo-font';
-// import { useCallback } from 'react';
-// import Home from './src/home page/home';
-// import Notification from './src/Notification/Notification';
-// import Reports from './src/Reports/reports';
-
-
-// import BottomNavigation from './src/navigation/BottomNavigation';
-
-// import MyProfile from './src/MyProfile/MyProfile';
-// import Request from './src/home page/Request';
-// import NotificationNavbar from './src/Notification/NotificationNavbar';
-// import NotiReq from './src/Notification/NotiReq';
-// import NotiAction from './src/Notification/NotiAction';
-// import AlertNoti from './src/alert/alert';
-
-
-
-// const Stack = createNativeStackNavigator();
-
-// function App() {
-//   const [fontsLoaded] = useFonts({
-//     regular: require('./assets/fonts/Content.ttf'),
-//     regular02: require('./assets/fonts/Inter-Regular.ttf'),
-//     regular01: require('./assets/fonts/CreteRound-Regular.ttf'),
-//     regular: require('./assets/fonts/Dosis-Regular.ttf'),
-//     regular: require('./assets/fonts/Dongle-Regular.ttf'),
-//     regular03: require('./assets/fonts/InriaSerif-Regular.ttf'),
-//     regular: require('./assets/fonts/Judson-Regular.ttf'),
-//     regular: require('./assets/fonts/Lato-Regular.ttf'),
-//     regular: require('./assets/fonts/JuliusSansOne-Regular.ttf'),
-//     regular89: require('./assets/fonts/Lato-Regular.ttf'),
-//     regular05: require('./assets/fonts/Kadwa-Regular.ttf'),
-//     medium01: require('./assets/fonts/Inter-Medium.ttf'),
-//     medium: require('./assets/fonts/Rubik-Medium.ttf'),
-//     medium: require('./assets/fonts/HindGuntur-Medium.ttf'),
-//     bold: require('./assets/fonts/Content-Bold.ttf'),
-//     bold: require('./assets/fonts/Dongle-Bold.ttf'),
-//     bold: require('./assets/fonts/InknutAntiqua-Bold.ttf'),
-//     bold02: require('./assets/fonts/InriaSerif-Bold.ttf'),
-//     bold01: require('./assets/fonts/Inter-Bold.ttf'),
-//     extrabold01: require('./assets/fonts/Inter-ExtraBold.ttf'),
-//     semibold: require('./assets/fonts/Inter-SemiBold.ttf'),
-//     semibold: require('./assets/fonts/Inter-SemiBold.ttf'),
-//     bold01: require('./assets/fonts/Lato-Bold.ttf'),
-//     black: require('./assets/fonts/Lato-Black.ttf'),
-//     light: require('./assets/fonts/Lato-Light.ttf'),
-    
-//   });
-//   const onLayoutRootView = useCallback(async () => {
-//     if(fontsLoaded){
-//       await Splashscreen.hideAsync();
-//     }
-//   }, [fontsLoaded]);
-//   if(!fontsLoaded){
-//     return null;
-//   }
-//   return (
-//     <NavigationContainer>
-//       <Stack.Navigator screenOptions={{ headerShown: false }}>
-//         <Stack.Screen name="Start" component={Start}/>
-//         <Stack.Screen name="Alert" component={AlertNoti} />
-//         <Stack.Screen name="Login" component={Login} />
-//         <Stack.Screen name="Home" component={Home} />
-//         <Stack.Screen name="Notification" component={Notification}  />
-        
-//         <Stack.Screen name="MyProfile" component={MyProfile} />
-//         <Stack.Screen name="Reports" component={Reports} />
-//         <Stack.Screen name="BottomNavigation" component={BottomNavigation}/>
-//         <Stack.Screen name="Request" component={Request}/>
-//         <Stack.Screen name="NotificationNavbar" component={NotificationNavbar}/>
-//         <Stack.Screen name="NotiReq" component={NotiReq}/>
-//         <Stack.Screen name="NotiAction" component={NotiAction}/>
-
-
-//       </Stack.Navigator>
-//     </NavigationContainer>
-   
-//   );
-// }
-
-// export default App;
-
-
-
-import * as React from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useFonts } from 'expo-font';
+import { useCallback, useContext } from 'react';
 import Start from './src/starting page/start';
 import Login from './src/login page/login';
-import { useFonts } from 'expo-font';
-import { useCallback } from 'react';
 import Home from './src/home page/home';
 import Notification from './src/Notification/Notification';
 import Reports from './src/Reports/reports';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
 import BottomNavigation from './src/navigation/BottomNavigation';
 import MyProfile from './src/MyProfile/MyProfile';
 import Request from './src/home page/Request';
 import NotificationNavbar from './src/Notification/NotificationNavbar';
 import NotiReq from './src/Notification/NotiReq';
 import NotiAction from './src/Notification/NotiAction';
+import { AuthProvider, AuthContext } from './src/AuthContext'; 
 import AlertNoti from './src/alert/alert';
 
 const Stack = createNativeStackNavigator();
 
-function App() {
-  const [fontsLoaded] = useFonts({
-    regular: require('./assets/fonts/Content.ttf'),
-    regular02: require('./assets/fonts/Inter-Regular.ttf'),
-    regular01: require('./assets/fonts/CreteRound-Regular.ttf'),
-    regular: require('./assets/fonts/Dosis-Regular.ttf'),
-    regular: require('./assets/fonts/Dongle-Regular.ttf'),
-    regular03: require('./assets/fonts/InriaSerif-Regular.ttf'),
-    regular: require('./assets/fonts/Judson-Regular.ttf'),
-    regular: require('./assets/fonts/Lato-Regular.ttf'),
-    regular: require('./assets/fonts/JuliusSansOne-Regular.ttf'),
-    regular89: require('./assets/fonts/Lato-Regular.ttf'),
-    regular05: require('./assets/fonts/Kadwa-Regular.ttf'),
-    medium01: require('./assets/fonts/Inter-Medium.ttf'),
-    medium: require('./assets/fonts/Rubik-Medium.ttf'),
-    medium: require('./assets/fonts/HindGuntur-Medium.ttf'),
-    bold: require('./assets/fonts/Content-Bold.ttf'),
-    bold: require('./assets/fonts/Dongle-Bold.ttf'),
-    bold: require('./assets/fonts/InknutAntiqua-Bold.ttf'),
-    bold02: require('./assets/fonts/InriaSerif-Bold.ttf'),
-    bold01: require('./assets/fonts/Inter-Bold.ttf'),
-    extrabold01: require('./assets/fonts/Inter-ExtraBold.ttf'),
-    semibold: require('./assets/fonts/Inter-SemiBold.ttf'),
-    semibold: require('./assets/fonts/Inter-SemiBold.ttf'),
-    bold01: require('./assets/fonts/Lato-Bold.ttf'),
-    black: require('./assets/fonts/Lato-Black.ttf'),
-    light: require('./assets/fonts/Lato-Light.ttf'),
-
+function AppNavigator() {
+  const { isLoggedIn, isLoading } = useContext(AuthContext);
+    const [fontsLoaded] = useFonts({
+      regular: require('./assets/fonts/Content.ttf'),
+      regular02: require('./assets/fonts/Inter-Regular.ttf'),
+      regular01: require('./assets/fonts/CreteRound-Regular.ttf'),
+      regular: require('./assets/fonts/Dosis-Regular.ttf'),
+      regular: require('./assets/fonts/Dongle-Regular.ttf'),
+      regular03: require('./assets/fonts/InriaSerif-Regular.ttf'),
+      regular: require('./assets/fonts/Judson-Regular.ttf'),
+      regular: require('./assets/fonts/Lato-Regular.ttf'),
+      regular: require('./assets/fonts/JuliusSansOne-Regular.ttf'),
+      regular89: require('./assets/fonts/Lato-Regular.ttf'),
+      regular05: require('./assets/fonts/Kadwa-Regular.ttf'),
+      medium01: require('./assets/fonts/Inter-Medium.ttf'),
+      medium: require('./assets/fonts/Rubik-Medium.ttf'),
+      medium: require('./assets/fonts/HindGuntur-Medium.ttf'),
+      bold: require('./assets/fonts/Content-Bold.ttf'),
+      bold: require('./assets/fonts/Dongle-Bold.ttf'),
+      bold: require('./assets/fonts/InknutAntiqua-Bold.ttf'),
+      bold02: require('./assets/fonts/InriaSerif-Bold.ttf'),
+      bold01: require('./assets/fonts/Inter-Bold.ttf'),
+      extrabold01: require('./assets/fonts/Inter-ExtraBold.ttf'),
+      semibold: require('./assets/fonts/Inter-SemiBold.ttf'),
+      semibold: require('./assets/fonts/Inter-SemiBold.ttf'),
+      bold01: require('./assets/fonts/Lato-Bold.ttf'),
+      black: require('./assets/fonts/Lato-Black.ttf'),
+      light: require('./assets/fonts/Lato-Light.ttf'),
   });
 
   const onLayoutRootView = useCallback(async () => {
@@ -149,114 +55,44 @@ function App() {
     }
   }, [fontsLoaded]);
 
-  React.useEffect(() => {
-    onLayoutRootView();
-  }, [fontsLoaded]);
-
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [istoken, setIsToken] = React.useState(null);
-
-  React.useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const userToken = await AsyncStorage.getItem('token');
-        setIsToken(userToken)
-        if (userToken !== null) {
-          setIsLoggedIn(true);
-        }
-        else {
-          setIsLoggedIn(false);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-      console.log("1st",userToken)
-    };
-
-    checkLoginStatus();
-  }, []);
-
-  if (!fontsLoaded) {
+  if (!fontsLoaded || isLoading) {
     return null;
   }
- 
 
   return (
-    <NavigationContainer>
-      {isLoggedIn ? <AppStack /> : <AuthStack />}
-    </NavigationContainer>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {!isLoggedIn ? (
+        <>
+          <Stack.Screen name="Start" component={Start} />
+          <Stack.Screen name="Alert" component={AlertNoti} />
+          <Stack.Screen name="Login" component={Login} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Notification" component={Notification} />
+          <Stack.Screen name="MyProfile" component={MyProfile} />
+          <Stack.Screen name="Reports" component={Reports} />
+          <Stack.Screen name="Request" component={Request} />
+          <Stack.Screen name="NotificationNavbar" component={NotificationNavbar} />
+          <Stack.Screen name="NotiReq" component={NotiReq} />
+          <Stack.Screen name="NotiAction" component={NotiAction} />
+        </>
+      )}
+    </Stack.Navigator>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
 
 export default App;
 
-export const AuthStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="Start" component={Start} />
-    <Stack.Screen name="Alert" component={AlertNoti} />
-    <Stack.Screen name="Login" component={Login} />
-    <Stack.Screen name="BottomNavigation" component={AppStack} />
-  </Stack.Navigator>
-);
-
-export const AppStack = () => {
-  const [token, setToken] = React.useState(null);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-
-  React.useEffect(() => {
-    const fetchToken = async () => {
-      const savedToken = await AsyncStorage.getItem('token');
-      if (savedToken) {
-        setToken(savedToken);
-        setIsLoggedIn(true);
-      }
-    };
-
-    fetchToken();
-  }, );
-
-  if (isLoggedIn==false) {
-    // You can show a loading spinner or some placeholder UI while the token is being fetched
-    return null;
-  }
-  console.log("app", token)
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-     
-      <Stack.Screen name="BottomNavigation">
-      {(props) => <BottomNavigation {...props} token={token} />} 
-      </Stack.Screen>
-      <Stack.Screen name="Home">
-      {(props) => <Home {...props} token={token} />} 
-      </Stack.Screen>
-      <Stack.Screen name="Notification">
-        {(props) => <Notification {...props} route={token} />}
-      </Stack.Screen>
-      <Stack.Screen name="MyProfile">
-        {(props) => <MyProfile {...props} route={token} />}
-      </Stack.Screen>
-      <Stack.Screen name="Reports">
-        {(props) => <Reports {...props} route={token} />}
-      </Stack.Screen>
-      
-      <Stack.Screen name="Request">
-        {(props) => <Request {...props} route={token} />}
-      </Stack.Screen>
-      <Stack.Screen name="NotificationNavbar">
-        {(props) => <NotificationNavbar {...props} route={token} />}
-      </Stack.Screen>
-      <Stack.Screen name="NotiReq">
-        {(props) => <NotiReq {...props} route={token} />}
-      </Stack.Screen>
-      <Stack.Screen name="NotiAction">
-        {(props) => <NotiAction {...props} route={token} />}
-      </Stack.Screen>
-      <Stack.Screen name="LoginUser" component={Login} />
-     
-    </Stack.Navigator>
-  );
-};

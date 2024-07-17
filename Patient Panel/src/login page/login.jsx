@@ -1,73 +1,46 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions , Alert, ActivityIndicator} from 'react-native';
+import React, { useContext, useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
-import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 import { backendURL } from "../backendapi";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../AuthContext';
+
 const { width, height } = Dimensions.get("window");
 const patientLoginURL = `${backendURL}/patientRouter/login`;
+
 const Login = () => {
-    const navigation = useNavigation();
+    const { login } = useContext(AuthContext);
     const [patientId, setPatientId] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleLogin = async () => {
-      setIsLoading(true);
-      console.log(patientLoginURL)
-      try {
-          const response = await fetch(patientLoginURL, {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                  patientId: patientId,
-                  password: password,
-              }),
-          });
-          const responseData = await response.json();
-          if (response.ok) {
-            if (responseData.status === 'success') {
+        setIsLoading(true);
+        try {
+            const response = await fetch(patientLoginURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    patientId: patientId,
+                    password: password,
+                }),
+            });
+            const responseData = await response.json();
+            if (response.ok && responseData.status === 'success') {
                 const { result } = responseData;
-                const { patientId, name, gender, age, contactNumber, bloodGroup, image } = result;
-                AsyncStorage.setItem('token', patientId.toString())
-                .then(() => {
-                    console.log('token saved successfully');
-                    navigation.navigate('BottomNavigation', { patientId: patientId });
-                })
-                .catch(error => {
-                    console.error('Failed to save patientId', error);
-                });
-               
-                
-
-        // fetch(`${backendURL}/patientRouter/HomePageDetails/${patientId}`)
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         navigation.navigate('BottomNavigation', { patientId: patientId });
-        //         console.log(patientId)
-        //     })
-            // .catch(error => {
-            //     console.error('Error fetching patient details:', error);
-            // });
+                await login(result.patientId);
             } else {
                 console.error('Error:', responseData.message);
             }
-        } 
-        else {
-            console.error('Error:', responseData.message);
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            setIsLoading(false);
         }
-    } catch (error) {
-        console.error('Error:', error);
-    }finally {
-
-        setIsLoading(false);
-    }
-};
-
+    };
     return (
         <View style={styles.container01}>
             <View style={styles.backgroundOverlay01}></View>

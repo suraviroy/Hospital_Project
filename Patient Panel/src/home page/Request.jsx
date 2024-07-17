@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { View, StyleSheet, Text, Dimensions, TouchableOpacity, SafeAreaView, ScrollView, ActivityIndicator, TextInput } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
 const windowWidth = Dimensions.get("window").width;
@@ -8,10 +8,12 @@ import axios from "axios";
 import * as DocumentPicker from 'expo-document-picker';
 import { backendURL } from "../backendapi";
 import { useNavigation, useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Request = () => {
     const route = useRoute();
-    const { patientId } = route.params;
+    const { patientId: routePatientId } = route.params || {};
+    const [patientId, setPatientId] = useState(routePatientId);
     const navigation = useNavigation();
     const [isLoading1, setIsLoading1] = useState(false);
     const [isLoading2, setIsLoading2] = useState(false);
@@ -79,6 +81,26 @@ const Request = () => {
         },
     ]
 
+    useEffect(() => {
+        const getPatientId = async () => {
+            try {
+                if (route.params && route.params.patientId) {
+                    setPatientId(route.params.patientId);
+                } else {
+                    const storedPatientId = await AsyncStorage.getItem('patientId');
+                    if (storedPatientId) {
+                        setPatientId(storedPatientId);
+                    } else {
+                        console.error('PatientId not found');
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching patientId:', error);
+            }
+        };
+
+        getPatientId();
+    }, []);
     const handleRequestSelection = (val) => {
         setSelectedRequest(val);
         if (val === 'Others') {
@@ -231,6 +253,11 @@ const Request = () => {
     };
 
     const handleSave = async () => {
+        if (!patientId) {
+            console.error('PatientId is not available');
+            // You might want to show an error message to the user
+            return;
+        }
         setIsLoading3(true);
         const requestText =
             selectedRequest === "Select" ? "NA" : (selectedRequest === "Others" ? otherText : selectedRequest);

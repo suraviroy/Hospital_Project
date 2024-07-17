@@ -1,29 +1,87 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Dimensions, SafeAreaView ,ScrollView} from 'react-native';
-import { MaterialIcons,FontAwesome6 } from '@expo/vector-icons';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Dimensions, SafeAreaView, ScrollView, Alert } from 'react-native';
+import { MaterialIcons, FontAwesome6 } from '@expo/vector-icons';
 import axios from 'axios';
 import { backendURL } from "../backendapi";
-const windowWidth = Dimensions.get('window').width;
-import { FontFamily, Color } from '../../GlobalStyles';
-import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FontFamily, Color } from '../../GlobalStyles';
+import { AuthContext } from '../AuthContext';
+import { useNavigation } from '@react-navigation/native';
 
-const MyProfile =({ route }) => {
-  const [defaultRating, setdefaultRating] =useState(2)
-  const [maxRating, setmaxRating] =useState([1,2,3,4,5])
+const windowWidth = Dimensions.get('window').width;
+
+const MyProfile = () => {
+  const [defaultRating, setDefaultRating] = useState(2);
+  const [maxRating] = useState([1, 2, 3, 4, 5]);
   const [improvementText, setImprovementText] = useState('');
-  const { patientId } = route.params;
   const [patientData, setPatientData] = useState({});
-  const starImgFilled = require('../../assets/images/star_filled.png')
-  const starImgCorner = require('../../assets/images/star_corner.png')
+  const starImgFilled = require('../../assets/images/star_filled.png');
+  const starImgCorner = require('../../assets/images/star_corner.png');
+
+  const { logout } = useContext(AuthContext);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const storedPatientId = await AsyncStorage.getItem('patientId');
+        if (storedPatientId) {
+          fetchPatientProfile(storedPatientId);
+        }
+      } catch (error) {
+        console.error('Error fetching patientId from storage:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const fetchPatientProfile = async (patientId) => {
+    try {
+      const response = await fetch(`${backendURL}/patientRouter/PatientProfile/${patientId}`);
+      const data = await response.json();
+      setPatientData(data);
+    } catch (error) {
+      console.error('Error fetching patient profile:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { 
+          text: "OK", 
+          onPress: async () => {
+            await logout();
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Login' }],
+            });
+          }
+        }
+      ]
+    );
+  };
+  const handleSend = async =>{
+    Alert.alert(
+      "Sorry",
+      "This functionality is not available right now."
+    )
+  }
+
   const CustomRatingBar = () => {
     return (
       <View style={styles.ratingBar}>
-        {maxRating.map((item, key) => (
+        {maxRating.map((item) => (
           <TouchableOpacity
             activeOpacity={0.7}
             key={item}
-            onPress={() => setdefaultRating(item)}
+            onPress={() => setDefaultRating(item)}
           >
             <Image
               style={styles.starImgStyle}
@@ -34,32 +92,6 @@ const MyProfile =({ route }) => {
       </View>
     );
   };
-    useEffect(() => {
-        fetch(`${backendURL}/patientRouter/PatientProfile/${patientId}`)
-            .then(response => response.json())
-            .then(data => {
-              setPatientData(data);
-            })
-            .catch(error => {
-                console.error('Error fetching patient basic details:', error);
-            });
-            console.log(patientData)
-    }, [patientId]);
-
-    const navigation = useNavigation();
-
-    const handleLogout = async () => {
-      try {
-        await AsyncStorage.removeItem('token');
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'LoginUser' }],
-        });
-      } catch (error) {
-        console.error('Failed to log out:', error);
-      }
-    };
-
     return (
       <SafeAreaView style={styles.container01}>
         <ScrollView style={styles.scrollViewContent}>
@@ -85,13 +117,13 @@ const MyProfile =({ route }) => {
             </View>
          </View>
          <View style={styles.feedprofile}>
-         <View style={styles.logout}>
-         <TouchableOpacity style={styles.logbutton} onPress={handleLogout}>
-        <MaterialIcons name='logout' size={25} color='#357EEA' marginRight={20} paddingLeft= {20} paddingTop={5}/>
-        <Text style={styles.textbutton}>Logout</Text>
-        <FontAwesome6 name='arrow-right-long' size={25} color='#357EEA' marginRight={20} paddingLeft= {windowWidth*0.5} paddingTop={5}/>
-        </TouchableOpacity>
-        </View>
+          <View style={styles.logout}>
+            <TouchableOpacity style={styles.logbutton} onPress={handleLogout}>
+              <MaterialIcons name='logout' size={25} color='#357EEA' marginRight={20} paddingLeft={20} paddingTop={5}/>
+              <Text style={styles.textbutton}>Logout</Text>
+              <FontAwesome6 name='arrow-right-long' size={25} color='#357EEA' marginRight={20} paddingLeft={windowWidth*0.5} paddingTop={5}/>
+            </TouchableOpacity>
+          </View>
         <View style= {styles.feedpage}>
             <Text style={styles.feedtext}> RATE YOUR EXPERIENCE</Text>
             <CustomRatingBar />
@@ -107,7 +139,7 @@ const MyProfile =({ route }) => {
           />
             </View> 
             <TouchableOpacity>
-            <Text style={styles.sendbutton}>Send</Text>
+            <Text style={styles.sendbutton} onPress={handleSend}>Send</Text>
             </TouchableOpacity>
         </View>
       </View>
