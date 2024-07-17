@@ -73,7 +73,11 @@ const MyProfile =({ route }) => {
                 <Text style= {styles.textStyle}>Username:{patientData.patientId}</Text>
                 <Text style= {styles.textStyle}>Age: {patientData.age}    Blood Group: {patientData.bloodGroup}</Text>
                 </View>
-                <Image source={{ uri: patientData.image }} style={styles.docImage} />
+                {patientData.image ? (
+            <Image source={{ uri: patientData.image }} style={styles.docImage} />
+        ) : (
+            <Image source={require('../../assets/images/user2.png')} style={styles.docImage} />
+        )}
              </View>
              <Text style= {styles.textStyle01}>Address: {patientData.address}</Text>
              <Text style= {styles.textStyle02}>State: {patientData.state}</Text>

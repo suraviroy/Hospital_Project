@@ -34,13 +34,21 @@ const Home = ({ route }) => {
     fetchPatientData(patientId);
   }, [patientId]);
 
-  useEffect(() => {
-    // Handle app state changes (background/foreground)
-    AppState.addEventListener('change', handleAppStateChange);
+  // useEffect(() => {
+  //   // Handle app state changes (background/foreground)
+  //   AppState.addEventListener('change', handleAppStateChange);
 
+  //   // Clean up listener on unmount
+  //   return () => {
+  //     AppState.removeEventListener('change', handleAppStateChange);
+  //   };
+  // }, []);
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+  
     // Clean up listener on unmount
     return () => {
-      AppState.removeEventListener('change', handleAppStateChange);
+      subscription.remove();
     };
   }, []);
 
@@ -79,7 +87,12 @@ const Home = ({ route }) => {
       <View style={styles.topContainer}>
         <View style={styles.header}>         
             <>
-              <Image source={{ uri: patientData.image }} style={styles.profileImage} />
+              {/* <Image source={{ uri: patientData.image }} style={styles.profileImage} /> */}
+              {patientData.image ? (
+            <Image source={{ uri: patientData.image }} style={styles.profileImage} />
+        ) : (
+            <Image source={require('../../assets/images/user2.png')} style={styles.profileImage} />
+        )}
               <View style={styles.profileText}>
                 <Text style={styles.boldText}>{patientData.name}</Text>
                 <Text style={styles.greyText}>How are you today?</Text>

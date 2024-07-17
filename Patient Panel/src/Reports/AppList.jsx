@@ -77,7 +77,6 @@ const AppList = ({ searchText }) => {
                 </View>
                 <TouchableOpacity
                     style={styles.viewButton2451}
-                    onPress={() => handleViewDetails()}
                 >
                     <Text style={styles.viewDetails}>View Details</Text>
                 </TouchableOpacity>
