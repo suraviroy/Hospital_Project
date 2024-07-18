@@ -54,7 +54,6 @@ const TodayList = ({ searchText }) => {
 
     const renderPatientItem = ({ item }) => (
         <View style={styles.patientView2451}>
-            {/* <Image source={{ uri: item.image }} style={styles.patientImage2451} /> */}
             {item.image ? (
             <Image source={{ uri: item.image }} style={styles.patientImage2451} />
         ) : (
@@ -74,9 +73,6 @@ const TodayList = ({ searchText }) => {
             >
                 <Text style={styles.viewDetails}>View Details</Text>
             </TouchableOpacity>
-            {/* <View style={styles.appointmentdet13}>
-                <Text style={styles.appointment2451}>Last Appointment On: <Text style={styles.time2451}>{item.date},{item.time}</Text></Text>
-            </View> */}
         </View>
     );
 

@@ -83,21 +83,6 @@ const Notification = ({}) => {
                 renderItem={renderPatientItem}
                 keyExtractor={item => item.requestId}
             />
-            {/* <Modal
-                visible={selectedRequest !== null}
-                transparent={true}
-                animationType="slide"
-                onRequestClose={() => setSelectedRequest(null)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text>{selectedRequest}</Text>
-                        <TouchableOpacity onPress={() => setSelectedRequest(null)}>
-                            <Text style={styles.closeButton}>Close</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal> */}
         </SafeAreaView>
     );
 };
@@ -109,7 +94,7 @@ const styles = StyleSheet.create({
         flex: 1, 
         paddingTop: windowWidth*0.1,
         backgroundColor: '#fff',
-        paddingBottom: windowWidth*0.3,
+        paddingBottom: windowWidth*0.2,
     },
     viewMore:{
         fontWeight: 'bold',
@@ -118,12 +103,10 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontFamily: FontFamily.font_bold,
         marginTop: windowWidth*0.01,
-        // backgroundColor: '#357EEA',
         width: windowWidth*0.15,
         borderRadius: windowWidth*0.01,
         borderBottomWidth: 1,
         borderBottomColor: '#1D1B88',
-        // padding: windowWidth*0.01,
          color:'#1D1B88'
 
     },
@@ -235,7 +218,7 @@ const styles = StyleSheet.create({
     appointmentdet13: {
         position: 'absolute',
         bottom: windowWidth*0.03,
-        left: windowWidth*0.6,
+        left: windowWidth*0.2,
     },
     patientId13: {
         alignSelf: 'center',

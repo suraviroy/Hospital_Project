@@ -59,9 +59,6 @@ const HomeAdmin = ({ searchText }) => {
 </View>
 <View style={styles.rightContent}>
               <View style={styles.buttonsRow}>
-              {/* <TouchableOpacity style={styles.button01}>
-                  <Ionicons name='chatbubble-ellipses-sharp' size={20} color='#096759' />
-                  </TouchableOpacity> */}
                   <TouchableOpacity style={styles.button02} onPress={()=>openDial(phNumber)}>
                   <Ionicons name="call-sharp" size={20} style={styles.callIcon} />
                   </TouchableOpacity>
@@ -71,7 +68,6 @@ const HomeAdmin = ({ searchText }) => {
                   <View style={styles.idNumberContainer}>
                   <Text style={styles.idNumberText}>{idNumber}</Text>
              </View>
-             {/* <View styles={{borderTopWidth: 2, borderTopColor: '#EEE9E9',}}></View> */}
              <View style={styles.registeredOnContainer}>
       <Text style={styles.registeredOnText}>Registered On: <Text style={styles.datetime}>{date},  {time}</Text></Text>
     </View>

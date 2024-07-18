@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity,Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity,Dimensions ,Linking,Alert} from 'react-native';
 import SearchList from './SearchList';
 import PatientList from './PatientList';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,6 +7,9 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 import { useNavigation } from '@react-navigation/native';
 const windowWidth = Dimensions.get('window').width;
+import * as FileSystem from 'expo-file-system';
+import { backendURL } from "../backendapi";
+import { fromByteArray } from 'base64-js';
 
 const ViewList = () => {
     const navigation = useNavigation();
@@ -15,7 +18,72 @@ const ViewList = () => {
     const handleBack = () => {
         navigation.goBack();
     };
-
+    const uploadToCloudinary = async (fileUri, fileName) => {
+        try {
+            const formData = new FormData();
+            formData.append('file', {
+                uri: fileUri,
+                name: fileName,
+                type: 'application/vnd.ms-excel', 
+            });
+            formData.append('upload_preset', 'pulmocareapp');
+            formData.append('cloud_name', 'pulmocare01');
+    
+            const response = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/raw/upload', {
+                method: 'POST',
+                body: formData,
+            });
+    
+            const data = await response.json();
+            if (!response.ok) {
+                console.error('Failed to upload file to Cloudinary:', data);
+                return null;
+            }
+    
+            console.log('Cloudinary response:', data);
+            return data.secure_url;
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            return null;
+        }
+    };
+    
+    const downloadExcel = async () => {
+        try {
+            const response = await fetch(`${backendURL}/adminRouter/excelFile`);
+    
+            if (!response.ok) {
+                throw new Error('Failed to download Excel file');
+            }
+    
+            const fileData = await response.arrayBuffer();
+            const fileName = 'users.xlsx'; 
+           
+            const downloadDirectory = FileSystem.documentDirectory + 'Downloads/';
+    
+            await FileSystem.makeDirectoryAsync(downloadDirectory, { intermediates: true });
+    
+            const fileUri = downloadDirectory + fileName;
+    
+            const bytes = new Uint8Array(fileData);
+            const base64Data = fromByteArray(bytes);
+    
+            await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+    
+            const cloudinaryUrl = await uploadToCloudinary(fileUri, fileName);
+            if (cloudinaryUrl) {
+                Linking.openURL(cloudinaryUrl);
+                Alert.alert('Download Successful', 'Excel file has been uploaded to Cloudinary.');
+            } else {
+                Alert.alert('Upload Failed', 'Failed to upload Excel file to Cloudinary.');
+            }
+        } catch (error) {
+            console.error('Error downloading Excel file:', error);
+            Alert.alert('Download Failed', 'Failed to download Excel file.');
+        }
+    };
     const headerPatients = () => (
         <View style={styles.viewList2451}>
               <View style={styles.header2451}>
@@ -23,6 +91,11 @@ const ViewList = () => {
                     <Text><Icon name="angle-left" size={30} color={Color.colorBlack} /></Text>
                 </TouchableOpacity>
                 <Text style={styles.text2451}>All Patients</Text>
+                <View style={{ alignItems: "flex-end" }}>
+                        <TouchableOpacity style={[styles.button457,{ marginLeft: 90 }]} onPress={downloadExcel}>
+                            <Text style={styles.text568}>Download Excel</Text>
+                        </TouchableOpacity>
+                    </View>
             </View>
             <SearchList setSearchText={setSearchText} />
         </View>
@@ -52,6 +125,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         // paddingTop: 35,
         paddingTop: windowWidth*0.08,
+    },
+    button457: {
+        marginLeft: 110,
+        borderWidth: 2,
+        borderColor: "#096759",
+        padding: 5,
+        borderRadius: 6,
+    },
+    text568:{
+        color: "#096759",
+        fontFamily: "bold01",
+        fontSize: 14,
     },
     headerContainer: {
         paddingHorizontal: 3,

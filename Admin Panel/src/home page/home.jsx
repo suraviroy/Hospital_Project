@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert, Platform, PermissionsAndroid ,Linking} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons, Ionicons } from 'react-native-vector-icons';
+import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import SearchAdmin from './SearchAdmin';
 import { useNavigation } from '@react-navigation/native';
 import HomeAdmin from './HomeAdmin';
@@ -97,12 +97,9 @@ const Home = () => {
                     <MaterialIcons name='local-hospital' size={40} color={'#730404'} />
                     <Text style={styles.text012}>Institute of Pulmocare & {'\n'}Research</Text>
                     <View style={{ alignItems: "flex-end" }}>
-                        <TouchableOpacity style={{ marginLeft: 50 }}>
-                            <Ionicons name='chatbubble-ellipses-sharp' size={30} color='#096759' />
+                        <TouchableOpacity style={[styles.button457,{ marginLeft: 30 }]}>
+                            <Text style={styles.text568}>Log Out</Text>
                         </TouchableOpacity>
-                        <View style={styles.ChatCount012}>
-                            <Text style={styles.chatNumber012}>8</Text>
-                        </View>
                     </View>
                 </View>
             </View>
@@ -113,7 +110,7 @@ const Home = () => {
                 </TouchableOpacity>
                 <View style={{ alignItems: "flex-end" }}>
                     <TouchableOpacity onPress={downloadExcel}>
-                        <Ionicons name='settings-sharp' size={30} color='#5B5151' marginRight={20} />
+                        <MaterialCommunityIcons name='briefcase-download' size={30} color='#096759' marginRight={20} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -173,6 +170,7 @@ const styles = StyleSheet.create({
     text012: {
         fontFamily: "regular01",
         fontSize: 18,
+        marginLeft: 5,
         marginBottom: 5,
     },
     text013: {
@@ -186,6 +184,19 @@ const styles = StyleSheet.create({
         borderColor: "#096759",
         padding: 5,
         borderRadius: 6,
+    },
+    button457: {
+        marginLeft: 10,
+        // borderWidth: 2,
+        backgroundColor: "#9F0606",
+        padding: 5,
+        borderRadius: 6,
+    },
+    text568:{
+        color:'#fff',
+        padding:3,
+        fontFamily: "bold01",
+        fontSize: 14,
     },
     text567: {
         color: "#096759",
