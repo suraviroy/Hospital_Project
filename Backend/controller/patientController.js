@@ -238,7 +238,8 @@ export const allrequest = async (req, res) => {
         _id: 0,
       }
     );
-    res.status(200).json(patientRequest);
+    const reversedPatientRequest = patientRequest.reverse();
+    res.status(200).json(reversedPatientRequest);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
