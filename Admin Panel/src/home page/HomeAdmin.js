@@ -11,6 +11,8 @@ const HomeAdmin = ({ searchText }) => {
     const navigation = useNavigation();
     const [adminList, setAdminList] = useState([]);
     const [filteredAdminList, setFilteredAdminList] = useState([]);
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         fetch(adminListURL)
@@ -18,6 +20,7 @@ const HomeAdmin = ({ searchText }) => {
             .then(data => {
                 setAdminList(data);
                 setFilteredAdminList(data);
+                setLoading(false);
             })
             .catch(error => {
                 console.error('Error fetching admin list:', error);
@@ -75,6 +78,13 @@ const HomeAdmin = ({ searchText }) => {
 
        
     );
+    if (loading) {
+        return <Text style={styles.text45}>Loading...</Text>;
+    }
+    
+    if (filteredAdminList.length === 0) {
+        return <Text style={styles.text45}>No Admins registered !!</Text>;
+    }
 
     return (
             <View style={styles.container}>
@@ -96,6 +106,12 @@ const styles = StyleSheet.create({
         marginBottom: 65,
         flex: 1,
         marginTop: windowWidth*0.04,
+    },
+    text45:{
+        marginTop: windowWidth*0.10,
+        fontSize:18,
+        fontFamily: 'bold01',
+        marginLeft: 20,
     },
     item: {
         backgroundColor: '#fff',

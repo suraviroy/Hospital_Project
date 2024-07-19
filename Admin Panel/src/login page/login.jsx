@@ -1,63 +1,81 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TextInput, 
+  TouchableOpacity, 
+  Dimensions,
+  Alert
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../AuthContext';
 
 const { width, height } = Dimensions.get("window");
 
 const Login = () => {
-    const navigation = useNavigation();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+  const navigation = useNavigation();
+  const { login } = useAuth();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-    const handleLogin = () => {
-        
-        if (username === "pulmo" && password === "1234") {
-            
-            navigation.navigate('BottomNavigation');
-        }else if (username === "register" && password === "1234"){
-            navigation.navigate('RegisterNavbar');
-        }
-        else {
-          
-            alert('Invalid username or password');
-        }
-    };
+  const handleLogin = useCallback(async () => {
+    if (!username.trim() || !password.trim()) {
+      Alert.alert('Error', 'Please enter both username and password');
+      return;
+    }
 
-    return (
-        <View style={styles.container01}>
-            <View style={styles.backgroundOverlay01}></View>
-            <Text style={styles.loginText01}>LOG IN</Text>
+    try {
+      if (username === "pulmo" && password === "1234") {
+        await login(username, 'user');
+        navigation.replace('BottomNavigation');
+      } else if (username === "register" && password === "1234") {
+        await login(username, 'register');
+        navigation.replace('RegisterNavbar');
+      } else {
+        Alert.alert('Error', 'Invalid username or password');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      Alert.alert('Error', 'An error occurred during login. Please try again.');
+    }
+  }, [username, password, login, navigation]);
 
-            <View style={styles.inputContainer01}>
-                <Icon name="user" size={24} color="black" style={styles.inputIcon01} />
-                <TextInput
-                    style={styles.input01}
-                    placeholder='Username'
-                    value={username}
-                    onChangeText={text => setUsername(text)}
-                />
-            </View>
+  return (
+    <View style={styles.container01}>
+      <View style={styles.backgroundOverlay01}></View>
+      <Text style={styles.loginText01}>LOG IN</Text>
 
-            <View style={styles.inputContainer01}>
-                <Icon name="lock" size={24} color="black" style={styles.inputIcon01} />
-                <TextInput
-                    style={styles.input01}
-                    placeholder='Password'
-                    secureTextEntry={true}
-                    value={password}
-                    onChangeText={text => setPassword(text)}
-                />
-            </View>
-            <View style={styles.straightLine01}></View>
-            <TouchableOpacity style={styles.loginButton01} onPress={handleLogin}>
-                <Text style={styles.loginButtonText01}>Login</Text>
-            </TouchableOpacity>
-        </View>
-    );
+      <View style={styles.inputContainer01}>
+        <Icon name="user" size={24} color="black" style={styles.inputIcon01} />
+        <TextInput
+          style={styles.input01}
+          placeholder='Username'
+          value={username}
+          onChangeText={setUsername}
+        />
+      </View>
+
+      <View style={styles.inputContainer01}>
+        <Icon name="lock" size={24} color="black" style={styles.inputIcon01} />
+        <TextInput
+          style={styles.input01}
+          placeholder='Password'
+          secureTextEntry={true}
+          value={password}
+          onChangeText={setPassword}
+        />
+      </View>
+      
+      <View style={styles.straightLine01}></View>
+      
+      <TouchableOpacity style={styles.loginButton01} onPress={handleLogin}>
+        <Text style={styles.loginButtonText01}>Login</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
-
-
 const styles = StyleSheet.create({
     straightLine01: {
         position: 'absolute',

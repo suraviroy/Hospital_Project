@@ -9,10 +9,13 @@ import * as FileSystem from 'expo-file-system';
 import { backendURL } from "../backendapi";
 import { fromByteArray } from 'base64-js';
 import * as Sharing from 'expo-sharing';
+import { useAuth } from '../AuthContext';
+import { CommonActions } from '@react-navigation/native';
 
 const windowWidth = Dimensions.get('window').width;
 
 const Home = () => {
+    const { logout } = useAuth();
     const navigation = useNavigation();
     const [searchText, setSearchText] = useState('');
 
@@ -23,6 +26,29 @@ const Home = () => {
     const handleSearch = (text) => {
         setSearchText(text);
     };
+
+    const handleLogout = async () => {
+        Alert.alert(
+          "Logout",
+          "Are you sure you want to logout?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel"
+            },
+            { 
+              text: "OK", 
+              onPress: async () => {
+                await logout();
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Login' }],
+                });
+              }
+            }
+          ]
+        );
+      };
     const uploadToCloudinary = async (fileUri, fileName) => {
         try {
             const formData = new FormData();
@@ -97,7 +123,7 @@ const Home = () => {
                     <MaterialIcons name='local-hospital' size={40} color={'#730404'} />
                     <Text style={styles.text012}>Institute of Pulmocare & {'\n'}Research</Text>
                     <View style={{ alignItems: "flex-end" }}>
-                        <TouchableOpacity style={[styles.button457,{ marginLeft: 30 }]}>
+                        <TouchableOpacity style={[styles.button457,{ marginLeft: 30 }]} onPress={handleLogout}>
                             <Text style={styles.text568}>Log Out</Text>
                         </TouchableOpacity>
                     </View>

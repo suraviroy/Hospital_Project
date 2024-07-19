@@ -13,6 +13,7 @@ const AllList = ({ searchText }) => {
     const navigation = useNavigation();
     const [patients, setPatients] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState({});
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -21,6 +22,7 @@ const AllList = ({ searchText }) => {
                 const data = await response.json();
                 setPatients(data);
                 setFilteredPatients(data);
+                setLoading(false);
             } catch (error) {
                 console.error('Error fetching patient data:', error);
             }
@@ -75,6 +77,13 @@ const AllList = ({ searchText }) => {
             </View>
         </View>
     );
+    if (loading) {
+        return <Text style={styles.text45}>Loading...</Text>;
+    }
+    
+    if (filteredPatients.length === 0) {
+        return <Text style={styles.text45}>No patients registered today!!</Text>;
+    }
 
     return (
         <SafeAreaView style={styles.patientContainer2451}>
@@ -97,6 +106,12 @@ const styles = StyleSheet.create({
         marginBottom: 85,
         marginTop: windowWidth*-0.08,
         
+    },
+    text45:{
+        marginTop: windowWidth*0.10,
+        fontSize:18,
+        fontFamily: 'bold01',
+        marginLeft: 20,
     },
     patientView2451: {
         width: windowWidth * 0.95,  

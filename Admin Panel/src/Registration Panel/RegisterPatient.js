@@ -9,10 +9,15 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { backendURL } from "../backendapi";
 import RegisterPopup from './RegisterPopup';
 import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
-
+import { useNavigation } from '@react-navigation/native';
 const windowWidth = Dimensions.get('window').width;
+import { useAuth } from '../AuthContext';
+import { CommonActions } from '@react-navigation/native';
+
 
 const AddPatient = () => {
+    const { logout } = useAuth();
+    const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
     const [savingData, setSavingData] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
@@ -55,7 +60,28 @@ const AddPatient = () => {
 
     const formattedContactNumber = countryCode + contactNumber;
     const [generatedPassword, setGeneratedPassword] = useState(''); 
-
+    const handleLogout = async () => {
+        Alert.alert(
+          "Logout",
+          "Are you sure you want to logout?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel"
+            },
+            { 
+              text: "OK", 
+              onPress: async () => {
+                await logout();
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Login' }],
+                });
+              }
+            }
+          ]
+        );
+      };
     
     const generatePassword = () => {
         const password = Math.floor(1000 + Math.random() * 9000).toString();
@@ -119,8 +145,6 @@ const AddPatient = () => {
         }
         return age.toString();
     };
-
-
 
     const handleSave = async () => {
     const password = generatePassword();
@@ -323,13 +347,14 @@ const savePatientData = async (imageUrl, password, stateToSend) => {
     };
 
 
-
-
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
                 <View style={styles.registerTextContainer}>
                     <Text style={styles.registerText}>Register New Patient</Text>
+                    <TouchableOpacity style={[styles.button457,{ marginLeft: 30 }]} onPress={handleLogout}>
+                            <Text style={styles.text568}>Log Out</Text>
+                    </TouchableOpacity>
                 </View>
                 <TouchableOpacity onPress={pickImage} style={styles.imagePickerContainer}>
                     {!image && <Image source={require("../../assets/images/user2.png")} style={styles.backgroundImage} />}
@@ -1126,6 +1151,19 @@ const styles = StyleSheet.create({
     disabledButtonText: {
         color: '#888888',
     },
+    button457: {
+        marginLeft: 10,
+        // borderWidth: 2,
+        backgroundColor: "#9F0606",
+        padding: 5,
+        borderRadius: 6,
+    },
+    text568:{
+        color:'#fff',
+        padding:3,
+        fontFamily: "bold01",
+        fontSize: 14,
+    },
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
@@ -1137,11 +1175,13 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     registerTextContainer: {
-        alignItems: 'center',
+        // alignItems: 'center',
         width: '100%',
         marginBottom: 20,
+        flexDirection:'row'
     },
     registerText: {
+        paddingLeft:windowWidth*0.1,
         fontSize: 24,
         fontWeight: 'bold',
     },
