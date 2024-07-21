@@ -71,7 +71,7 @@ const BottomNavigation = () => {
             <Tab.Screen
                 name="Reports"
                 component={Reports}
-                options={{ tabBarLabel: 'Appoinments', headerShown: false }}
+                options={{ tabBarLabel: 'Appointments', headerShown: false }}
             />
             <Tab.Screen
                 name="MyProfile"

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView, Image, TouchableOpacity, Linking, Platform, Dimensions } from 'react-native';
-const windowWidth = Dimensions.get('window').width;
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Linking, Platform, Dimensions, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { backendURL } from "../backendapi";
 import { Ionicons } from 'react-native-vector-icons';
 
+const windowWidth = Dimensions.get('window').width;
 const adminListURL = `${backendURL}/adminListRouter/adminlist`;
 
 const HomeAdmin = ({ searchText }) => {
@@ -12,7 +12,7 @@ const HomeAdmin = ({ searchText }) => {
     const [adminList, setAdminList] = useState([]);
     const [filteredAdminList, setFilteredAdminList] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const [loadingAdmins, setLoadingAdmins] = useState({});
 
     useEffect(() => {
         fetch(adminListURL)
@@ -24,11 +24,15 @@ const HomeAdmin = ({ searchText }) => {
             })
             .catch(error => {
                 console.error('Error fetching admin list:', error);
+                setLoading(false);
             });
-    }, [adminList]);
+    }, []);
 
     useEffect(() => {
-        const filteredList = adminList.filter(admin => admin.name.toLowerCase().startsWith(searchText.toLowerCase()) || admin.idNumber.startsWith(searchText));
+        const filteredList = adminList.filter(admin => 
+            admin.name.toLowerCase().startsWith(searchText.toLowerCase()) || 
+            admin.idNumber.startsWith(searchText)
+        );
         setFilteredAdminList(filteredList);
     }, [searchText, adminList]);
 
@@ -39,45 +43,63 @@ const HomeAdmin = ({ searchText }) => {
             Linking.openURL(`telprompt:+91${phNumber}`);
         }
     }
-    const Item = ({ name, educationQualification,picture,gender, idNumber, date,time,phNumber}) => (
-       
+
+    const handleViewPatient = async (adminName) => {
+        setLoadingAdmins(prev => ({ ...prev, [adminName]: true }));
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            navigation.navigate('AdminPatientList', { adminName });
+        } catch (error) {
+            console.error('Error navigating to AdminPatientList:', error);
+        } finally {
+            setLoadingAdmins(prev => ({ ...prev, [adminName]: false }));
+        }
+    };
+
+    const Item = ({ name, educationQualification, picture, gender, idNumber, date, time, phNumber }) => (
         <View style={styles.item}>
-        <View style={styles.leftContent}>
-        {/* <Image style={styles.picture} source={{ uri: picture }}/> */}
-        {picture ? (
-            <Image source={{ uri: picture }} style={styles.picture} />
-        ) : (
-            <Image source={require('../../assets/images/user.png')} style={styles.picture} />
-        )}
-        <View style={styles.contain890}>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.educationQualification}>{educationQualification}</Text>
-        <Text style={styles.gender}>{gender}</Text>
-        <View style={styles.button90}>
-        <TouchableOpacity><Text style={styles.detailsButtonText01}>View Patient</Text></TouchableOpacity>
-        <TouchableOpacity><Text style={styles.detailsButtonText02}>View Details</Text></TouchableOpacity>
+            <View style={styles.leftContent}>
+                {picture ? (
+                    <Image source={{ uri: picture }} style={styles.picture} />
+                ) : (
+                    <Image source={require('../../assets/images/user.png')} style={styles.picture} />
+                )}
+                <View style={styles.contain890}>
+                    <Text style={styles.name}>{name}</Text>
+                    <Text style={styles.educationQualification}>{educationQualification}</Text>
+                    <Text style={styles.gender}>{gender}</Text>
+                    <View style={styles.button90}>
+                        <TouchableOpacity onPress={() => handleViewPatient(name)} disabled={loadingAdmins[name]}>
+                            {loadingAdmins[name] ? (
+                                <View style={styles.loadingIndicator}>
+                                    <ActivityIndicator size="small" color="#F56B62" />
+                                </View>
+                            ) : (
+                                <Text style={styles.detailsButtonText01}>View Patient</Text>
+                            )}
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <Text style={styles.detailsButtonText02}>View Details</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+            <View style={styles.rightContent}>
+                <View style={styles.buttonsRow}>
+                    <TouchableOpacity style={styles.button02} onPress={() => openDial(phNumber)}>
+                        <Ionicons name="call-sharp" size={20} style={styles.callIcon} />
+                    </TouchableOpacity>
+                </View>
+            </View>
+            <View style={styles.idNumberContainer}>
+                <Text style={styles.idNumberText}>{idNumber}</Text>
+            </View>
+            <View style={styles.registeredOnContainer}>
+                <Text style={styles.registeredOnText}>Registered On: <Text style={styles.datetime}>{date}, {time}</Text></Text>
+            </View>
         </View>
-</View>
-
-</View>
-<View style={styles.rightContent}>
-              <View style={styles.buttonsRow}>
-                  <TouchableOpacity style={styles.button02} onPress={()=>openDial(phNumber)}>
-                  <Ionicons name="call-sharp" size={20} style={styles.callIcon} />
-                  </TouchableOpacity>
-                 
-                  </View>              
-                  </View>
-                  <View style={styles.idNumberContainer}>
-                  <Text style={styles.idNumberText}>{idNumber}</Text>
-             </View>
-             <View style={styles.registeredOnContainer}>
-      <Text style={styles.registeredOnText}>Registered On: <Text style={styles.datetime}>{date},  {time}</Text></Text>
-    </View>
-</View>
-
-       
     );
+
     if (loading) {
         return <Text style={styles.text45}>Loading...</Text>;
     }
@@ -87,14 +109,10 @@ const HomeAdmin = ({ searchText }) => {
     }
 
     return (
-            <View style={styles.container}>
+        <View style={styles.container}>
             <FlatList
                 data={filteredAdminList}
-                renderItem={({ item }) => <Item name={item.name}
-                    educationQualification={item.educationQualification}
-                    picture={item.picture}
-                    gender={item.gender} idNumber={item.idNumber} date={item.date} time={item.time} phNumber={item.phNumber} />
-                }
+                renderItem={({ item }) => <Item {...item} />}
                 keyExtractor={item => item._id}
             />
         </View>
@@ -105,11 +123,11 @@ const styles = StyleSheet.create({
     container: {
         marginBottom: 65,
         flex: 1,
-        marginTop: windowWidth*0.04,
+        marginTop: windowWidth * 0.04,
     },
-    text45:{
-        marginTop: windowWidth*0.10,
-        fontSize:18,
+    text45: {
+        marginTop: windowWidth * 0.10,
+        fontSize: 18,
         fontFamily: 'bold01',
         marginLeft: 20,
     },
@@ -127,9 +145,9 @@ const styles = StyleSheet.create({
     },
     name: {
         paddingTop: 15,
-        fontFamily:'bold01',
+        fontFamily: 'bold01',
         fontSize: 14
-        },
+    },
     leftContent: {
         flex: 1,
         flexDirection: 'row',
@@ -174,7 +192,7 @@ const styles = StyleSheet.create({
     },
     gender: {
         paddingTop: 10,
-        fontSize:12,
+        fontSize: 12,
         fontFamily: 'regular89',
     },
     contain890: {
@@ -211,15 +229,25 @@ const styles = StyleSheet.create({
         color: '#666',
         fontSize: 11,
     },
-    callIcon:{
-        color:'#096759'
+    callIcon: {
+        color: '#096759'
     },
-    datetime:{
-    color: '#011411',
-    alignSelf: 'center',
-    fontFamily: 'bold01'
-    }
+    datetime: {
+        color: '#011411',
+        alignSelf: 'center',
+        fontFamily: 'bold01'
+    },
+    loadingIndicator: {
+        width: 80,
+        height: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1.5,
+        borderRadius: 5,
+        borderColor: "#F56B62",
+        marginLeft: 20,
+        marginRight: 20,
+    },
 });
-
 
 export default HomeAdmin;

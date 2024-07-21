@@ -66,7 +66,7 @@ const NotificationDetails = ({ patientId }) => {
     if (!basicDetails) {
         return (
             <View style={styles.loadingContainer}>
-                <Text>Loading...</Text>
+                <Text style={styles.text45}>Loading...</Text>
             </View>
         );
     }
@@ -700,6 +700,12 @@ const styles = StyleSheet.create({
     scrollContent: {
         flexGrow: 1,
     },
+    text45:{
+      marginTop: windowWidth*0.10,
+      fontSize:18,
+      fontFamily: 'bold01',
+      marginLeft: 20,
+  },
     textContainer:{
     backgroundColor: '#D9D9D9',
     padding: 5,

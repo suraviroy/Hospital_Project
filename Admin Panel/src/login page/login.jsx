@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { 
   View, 
   Text, 
@@ -6,7 +6,8 @@ import {
   TextInput, 
   TouchableOpacity, 
   Dimensions,
-  Alert
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
@@ -19,6 +20,8 @@ const Login = () => {
   const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = useCallback(async () => {
     if (!username.trim() || !password.trim()) {
@@ -26,6 +29,7 @@ const Login = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
       if (username === "pulmo" && password === "1234") {
         await login(username, 'user');
@@ -39,15 +43,31 @@ const Login = () => {
     } catch (error) {
       console.error('Login error:', error);
       Alert.alert('Error', 'An error occurred during login. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   }, [username, password, login, navigation]);
 
+  const togglePasswordVisibility = useCallback(() => {
+    setShowPassword(!showPassword);
+  }, [showPassword]);
+
+  const inputContainerStyle = useMemo(() => [
+    styles.inputContainer01,
+    { top: height * 0.15 }
+  ], [height]);
+
+  const loginButtonStyle = useMemo(() => [
+    styles.loginButton01,
+    { top: height * 0.15 }
+  ], [height]);
+
   return (
     <View style={styles.container01}>
-      <View style={styles.backgroundOverlay01}></View>
-      <Text style={styles.loginText01}>LOG IN</Text>
+      <View style={styles.backgroundOverlay01} />
+      <Text style={[styles.loginText01, { top: height * 0.1 }]}>LOG IN</Text>
 
-      <View style={styles.inputContainer01}>
+      <View style={inputContainerStyle}>
         <Icon name="user" size={24} color="black" style={styles.inputIcon01} />
         <TextInput
           style={styles.input01}
@@ -57,25 +77,37 @@ const Login = () => {
         />
       </View>
 
-      <View style={styles.inputContainer01}>
+      <View style={inputContainerStyle}>
         <Icon name="lock" size={24} color="black" style={styles.inputIcon01} />
         <TextInput
           style={styles.input01}
           placeholder='Password'
-          secureTextEntry={true}
+          secureTextEntry={!showPassword}
           value={password}
           onChangeText={setPassword}
         />
+        <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIcon}>
+          <Icon name={showPassword ? "eye-slash" : "eye"} size={20} color="black" />
+        </TouchableOpacity>
       </View>
       
-      <View style={styles.straightLine01}></View>
+      <View style={[styles.straightLine01, { top: height * 0.45 + 24 }]} />
       
-      <TouchableOpacity style={styles.loginButton01} onPress={handleLogin}>
-        <Text style={styles.loginButtonText01}>Login</Text>
+      <TouchableOpacity 
+        style={loginButtonStyle} 
+        onPress={handleLogin}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text style={styles.loginButtonText01}>Login</Text>
+        )}
       </TouchableOpacity>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
     straightLine01: {
         position: 'absolute',
@@ -90,9 +122,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'white',
-
-      },
-      backgroundOverlay01: {
+    },
+    backgroundOverlay01: {
         backgroundColor: '#096759',
         top: -height / 2,
         position: 'absolute',
@@ -101,9 +132,8 @@ const styles = StyleSheet.create({
         borderRadius: width * 8,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
-        
-      },
-      loginText01: {
+    },
+    loginText01: {
         top: height*0.1,
         fontSize: 40,
         fontFamily: 'extrabold01',
@@ -122,11 +152,9 @@ const styles = StyleSheet.create({
         marginVertical: 13,
         backgroundColor: '#EEE9E9',
         borderRadius: 5,
-    
     },
     inputIcon01: {
         marginRight: 20,
-        
     },
     input01: {
         position: 'relative',
@@ -145,7 +173,6 @@ const styles = StyleSheet.create({
         fontStyle: 'bold02',
         padding: 10,
         marginTop: 20,
-        
     },
     loginButtonText01: {
         color: 'white',
@@ -153,6 +180,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
+    eyeIcon: {
+        position: 'absolute',
+        right: 10,
+    },
 });
 
-export default Login;
+export default React.memo(Login);

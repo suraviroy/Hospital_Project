@@ -1,99 +1,77 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
-const windowWidth = Dimensions.get('window').width;
-import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily, Color } from '../../GlobalStyles';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { backendURL } from "../backendapi";
 
-const appdata = [
-    {
-        docname: 'Dr. Partha Sarathi Bhattacharya',
-        docdeg: 'MBBS, Pathologist',
-        doclang: 'English, Hindi +1',
-        docexp: '18 Years Exp',
-        appdate: '15',
-        appmon: 'Aug',
-        appyear: '2023',
-        apptime: '2:30 PM',
-        id: 1
-    },
-    {
-        docname: 'Dr Amlan Chowdhury',
-        docdeg: 'mbbs',
-        doclang: 'hindi',
-        docexp: '18 years exp',
-        appdate: '18',
-        appmon: 'Nov',
-        appyear: '2023',
-        apptime: '5:30 PM',
-        id: 2
-    },
-   
-    {
-        docname: 'Dr. Satyabrata Ghosh',
-        docdeg: 'mbbs',
-        doclang: 'hindi',
-        docexp: '18 years exp',
-        appdate: '02',
-        appmon: 'Jun',
-        appyear: '2023',
-        apptime: '4:30 PM',
-        id: 3
-    }
-];
+const windowWidth = Dimensions.get('window').width;
 
 const AppList = ({ searchText }) => {
     const navigation = useNavigation();
-    const [filteredDate, setFilteredDate] = useState([]);
-
-    
-    const handleViewDetails = (id) => {
-        navigation.navigate('#');
-    };
+    const [patientData, setPatientData] = useState([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
-        if (!searchText) {
-            setFilteredDate(appdata);
-            return;
+        const fetchData = async () => {
+            try {
+                const storedPatientId = await AsyncStorage.getItem('patientId');
+                if (storedPatientId) {
+                    fetchPatientData(storedPatientId);
+                }
+            } catch (error) {
+                console.error('Error fetching patientId from storage:', error);
+            }
+        };
+        fetchData();
+    }, []);
+
+    const fetchPatientData = async (patientId) => {
+        try {
+            const response = await fetch(`${backendURL}/patientRouter/HomePageDetails/${patientId}`);
+            const data = await response.json();
+            setPatientData(data);
+        } catch (error) {
+            console.error('Error fetching patient basic details:', error);
         }
+    };
 
-        const filtered = appdata.filter(doctor =>
-            doctor.appdate.toLowerCase().includes(searchText.toLowerCase()) ||
-            doctor.appmon.toLowerCase().includes(searchText.toLowerCase()) 
-        );
-        setFilteredDate(filtered);
-    }, [searchText, appdata]);
 
-    const renderDoctorItem = ({item}) => (
+
+    const renderAppointmentItem = ({ item }) => (
         <View style={styles.appointView}>
-                <Image source={{ uri: 'https://s3-alpha-sig.figma.com/img/f090/da92/0c0b2c11a9e7821a841e1c7d8128531b?Expires=1713139200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=UTd2U3uMJfxYpa6ttNjsY6ywyHjJcf7dhuhtMN0yiriIE4gWZOLt4OeoiTgXj7H0EBygPTlEnzkj0zFxcJKg-36j-OVTFgmAqc6vrNo8h9~Yxotz6rcTvvB9s0mHpTurYpUgWQP9dx0OolWDlNyofFW6Qqt04IVwQIjHxoP3PJRij8MMG0BiL92BeCK-ERu-kuxjD6K4sQ94lqqeGSGmPxEr68S7VPBz2yNxEcjp-128tLZzxAtbwe6zrf~-NQV5z9pUV16OwDjyVtSvB~LaS0V90MxkXvtSGx3WuIPKZCCv4INYYofEbXKTwghvg~S090PEzO20xnut3ru5Yt1bYA__' }} style={styles.docImage} />
-                <View style={styles.docdet}>
-                    <Text style={styles.docname}>{item.docname}</Text>
-                    <View style={{ display: 'flex', flexDirection: 'row' }}>
-                        <Text style={styles.docdesg}>{item.docdeg}</Text>
-                        <Text style={styles.docexp}>{item.docexp}</Text>
-                    </View>
-                    <Text style={styles.doclang}>{item.doclang}</Text>
+            <Image source={require('../../assets/images/doc.png')} style={styles.docImage} />
+            <View style={styles.docdet}>
+                <Text style={styles.docname}>{item.consultingDoctor}</Text>
+                <View style={{ display: 'flex', flexDirection: 'row' }}>
+                    <Text style={styles.docdesg}>MD, DND, DM</Text>
+                    <Text style={styles.docexp}>Pulmonary Medicine</Text>
                 </View>
-                <TouchableOpacity
-                    style={styles.viewButton2451}
-                    // onPress={() => handleViewDetails()}
-                >
-                    <Text style={styles.viewDetails}>View Details</Text>
-                </TouchableOpacity>
-                <View style={styles.appdate}>
-                    <Text style={styles.apptext}>Appointment On: <Text style={styles.datime}>{item.appdate} {item.appmon},{item.appyear},  {item.apptime}</Text></Text>
-                </View>
+                <Text style={styles.doclang}>English, Hindi , Bengali</Text>
             </View>
+            <TouchableOpacity
+                style={styles.viewButton2451}
+            >
+                <Text style={styles.viewDetails}>View Details</Text>
+            </TouchableOpacity>
+            <View style={styles.appdate}>
+                <Text style={styles.apptext}>Appointment On: <Text style={styles.datime}>{item.date} , {item.time}</Text></Text>
+            </View>
+        </View>
+    );
+
+    const filteredAppointments = patientData.filter(item =>
+        item.consultingDoctor.toLowerCase().includes(searchText.toLowerCase())
     );
 
     return (
         <SafeAreaView style={styles.appointcon}>
             <FlatList
                 nestedScrollEnabled
-                data={filteredDate}
-                renderItem={renderDoctorItem}
-                keyExtractor={item => item.id}
+                data={filteredAppointments}
+                renderItem={renderAppointmentItem}
+                keyExtractor={(item, index) => index.toString()}
             />
         </SafeAreaView>
     );
@@ -120,7 +98,6 @@ const styles = StyleSheet.create({
     docImage: {
         marginTop: windowWidth * 0.02,
         marginLeft: windowWidth * 0.02,
-        // marginRight: 10,
         width: windowWidth * 0.2,
         height: windowWidth * 0.25,
         borderRadius: 8,
@@ -129,17 +106,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         display: 'flex',
         bottom: 7,
-        // left: 10,
         width: windowWidth * 0.965,
         borderTopColor: '#D1D1D6',
         borderTopWidth: 1,
         borderStyle: 'solid',
-
     },
     apptext: {
         color: '#666',
         fontSize: 13,
-        // alignSelf: 'center',
         marginLeft: windowWidth * 0.02,
         marginTop: windowWidth * 0.01
     },
@@ -186,7 +160,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontFamily: FontFamily.font_bold,
         marginTop: windowWidth * 0.005,
-        width: windowWidth*0.28
+        width: windowWidth * 0.28
     },
     doclang: {
         marginLeft: windowWidth * 0.02,
@@ -198,11 +172,12 @@ const styles = StyleSheet.create({
     },
     docexp: {
         color: '#357EEA',
-        marginLeft: windowWidth * 0.17,
+        marginLeft: windowWidth * 0.13,
         alignItems: 'center',
         fontSize: 12,
         fontFamily: FontFamily.font_bold,
         marginTop: windowWidth * 0.005,
     }
-})
+});
+
 export default AppList;

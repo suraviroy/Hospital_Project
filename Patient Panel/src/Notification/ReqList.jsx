@@ -1,18 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, FlatList, Dimensions } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, StyleSheet, Text, TouchableOpacity, FlatList, Dimensions, RefreshControl } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily, Color } from '../../GlobalStyles';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { backendURL } from "../backendapi";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ReqList = ({ searchText }) => {
     const navigation = useNavigation();
-    const [filteredDate, setFilteredDate] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
     const [originalData, setOriginalData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [patientId, setPatientId] = useState(null);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const fetchPatientData = useCallback(async (id) => {
+        try {
+            const response = await fetch(`${backendURL}/patientRouter/allrequest/${id}`);
+            if (response.ok) {
+                const requestData = await response.json();
+                setOriginalData(requestData);
+                setFilteredData(requestData);
+                setLoading(false);
+            } else {
+                console.error('Failed to fetch request data');
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error('Error fetching request data:', error);
+            setLoading(false);
+        }
+    }, []);
+
+    const refreshList = useCallback(async () => {
+        setRefreshing(true);
+        if (patientId) {
+            await fetchPatientData(patientId);
+        }
+        setRefreshing(false);
+    }, [patientId, fetchPatientData]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,41 +54,31 @@ const ReqList = ({ searchText }) => {
             }
         };
         fetchData();
-    }, []);
+    }, [fetchPatientData]);
 
-    const fetchPatientData = async (id) => {
-        try {
-            const response = await fetch(`${backendURL}/patientRouter/allrequest/${id}`);
-            if (response.ok) {
-                const requestData = await response.json();
-                setOriginalData(requestData);
-                setFilteredDate(requestData);
-                setLoading(false);
-            } else {
-                console.error('Failed to fetch request data');
-                setLoading(false);
+    useFocusEffect(
+        useCallback(() => {
+            if (patientId) {
+                fetchPatientData(patientId);
             }
-        } catch (error) {
-            console.error('Error fetching request data:', error);
-            setLoading(false);
-        }
-    };
+        }, [patientId, fetchPatientData])
+    );
 
     useEffect(() => {
         if (patientId) {
             filterData(searchText);
         }
-    }, [searchText, patientId]);
+    }, [searchText, patientId, originalData]);
 
     const filterData = (text) => {
         if (!text) {
-            setFilteredDate(originalData);
+            setFilteredData(originalData);
         } else {
             const filtered = originalData.filter(item => 
                 item.date.toLowerCase().includes(text.toLowerCase()) ||
                 item.time.toLowerCase().includes(text.toLowerCase())
             );
-            setFilteredDate(filtered);
+            setFilteredData(filtered);
         }
     };
 
@@ -96,7 +113,7 @@ const ReqList = ({ searchText }) => {
         return <Text style={styles.text45}>Loading...</Text>;
     }
     
-    if (filteredDate.length === 0) {
+    if (filteredData.length === 0) {
         return <Text style={styles.text45}>No matching requests found.</Text>;
     }
 
@@ -104,9 +121,15 @@ const ReqList = ({ searchText }) => {
         <SafeAreaView style={styles.reqcon}>
             <FlatList
                 nestedScrollEnabled
-                data={filteredDate}
+                data={filteredData}
                 renderItem={renderRequestItem}
                 keyExtractor={item => item.requestId.toString()}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={refreshList}
+                    />
+                }
             />
         </SafeAreaView>
     );

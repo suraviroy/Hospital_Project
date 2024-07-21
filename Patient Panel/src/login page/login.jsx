@@ -1,7 +1,6 @@
-import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
+import React, { useContext, useState, useCallback, useMemo } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, ActivityIndicator, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 import { backendURL } from "../backendapi";
 import { AuthContext } from '../AuthContext';
@@ -14,10 +13,19 @@ const Login = () => {
     const [patientId, setPatientId] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
-    const handleLogin = async () => {
+    const handleLogin = useCallback(async () => {
+        if (!patientId.trim() || !password.trim()) {
+            Alert.alert('Error', 'Please enter both username and password');
+            return;
+        }
+
         setIsLoading(true);
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+
             const response = await fetch(patientLoginURL, {
                 method: 'POST',
                 headers: {
@@ -27,58 +35,88 @@ const Login = () => {
                     patientId: patientId,
                     password: password,
                 }),
+                signal: controller.signal
             });
+
+            clearTimeout(timeoutId);
+
             const responseData = await response.json();
             if (response.ok && responseData.status === 'success') {
                 const { result } = responseData;
                 await login(result.patientId);
+                Alert.alert('Success', 'Logged in successfully');
             } else {
-                console.error('Error:', responseData.message);
+                Alert.alert('Error', responseData.message || 'Login failed');
             }
         } catch (error) {
+            if (error.name === 'AbortError') {
+                Alert.alert('Error', 'Login request timed out. Please try again.');
+            } else {
+                Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+            }
             console.error('Error:', error);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [patientId, password, login]);
+
+    const togglePasswordVisibility = useCallback(() => {
+        setShowPassword(!showPassword);
+    }, [showPassword]);
+
+    const inputContainerStyle = useMemo(() => [
+        styles.inputContainer01,
+        { top: height * 0.15 }
+    ], [height]);
+
+    const loginButtonStyle = useMemo(() => [
+        styles.loginButton01,
+        { top: height * 0.15 }
+    ], [height]);
+
     return (
         <View style={styles.container01}>
             <View style={styles.backgroundOverlay01}></View>
-            <Text style={styles.loginText01}>LOG IN</Text>
+            <Text style={[styles.loginText01, { top: height * 0.1 }]}>LOG IN</Text>
 
-            <View style={styles.inputContainer01}>
+            <View style={inputContainerStyle}>
                 <Icon name="user" size={24} color="black" style={styles.inputIcon01} />
                 <TextInput
                     style={styles.input01}
                     placeholder='Username'
                     value={patientId}
-                    onChangeText={text => setPatientId(text)}
+                    onChangeText={setPatientId}
                 />
             </View>
 
-            <View style={styles.inputContainer01}>
+            <View style={inputContainerStyle}>
                 <Icon name="lock" size={24} color="black" style={styles.inputIcon01} />
                 <TextInput
                     style={styles.input01}
                     placeholder='Password'
-                    secureTextEntry={true}
+                    secureTextEntry={!showPassword}
                     value={password}
-                    onChangeText={text => setPassword(text)}
+                    onChangeText={setPassword}
                 />
+                <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIcon}>
+                    <Icon name={showPassword ? "eye-slash" : "eye"} size={20} color="black" />
+                </TouchableOpacity>
             </View>
-            <View style={styles.straightLine01}></View>
-            <TouchableOpacity style={styles.loginButton01} onPress={handleLogin}>
-            {isLoading ? (
-                                <ActivityIndicator size="small" color={Color.colorWhite} />
-                            ) : (
-                                <Text style={styles.loginButtonText01}>Login</Text>
-                            )}
-               
+            <View style={[styles.straightLine01, { top: height * 0.45 + 24 }]}></View>
+            <TouchableOpacity 
+                style={loginButtonStyle} 
+                onPress={handleLogin}
+                disabled={isLoading}
+            >
+                {isLoading ? (
+                    <ActivityIndicator size="small" color={Color.colorWhite} />
+                ) : (
+                    <Text style={styles.loginButtonText01}>Login</Text>
+                )}
             </TouchableOpacity>
         </View>
     );
 }
-
 
 const styles = StyleSheet.create({
     straightLine01: {
@@ -94,9 +132,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'white',
-
-      },
-      backgroundOverlay01: {
+    },
+    backgroundOverlay01: {
         backgroundColor: '#357EEA',
         top: -height / 2,
         position: 'absolute',
@@ -105,9 +142,8 @@ const styles = StyleSheet.create({
         borderRadius: width * 8,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
-        
-      },
-      loginText01: {
+    },
+    loginText01: {
         top: height*0.1,
         fontSize: 40,
         fontFamily: 'extrabold01',
@@ -126,11 +162,9 @@ const styles = StyleSheet.create({
         marginVertical: 13,
         backgroundColor: '#EEE9E9',
         borderRadius: 5,
-    
     },
     inputIcon01: {
         marginRight: 20,
-        
     },
     input01: {
         position: 'relative',
@@ -149,7 +183,6 @@ const styles = StyleSheet.create({
         fontStyle: 'bold02',
         padding: 10,
         marginTop: 20,
-        
     },
     loginButtonText01: {
         color: 'white',
@@ -157,6 +190,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
+    eyeIcon: {
+        position: 'absolute',
+        right: 10,
+    },
 });
 
-export default Login;
+export default React.memo(Login);

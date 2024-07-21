@@ -119,14 +119,14 @@ return (
       <Text style={styles.viewAll}>View All</Text>
     </View>
     <View style={styles.appointView}>
-              <Image source={{ uri: 'https://s3-alpha-sig.figma.com/img/f090/da92/0c0b2c11a9e7821a841e1c7d8128531b?Expires=1713139200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=UTd2U3uMJfxYpa6ttNjsY6ywyHjJcf7dhuhtMN0yiriIE4gWZOLt4OeoiTgXj7H0EBygPTlEnzkj0zFxcJKg-36j-OVTFgmAqc6vrNo8h9~Yxotz6rcTvvB9s0mHpTurYpUgWQP9dx0OolWDlNyofFW6Qqt04IVwQIjHxoP3PJRij8MMG0BiL92BeCK-ERu-kuxjD6K4sQ94lqqeGSGmPxEr68S7VPBz2yNxEcjp-128tLZzxAtbwe6zrf~-NQV5z9pUV16OwDjyVtSvB~LaS0V90MxkXvtSGx3WuIPKZCCv4INYYofEbXKTwghvg~S090PEzO20xnut3ru5Yt1bYA__' }} style={styles.docImage} />
+              <Image source={require('../../assets/images/doc.png')} style={styles.docImage} />
               <View style={styles.docdet}>
                   <Text style={styles.docname}>{patientData.consultingDoctor}</Text>
                   <View style={{ display: 'flex', flexDirection: 'row' }}>
-                      <Text style={styles.docdesg}>MBBS, Pathologist</Text>
-                      <Text style={styles.docexp}>18 Years Exp</Text>
+                      <Text style={styles.docdesg}>MD, DND, DM</Text>
+                      <Text style={styles.docexp}>Pulmonary Medicine</Text>
                   </View>
-                  <Text style={styles.doclang}>English, Hindi +1</Text>
+                  <Text style={styles.doclang}>English, Hindi , Bengali</Text>
               </View>
               <TouchableOpacity
                   style={styles.viewButton2451}
@@ -237,7 +237,7 @@ marginTop: windowWidth * 0.005
 },
 docexp: {
 color: '#357EEA',
-marginLeft: windowWidth * 0.17,
+marginLeft: windowWidth * 0.13,
 alignItems: 'center',
 fontSize: 12,
 fontFamily: FontFamily.font_bold,

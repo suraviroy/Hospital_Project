@@ -25,6 +25,7 @@ import NotificationDetails from './src/Notification/NotificationDetails';
 import NotiRequests from './src/Notification/NotiRequests';
 import Actions from './src/Notification/Actions';
 import { AuthProvider, useAuth } from './src/AuthContext';
+import AdminPatientList from './src/ViewList/AdminPatientList';
 
 const Stack = createNativeStackNavigator();
 
@@ -93,6 +94,7 @@ function AppNavigator() {
       <Stack.Screen name="NotificationDetails" component={NotificationDetails} />
       <Stack.Screen name="NotiRequests" component={NotiRequests} />
       <Stack.Screen name="Actions" component={Actions} />
+      <Stack.Screen name= "AdminPatientList" component={AdminPatientList} />
     </Stack.Navigator>
   );
 }

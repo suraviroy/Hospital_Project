@@ -187,11 +187,13 @@ const styles = StyleSheet.create({
         borderBottomColor: '#D3F1ED'
     },
     adminRow012: {
+        position: "relative",
         flexDirection: "row",
         justifyContent: "space-between",
         marginLeft: 10,
         alignItems: "center",
         marginTop: 15,
+
     },
     text012: {
         fontFamily: "regular01",

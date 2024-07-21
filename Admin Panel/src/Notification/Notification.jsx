@@ -56,12 +56,7 @@ const Notification = ({}) => {
                 )}
                 <View style={styles.patientDetails13}>
                     <Text style={styles.patientDetails2451}>{item.name} sent you a request</Text>
-                    <Text style={styles.patientMessage} numberOfLines={2}>{item.request.length > 25 ? `${item.request.slice(0, 25)}...` : item.request}</Text>
-                    {item.request.length > 25 && (
-                        <TouchableOpacity onPress={() => handleViewDetails(item.patientId, item.requestId)}>
-                            <Text style={styles.viewMore}>View More</Text>
-                        </TouchableOpacity>
-                    )}
+                    <Text style={styles.patientMessage} numberOfLines={2}>{item.request.length > 25 ? `${item.request.slice(0, 27)}...` : item.request}</Text>
                 </View>
                 <View style={styles.patientId2451}>
                     <Text style={styles.patientId13}>{item.patientId}</Text>
@@ -81,7 +76,7 @@ const Notification = ({}) => {
         }
         
         if (filteredPatients.length === 0) {
-            return <Text style={styles.text45}>No patients registered today!!</Text>;
+            return <Text style={styles.text45}>No Notifications to show!!</Text>;
         }
 
         return (
