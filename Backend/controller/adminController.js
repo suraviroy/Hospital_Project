@@ -128,7 +128,8 @@ export const sectionAallPatient = async (req, res) => {
 
     const registeredPatients = await PatientSchema.find(
       {
-        status: "Registered",
+        // status: "Registered",
+        
       },
       {
         name: 1,
@@ -139,6 +140,7 @@ export const sectionAallPatient = async (req, res) => {
         age: 1,
         time: 1,
         _id: 0,
+        status:1,
       }
     );
 
