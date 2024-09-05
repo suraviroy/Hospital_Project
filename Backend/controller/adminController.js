@@ -23,12 +23,14 @@ export const patientregistration = async (req, res) => {
       localContactName,
       localContactRelation,
       localContactNumber,
+      date,
+      time,
     } = req.body;
 
     // Get the desired time zone (e.g., server's time zone or a specific time zone)
-    const desiredTimezone = "Asia/Kolkata"; // Replace with your desired time zone
-    const currentDate = moment().tz(desiredTimezone).format("MMMM D, YYYY");
-    const currentTime = moment().tz(desiredTimezone).format("hh:mm A");
+    // const desiredTimezone = "Asia/Kolkata"; // Replace with your desired time zone
+    // const currentDate = moment().tz(desiredTimezone).format("MMMM D, YYYY");
+    // const currentTime = moment().tz(desiredTimezone).format("hh:mm A");
 
     const finduser = await PatientSchema.findOne({ patientId: patientId });
     if (finduser) {
@@ -52,8 +54,8 @@ export const patientregistration = async (req, res) => {
         localContactName,
         localContactRelation,
         localContactNumber,
-        date: currentDate,
-        time: currentTime,
+        date,
+        time,
         status: "Registered",
       });
 
@@ -233,7 +235,7 @@ export const patientEachVistDetails = async (req, res) => {
   try {
     const id = req.params.id;
     const visitData = req.body.visitData;
-    console.log("data", visitData)
+   // console.log("data", visitData)
     const patientExists = await PatientSchema.exists({ patientId: id });
     if (!patientExists) {
       return res.status(404).json({ message: "Patient not found" });
@@ -242,14 +244,17 @@ export const patientEachVistDetails = async (req, res) => {
     const patient = await PatientSchema.findOne({ patientId: id });
 
     // Get the desired time zone (e.g., server's time zone or a specific time zone)
-    const desiredTimezone = "Asia/Kolkata"; // Replace with your desired time zone
-    // Get the current date and time in the desired time zone
-    const currentDate = moment().tz(desiredTimezone).format("MMMM D, YYYY");
-    const currentTime = moment().tz(desiredTimezone).format("hh:mm A");
+    // const desiredTimezone = "Asia/Kolkata"; // Replace with your desired time zone
+    // // Get the current date and time in the desired time zone
+    // const currentDate = moment().tz(desiredTimezone).format("MMMM D, YYYY");
+    // const currentTime = moment().tz(desiredTimezone).format("hh:mm A");
+
+    const visitDate = req.body.visitDate;
+    const visitTime = req.body.visitTime;
 
     const newVisit = {
-      visitDate: currentDate,
-      visitTime: currentTime,
+      visitDate,
+      visitTime,
       existingDeseases: req.body.existingDeseases,
       problemForConsultation: req.body.problemForConsultation,
       importantHistory: req.body.importantHistory,
