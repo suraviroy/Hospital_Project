@@ -55,6 +55,16 @@ const PatientList = ({ searchText }) => {
             console.error('Error fetching patient details:', error);
         });
     };
+    const handleUpdate = (patientId) => {
+        fetch(`${BasicDetailsURL}/${patientId}`)
+            .then(response => response.json())
+            .then(data => {
+                navigation.navigate('RegisterFirst', { details: data[0] });
+            })
+            .catch(error => {
+                console.error('Error fetching patient details:', error);
+            });
+    };
 
     const renderPatientItem = ({ item }) => (
         <View style={styles.patientView2451}>
@@ -78,6 +88,12 @@ const PatientList = ({ searchText }) => {
             >
                 <Text style={styles.viewDetails}>View Details</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.viewButton2452}
+                onPress={() => handleUpdate(item.patientId)}
+            >
+                <Text style={styles.viewDetails02}>Update Disease</Text>
+            </TouchableOpacity>
             <View style={styles.appointmentdet13}>
                 <Text style={styles.appointment2451}>Last Appointment On: <Text style={styles.time2451}>{item.visitDate},  {item.visitTime}</Text></Text>
             </View>
@@ -88,7 +104,7 @@ const PatientList = ({ searchText }) => {
     }
     
     if (filteredPatients.length === 0) {
-        return <Text style={styles.text45}>No patients registered today!!</Text>;
+        return <Text style={styles.text45}>No patients registered today!</Text>;
     }
     return (
         <SafeAreaView style={styles.patientContainer2451}>
@@ -156,8 +172,28 @@ const styles = StyleSheet.create({
         marginTop: 70,
         marginLeft: windowWidth*0.65,
     },
+    viewButton2452: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: "absolute",
+        width: windowWidth*0.28,
+        height: 34,
+        color: "#F56B62",
+        borderColor: "#F56B62",
+        borderWidth: 2,
+        borderStyle: 'solid',
+        borderRadius: 5,
+        marginTop: 70,
+        marginLeft: windowWidth*0.35,
+    },
     viewDetails: {
         color: '#077547',
+        fontSize: 12,
+        alignContent: 'center',
+    },
+    viewDetails02: {
+        color: "#F56B62",
         fontSize: 12,
         alignContent: 'center',
     },

@@ -15,6 +15,8 @@ const UpdatedDetails = ({patientId}) => {
     const [statusOfSickness, setStatusOfSickness] = useState(null);
    const [catScore, setCatScore] = useState(0);
    const [coordinator,setcoordinator]=useState(null);
+   const [visitDate,setvisitDate]=useState(null);
+   const [visitTime,setvisitTime]=useState(null);
     useEffect(() => {
       
       fetchData();
@@ -37,6 +39,8 @@ const UpdatedDetails = ({patientId}) => {
         const statusOfSicknessData = data[0]?.visitCount[0]?.statusOfSickness;
         const catScoreData = data[0]?.visitCount[0]?.catScore;
         const coordinatordata = data[0]?.coordinator;
+        const visitDatedata = data[0]?.visitCount[0]?.visitDate;
+        const visitTimedata = data[0]?.visitCount[0]?.visitTime;
         setImportantHistory(importantHistoryData);
         setexistingDeseases(existingDeseasesData);
         setproblemForConsultation(problemForConsultationData);
@@ -44,6 +48,9 @@ const UpdatedDetails = ({patientId}) => {
         setStatusOfSickness(statusOfSicknessData);
         setCatScore(catScoreData);
         setcoordinator(coordinatordata);
+        setvisitDate(visitDatedata);
+        setvisitTime(visitTimedata);
+
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -52,8 +59,10 @@ const UpdatedDetails = ({patientId}) => {
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollContent}>
-        <View style={styles.profileContainer}>
+        <View style={styles.profileContainer}>     
         <Text style={styles.subHead6}>Coordinator : {coordinator}</Text>
+        <Text style={styles.subHead6}>Visit Date : {visitDate}</Text>
+        <Text style={styles.subHead6}>Visit Time : {visitTime}</Text>
         <View style={styles.exiDisContainer}>
         {existingDeseases && (
           <View>

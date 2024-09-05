@@ -795,7 +795,7 @@ const Request = () => {
                             <View style={styles.hosopt1}>
                                 <Icon name="paperclip" size={22} color={Color.colorGray_100} />
                                 <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
-                                    {pickedFile2 ? pickedFile2.name : 'Upload Discharge Certificate'}
+                                    {pickedFile2 ? pickedFile2.name : 'Upload Death Certificate'}
                                 </Text>
                                 <TouchableOpacity style={styles.uploadbutton} onPress={pickFile2}>
                                     {isLoading2 ? (
@@ -883,7 +883,7 @@ const Request = () => {
                                 <View style={styles.hosopt1}>
                                     <Icon name="paperclip" size={22} color={Color.colorGray_100} />
                                     <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
-                                        {pickedFile3 ? pickedFile3.name : 'Upload Discharge Certificate'}
+                                        {pickedFile3 ? pickedFile3.name : 'Upload Report'}
                                     </Text>
                                     <TouchableOpacity style={styles.uploadbutton} onPress={pickFile3}>
                                         {isLoading4 ? (

@@ -47,9 +47,10 @@ const AddPatient = () => {
     const [selectedBloodGroup, setSelectedBloodGroup] = useState(bloodGroup);
     const [selectedState, setSelectedState] = useState(state);
     const [selectedCountry, setSelectedCountry] = useState(country);
-
-
-
+    const [visitDate, setVisitDate] = useState(new Date());
+    const [visitTime, setVisitTime] = useState(new Date());
+    const [showVisitDatePicker, setShowVisitDatePicker] = useState(false);
+    const [showVisitTimePicker, setShowVisitTimePicker] = useState(false);
     const [patientNameError, setPatientNameError] = useState(false);
     const [ageError, setAgeError] = useState(false);
     const [genderError, setGenderError] = useState(false);
@@ -276,6 +277,8 @@ const savePatientData = async (imageUrl, password, stateToSend) => {
             localContactName: localContactName,
             localContactRelation: localContactRelation,
             localContactNumber: localContactNumber,
+            date: visitDate.toLocaleDateString(),
+            time: visitTime.toLocaleTimeString()
             // existingPatientDiagnosis: existingPatient
         };
         const response = await fetch(`${backendURL}/adminRouter/patientregistration`, {
@@ -345,7 +348,18 @@ const savePatientData = async (imageUrl, password, stateToSend) => {
         setConsultingDoctor(value);
         setSelectedDoctor(value);
     };
-
+    const handleVisitDateChange = (event, selectedDate) => {
+        const currentDate = selectedDate || visitDate;
+        setShowVisitDatePicker(false);
+        setVisitDate(currentDate);
+    };
+    
+    const handleVisitTimeChange = (event, selectedTime) => {
+        const currentTime = selectedTime || visitTime;
+        setShowVisitTimePicker(false);
+        setVisitTime(currentTime);
+    };
+    
 
     return (
         <SafeAreaView style={styles.container}>
@@ -1112,7 +1126,33 @@ const savePatientData = async (imageUrl, password, stateToSend) => {
                         keyboardType="phone-pad"
                         placeholder="Enter Local Contact Number"
                     />
-                </View>
+                    <Text style={styles.label}>Visit Date</Text>
+                    <TouchableOpacity onPress={() => setShowVisitDatePicker(true)} style={styles.input01}>
+                    <Text>{visitDate.toLocaleDateString()}</Text>
+                    </TouchableOpacity>
+                    {showVisitDatePicker && (
+                    <DateTimePicker
+                    value={visitDate}
+                    style={styles.input01}
+                    mode="date"
+                    display="default"
+                    onChange={handleVisitDateChange}
+                    />
+                    )}
+                <Text style={styles.label}>Visit Time</Text>
+                <TouchableOpacity onPress={() => setShowVisitTimePicker(true)} style={styles.input01}>
+                <Text>{visitTime.toLocaleTimeString()}</Text>
+                </TouchableOpacity>
+                {showVisitTimePicker && (
+                <DateTimePicker
+                style={styles.input01}
+                value={visitTime}
+                mode="time"
+                display="default"
+                onChange={handleVisitTimeChange}
+                />
+                )}
+            </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
                         <Text style={[styles.buttonText, styles.cancelText]}>Cancel</Text>
@@ -1221,6 +1261,16 @@ const styles = StyleSheet.create({
         borderColor: '#CCCCCC',
         borderRadius: 5,
         paddingHorizontal: 10,
+        marginTop: 10,
+        height: 40,
+        backgroundColor: '#D3F1ED',
+    },
+    input01: {
+        borderWidth: 1,
+        borderColor: '#CCCCCC',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingTop: 7,
         marginTop: 10,
         height: 40,
         backgroundColor: '#D3F1ED',
