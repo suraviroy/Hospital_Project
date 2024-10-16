@@ -1,70 +1,81 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList,Dimensions, ScrollView,Linking } from 'react-native';
-const windowWidth = Dimensions.get('window').width;
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FontFamily } from '../../../GlobalStyles';
+import { Ionicons } from '@expo/vector-icons';
 import { backendURL } from "../../backendapi";
 
+const windowWidth = Dimensions.get('window').width;
 
-const UpdatedDetails = ({patientId}) => {
-    const [importantHistory, setImportantHistory] = useState(null);
-    const [existingDeseases,setexistingDeseases] = useState(null)
-    const [problemForConsultation,setproblemForConsultation] = useState(null)
-    const [pastHospitalization,setpastHospitalization] = useState(null)
-    const [statusOfSickness, setStatusOfSickness] = useState(null);
-   const [catScore, setCatScore] = useState(0);
-   const [coordinator,setcoordinator]=useState(null);
-   const [visitDate,setvisitDate]=useState(null);
-   const [visitTime,setvisitTime]=useState(null);
-    useEffect(() => {
-      
-      fetchData();
-    }, []);
-    const handleDischargeCertificatePress = (url) => {
-      Linking.openURL(url);
-    };
-  
-    const fetchData = async () => {
-      try {
-        
-        const response = await fetch(`${backendURL}/adminRouter/patientDisease/${patientId}`);
-        const data = await response.json();
-  
-        
-        const importantHistoryData = data[0]?.visitCount[0]?.importantHistory;
-        const existingDeseasesData = data[0]?.visitCount[0]?.existingDeseases;
-        const problemForConsultationData = data[0]?.visitCount[0]?.problemForConsultation;
-        const pastHospitalizationData = data[0]?.visitCount[0]?.pastHospitalization;
-        const statusOfSicknessData = data[0]?.visitCount[0]?.statusOfSickness;
-        const catScoreData = data[0]?.visitCount[0]?.catScore;
-        const coordinatordata = data[0]?.coordinator;
-        const visitDatedata = data[0]?.visitCount[0]?.visitDate;
-        const visitTimedata = data[0]?.visitCount[0]?.visitTime;
-        setImportantHistory(importantHistoryData);
-        setexistingDeseases(existingDeseasesData);
-        setproblemForConsultation(problemForConsultationData);
-        setpastHospitalization(pastHospitalizationData)
-        setStatusOfSickness(statusOfSicknessData);
-        setCatScore(catScoreData);
-        setcoordinator(coordinatordata);
-        setvisitDate(visitDatedata);
-        setvisitTime(visitTimedata);
+const UpdatedDetails = ({ patientId }) => {
+  const [visitData, setVisitData] = useState([]);
+  const [coordinator, setCoordinator] = useState(null);
+  const [expandedVisits, setExpandedVisits] = useState({});
 
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleDischargeCertificatePress = (url) => {
+    Linking.openURL(url);
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${backendURL}/adminRouter/patientDisease/${patientId}`);
+      const data = await response.json();
+
+      setVisitData(data[0]?.visitCount || []);
+      setCoordinator(data[0]?.coordinator);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const toggleVisitExpansion = (index) => {
+    setExpandedVisits(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
+
+  const renderVisitDetails = (visit, index) => {
+    const isExpanded = expandedVisits[index];
+
+    return (
+      <View key={index} style={styles.visitContainer}>
+       
+        <TouchableOpacity onPress={() => toggleVisitExpansion(index)} style={styles.visitHeader}>
+        <View style={{flexDirection:'row'}}>
+          <Text style={styles.visitHeaderText}>Visit Date: {visit.visitDate}  Time: {visit.visitTime}</Text>
+          <Ionicons 
+            name={isExpanded ? "chevron-up" : "chevron-down"}   
+            marginLeft={windowWidth*0.03}
+            size={24} 
+            color="#000" 
+          />
+           </View>
+        </TouchableOpacity>
+        {isExpanded && (
+          <View style={styles.visitDetails}>
+            {renderExistingDiseases(visit.existingDeseases)}
+            {renderProblemForConsultation(visit.problemForConsultation)}
+            {renderImportantHistory(visit.importantHistory)}
+            {renderPastHospitalization(visit.pastHospitalization)}
+            <View  style={styles.backField2}>
+            <Text style={styles.subHead6}>Status of Sickness: {visit.statusOfSickness}</Text>
+            <Text style={styles.subHead6}>CAT Score: {visit.catScore}</Text>
+            </View>
+          </View>
+        )}
+      </View>
+    );
+  };
+  const renderExistingDiseases = (existingDeseases) => {
+    if (!existingDeseases) return null;
   
     return (
-      <SafeAreaView style={styles.container}>
-        <ScrollView style={styles.scrollContent}>
-        <View style={styles.profileContainer}>     
-        <Text style={styles.subHead6}>Coordinator : {coordinator}</Text>
-        <Text style={styles.subHead6}>Visit Date : {visitDate}</Text>
-        <Text style={styles.subHead6}>Visit Time : {visitTime}</Text>
-        <View style={styles.exiDisContainer}>
-        {existingDeseases && (
+      <View style={styles.exiDisContainer}>
+       {existingDeseases && (
           <View>
              <Text style={styles.texthead2}>Existing Diseases</Text>
         </View>
@@ -304,281 +315,299 @@ const UpdatedDetails = ({patientId}) => {
         </View>
          )}
          </View>
-         <View style={styles.exiDisContainer}>
-        {problemForConsultation && (
-          <View>
-             <Text style={styles.texthead2}>Problem For Consultation</Text>
-        </View>
-         )}
-          {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.sob && problemForConsultation.sob.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease: SOB{"\n"}
-             Duration:  {problemForConsultation.sob.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.sob.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.sob.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-         {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.cough && problemForConsultation.cough.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease: Cough{"\n"}
-             Duration:  {problemForConsultation.cough.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.cough.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.cough.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-           {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.bleedingwithcough && problemForConsultation.bleedingwithcough.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease: Bleeding With Cough{"\n"}
-             Duration:  {problemForConsultation.bleedingwithcough.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.bleedingwithcough.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.bleedingwithcough.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-          {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.chestpain && problemForConsultation.chestpain.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease: Chest Pain{"\n"}
-             Duration:  {problemForConsultation.chestpain.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.chestpain.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.chestpain.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-        {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.wheeze && problemForConsultation.wheeze.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease: Wheeze{"\n"}
-             Duration:  {problemForConsultation.wheeze.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.wheeze.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.wheeze.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-         {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.phlagm && problemForConsultation.phlagm.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease: Phlagm{"\n"}
-             Duration:  {problemForConsultation.phlagm.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.phlagm.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.phlagm.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-          {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.nasalcongestion && problemForConsultation.nasalcongestion.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease: Nasal Congestion{"\n"}
-             Duration:  {problemForConsultation.nasalcongestion.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.nasalcongestion.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.nasalcongestion.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-        {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.snoring && problemForConsultation.snoring.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease: Snoring{"\n"}
-             Duration:  {problemForConsultation.snoring.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.snoring.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.snoring.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-          {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.daytimesleepiness && problemForConsultation.daytimesleepiness.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease: Day Time Sleepiness{"\n"}
-             Duration:  {problemForConsultation.daytimesleepiness.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.daytimesleepiness.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.daytimesleepiness.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-         {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.weakness && problemForConsultation.weakness.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease: Weakness{"\n"}
-             Duration:  {problemForConsultation.weakness.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.weakness.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.weakness.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-          {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.lethargy && problemForConsultation.lethargy.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Lethargy{"\n"}
-             Duration:  {problemForConsultation.lethargy.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.lethargy.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.lethargy.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-        {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.lowmood && problemForConsultation.lowmood.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Low mood{"\n"}
-             Duration:  {problemForConsultation.lowmood.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.lowmood.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.lowmood.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-         {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.diarrhoea && problemForConsultation.diarrhoea.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Diarrhoea{"\n"}
-             Duration:  {problemForConsultation.diarrhoea.duration.numericValue} 
-             {' '}  Unit:  {problemForConsultation.diarrhoea.duration.unit}{"\n"}
-             Status of Disease:  {problemForConsultation.diarrhoea.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-      {problemForConsultation && problemForConsultation.uncontrolleddisease && problemForConsultation.uncontrolleddisease.length > 0 && (
-   <View style={styles.backField}>
-    {problemForConsultation.uncontrolleddisease.map((disease, index) => (
-      <View key={index}>
-        <Text style={styles.subHead4}>
-          Uncontrolled Disease: {disease.name === "Others" ? disease.disease : disease.name}{"\n"}
-          Duration: {disease.duration.numericValue} {' '} Unit: {disease.duration.unit}{"\n"}
-          Status of Disease: {disease.statusOfDisease}
-        </Text>
+    );
+  };
+  const renderProblemForConsultation = (problemForConsultation) => {
+    if (!problemForConsultation) return null;
+  
+    return (
+      <View style={styles.exiDisContainer}>
+      {problemForConsultation && (
+        <View>
+           <Text style={styles.texthead2}>Problem For Consultation</Text>
       </View>
-    ))}
-  </View>
+       )}
+        {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.sob && problemForConsultation.sob.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease: SOB{"\n"}
+           Duration:  {problemForConsultation.sob.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.sob.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.sob.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+       {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.cough && problemForConsultation.cough.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease: Cough{"\n"}
+           Duration:  {problemForConsultation.cough.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.cough.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.cough.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+         {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.bleedingwithcough && problemForConsultation.bleedingwithcough.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease: Bleeding With Cough{"\n"}
+           Duration:  {problemForConsultation.bleedingwithcough.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.bleedingwithcough.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.bleedingwithcough.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+        {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.chestpain && problemForConsultation.chestpain.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease: Chest Pain{"\n"}
+           Duration:  {problemForConsultation.chestpain.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.chestpain.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.chestpain.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+      {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.wheeze && problemForConsultation.wheeze.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease: Wheeze{"\n"}
+           Duration:  {problemForConsultation.wheeze.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.wheeze.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.wheeze.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+       {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.phlagm && problemForConsultation.phlagm.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease: Phlagm{"\n"}
+           Duration:  {problemForConsultation.phlagm.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.phlagm.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.phlagm.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+        {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.nasalcongestion && problemForConsultation.nasalcongestion.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease: Nasal Congestion{"\n"}
+           Duration:  {problemForConsultation.nasalcongestion.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.nasalcongestion.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.nasalcongestion.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+      {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.snoring && problemForConsultation.snoring.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease: Snoring{"\n"}
+           Duration:  {problemForConsultation.snoring.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.snoring.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.snoring.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+        {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.daytimesleepiness && problemForConsultation.daytimesleepiness.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease: Day Time Sleepiness{"\n"}
+           Duration:  {problemForConsultation.daytimesleepiness.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.daytimesleepiness.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.daytimesleepiness.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+       {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.weakness && problemForConsultation.weakness.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease: Weakness{"\n"}
+           Duration:  {problemForConsultation.weakness.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.weakness.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.weakness.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+        {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.lethargy && problemForConsultation.lethargy.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease:  Lethargy{"\n"}
+           Duration:  {problemForConsultation.lethargy.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.lethargy.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.lethargy.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+      {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.lowmood && problemForConsultation.lowmood.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease:  Low mood{"\n"}
+           Duration:  {problemForConsultation.lowmood.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.lowmood.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.lowmood.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+       {problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.diarrhoea && problemForConsultation.diarrhoea.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease:  Diarrhoea{"\n"}
+           Duration:  {problemForConsultation.diarrhoea.duration.numericValue} 
+           {' '}  Unit:  {problemForConsultation.diarrhoea.duration.unit}{"\n"}
+           Status of Disease:  {problemForConsultation.diarrhoea.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+    {problemForConsultation && problemForConsultation.uncontrolleddisease.length > 0 && (
+ <View style={styles.backField}>
+  {problemForConsultation.uncontrolleddisease.map((disease, index) => (
+    <View key={index}>
+      <Text style={styles.subHead4}>
+        Uncontrolled Disease: {disease.name === "Others" ? disease.disease : disease.name}{"\n"}
+        Duration: {disease.duration.numericValue} {' '} Unit: {disease.duration.unit}{"\n"}
+        Status of Disease: {disease.statusOfDisease}
+      </Text>
+    </View>
+  ))}
+</View>
 )}
- {problemForConsultation && (
-          <View  style={styles.backField}>
-             {problemForConsultation.others && problemForConsultation.others.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Others{"\n"}
-             Organ:   {problemForConsultation.others.disease}
-             {' '}  Duration:  {problemForConsultation.others.duration.numericValue}{"\n"}
-             Unit:  {problemForConsultation.others.duration.unit}
-             {' '}  Status of Disease:  {problemForConsultation.others.statusOfDisease}
+{problemForConsultation && (
+        <View  style={styles.backField}>
+           {problemForConsultation.others && problemForConsultation.others.duration.numericValue !== 0 && (
+            <Text style={styles.subHead4}>Disease:  Others{"\n"}
+           Organ:   {problemForConsultation.others.disease}
+           {' '}  Duration:  {problemForConsultation.others.duration.numericValue}{"\n"}
+           Unit:  {problemForConsultation.others.duration.unit}
+           {' '}  Status of Disease:  {problemForConsultation.others.statusOfDisease}
+           </Text>
+          )}
+      </View>
+       )}
+       </View>
+    );
+  };
+  const renderImportantHistory = (importantHistory) => {
+    if (!importantHistory) return null;
+  
+    return (
+      <View style={styles.imphisContainer}>
+      {importantHistory && (
+        <View>
+           <Text style={styles.texthead2}>Important History</Text>
+      </View>
+       )}
+      {importantHistory && (
+        <View  style={styles.backField}>
+          {importantHistory.allergy && importantHistory.allergy.typeOfAllergy !== "NA" && (
+            <Text style={styles.subHead}>Allergy: {importantHistory.allergy.typeOfAllergy}
+           {' '}  Duration:  {importantHistory.allergy.duration.numericValue} 
+           {' '}  Unit:  {importantHistory.allergy.duration.unit}</Text>
+          )}
+          {importantHistory.drugReaction && importantHistory.drugReaction.typeOfDrug !== "NA" && (
+            <Text style={styles.subHead2}>Drug Type: {importantHistory.drugReaction.typeOfDrug}
+            {' '}  Drug Reaction: {importantHistory.drugReaction.typeOfReaction}  
+            </Text>
+          )}
+          {importantHistory.pastSurgery.typeOfSurgery !== "NA" && (
+            <Text style={styles.subHead3}>Past Surgery: {importantHistory.pastSurgery.typeOfSurgery}
+            {'\n'}Year Of Surgery:  {importantHistory.pastSurgery.year}  </Text>
+         )}
+           {importantHistory.pastDisease.typeOfDisease !== "NA" && (
+            <Text style={styles.subHead2}>Past Disease: {importantHistory.pastDisease.typeOfDisease}
              </Text>
-            )}
-        </View>
          )}
-         </View>
-         <View style={styles.imphisContainer}>
-        {importantHistory && (
-          <View>
-             <Text style={styles.texthead2}>Important History</Text>
-        </View>
+           {importantHistory.familyHistory !== "NA" && (
+            <Text style={styles.subHead2}>Family History: {importantHistory.familyHistory}
+             </Text>
          )}
-        {importantHistory && (
-          <View  style={styles.backField}>
-            {importantHistory.allergy && importantHistory.allergy.typeOfAllergy !== "NA" && (
-              <Text style={styles.subHead}>Allergy: {importantHistory.allergy.typeOfAllergy}
-             {' '}  Duration:  {importantHistory.allergy.duration.numericValue} 
-             {' '}  Unit:  {importantHistory.allergy.duration.unit}</Text>
-            )}
-            {importantHistory.drugReaction && importantHistory.drugReaction.typeOfDrug !== "NA" && (
-              <Text style={styles.subHead2}>Drug Type: {importantHistory.drugReaction.typeOfDrug}
-              {' '}  Drug Reaction: {importantHistory.drugReaction.typeOfReaction}  
-              </Text>
-            )}
-            {importantHistory.pastSurgery.typeOfSurgery !== "NA" && (
-              <Text style={styles.subHead3}>Past Surgery: {importantHistory.pastSurgery.typeOfSurgery}
-              {'\n'}Year Of Surgery:  {importantHistory.pastSurgery.year}  </Text>
-           )}
-             {importantHistory.pastDisease.typeOfDisease !== "NA" && (
-              <Text style={styles.subHead2}>Past Disease: {importantHistory.pastDisease.typeOfDisease}
-               </Text>
-           )}
-             {importantHistory.familyHistory !== "NA" && (
-              <Text style={styles.subHead2}>Family History: {importantHistory.familyHistory}
-               </Text>
-           )}
-           {importantHistory.occupation !== "NA" && (
-              <Text style={styles.subHead2}>Occupation: {importantHistory.occupation}
-               </Text>
-           )}
-             {importantHistory.exposure.dust.duration.numericValue !== 0 && (
-              <Text style={styles.subHead3}>Exposure: Dust{"\n"}
-                Duration:  {importantHistory.exposure.dust.duration.numericValue}
-                {' '} Unit:  {importantHistory.exposure.dust.duration.unit}  
-               </Text>
-           )}
-            {importantHistory.pastSurgery && importantHistory.exposure.cottondust.duration.numericValue !== 0 && (
-              <Text style={styles.subHead3}>Exposure:  Cotton Dust{"\n"}
-                Duration:  {importantHistory.exposure.cottondust.duration.numericValue}
-                {' '}  Unit:  {importantHistory.exposure.cottondust.duration.unit}  
-               </Text>
-           )}
-            {importantHistory.exposure.wooddust.duration.numericValue !== 0 && (
-              <Text style={styles.subHead3}>Exposure:  Wood Dust{"\n"}
-               Duration:  {importantHistory.exposure.wooddust.duration.numericValue}
-                {' '}  Unit:  {importantHistory.exposure.wooddust.duration.unit}  
-               </Text>
-           )}
-            {importantHistory.exposure.pigeon.duration.numericValue !== 0 && (
-              <Text style={styles.subHead3}>Exposure:  Pigeon{"\n"}
-               Duration:  {importantHistory.exposure.pigeon.duration.numericValue}
-                {' '}  Unit :  {importantHistory.exposure.pigeon.duration.unit}  
-               </Text>
-           )}
-             {importantHistory.exposure.hay.duration.numericValue !== 0 && (
-              <Text style={styles.subHead3}>Exposure:  Hay{"\n"}
-               Duration:  {importantHistory.exposure.hay.duration.numericValue}
-                {' '}  Unit :  {importantHistory.exposure.hay.duration.unit}  
-               </Text>
-           )}
-           {importantHistory.exposure.moulds.duration.numericValue !== 0 && (
-              <Text style={styles.subHead3}>Exposure:  Moulds{"\n"}
-              Duration:   {importantHistory.exposure.moulds.duration.numericValue}
-                {' '}  Unit :  {importantHistory.exposure.moulds.duration.unit}  
-               </Text>
-           )}
-            {importantHistory.pastSurgery && importantHistory.exposure.pollen.duration.numericValue !== 0 && (
-              <Text style={styles.subHead3}>Exposure:  Pollen{"\n"} 
-              Duration:   {importantHistory.exposure.pollen.duration.numericValue}
-                {' '}  Unit :  {importantHistory.exposure.pollen.duration.unit}  
-               </Text>
-           )}
-            {importantHistory.exposure.chemical.duration.numericValue !== 0 && (
-              <Text style={styles.subHead3}>Exposure:  Chemical{"\n"}
-               Duration:   {importantHistory.exposure.chemical.duration.numericValue}
-                {' '}  Unit :  {importantHistory.exposure.chemical.duration.unit}  
-               </Text>
-            
-           )}
-            {importantHistory.exposure.stonedust.duration.numericValue !== 0 && (
-              <Text style={styles.subHead3}>Exposure:  Stone Dust{"\n"}
-               Duration :   {importantHistory.exposure.stonedust.duration.numericValue}
-                {' '}  Unit :  {importantHistory.exposure.stonedust.duration.unit}  
-               </Text>
-            
-           )}
-           {importantHistory.exposure.others.typeOfExposure !== "NA" && (
-              <Text style={styles.subHead3}>Exposure:  {importantHistory.exposure.others.typeOfExposure}{"\n"}
-              Duration:  {importantHistory.exposure.others.duration.numericValue}
+         {importantHistory.occupation !== "NA" && (
+            <Text style={styles.subHead2}>Occupation: {importantHistory.occupation}
+             </Text>
+         )}
+           {importantHistory.exposure.dust.duration.numericValue !== 0 && (
+            <Text style={styles.subHead3}>Exposure: Dust{"\n"}
+              Duration:  {importantHistory.exposure.dust.duration.numericValue}
+              {' '} Unit:  {importantHistory.exposure.dust.duration.unit}  
+             </Text>
+         )}
+          {importantHistory.pastSurgery && importantHistory.exposure.cottondust.duration.numericValue !== 0 && (
+            <Text style={styles.subHead3}>Exposure:  Cotton Dust{"\n"}
+              Duration:  {importantHistory.exposure.cottondust.duration.numericValue}
+              {' '}  Unit:  {importantHistory.exposure.cottondust.duration.unit}  
+             </Text>
+         )}
+          {importantHistory.exposure.wooddust.duration.numericValue !== 0 && (
+            <Text style={styles.subHead3}>Exposure:  Wood Dust{"\n"}
+             Duration:  {importantHistory.exposure.wooddust.duration.numericValue}
+              {' '}  Unit:  {importantHistory.exposure.wooddust.duration.unit}  
+             </Text>
+         )}
+          {importantHistory.exposure.pigeon.duration.numericValue !== 0 && (
+            <Text style={styles.subHead3}>Exposure:  Pigeon{"\n"}
+             Duration:  {importantHistory.exposure.pigeon.duration.numericValue}
+              {' '}  Unit :  {importantHistory.exposure.pigeon.duration.unit}  
+             </Text>
+         )}
+           {importantHistory.exposure.hay.duration.numericValue !== 0 && (
+            <Text style={styles.subHead3}>Exposure:  Hay{"\n"}
+             Duration:  {importantHistory.exposure.hay.duration.numericValue}
+              {' '}  Unit :  {importantHistory.exposure.hay.duration.unit}  
+             </Text>
+         )}
+         {importantHistory.exposure.moulds.duration.numericValue !== 0 && (
+            <Text style={styles.subHead3}>Exposure:  Moulds{"\n"}
+            Duration:   {importantHistory.exposure.moulds.duration.numericValue}
+              {' '}  Unit :  {importantHistory.exposure.moulds.duration.unit}  
+             </Text>
+         )}
+          {importantHistory.pastSurgery && importantHistory.exposure.pollen.duration.numericValue !== 0 && (
+            <Text style={styles.subHead3}>Exposure:  Pollen{"\n"} 
+            Duration:   {importantHistory.exposure.pollen.duration.numericValue}
+              {' '}  Unit :  {importantHistory.exposure.pollen.duration.unit}  
+             </Text>
+         )}
+          {importantHistory.exposure.chemical.duration.numericValue !== 0 && (
+            <Text style={styles.subHead3}>Exposure:  Chemical{"\n"}
+             Duration:   {importantHistory.exposure.chemical.duration.numericValue}
               {' '}  Unit :  {importantHistory.exposure.chemical.duration.unit}  
-               </Text>
-           )}
-          </View>
-        )}
-         </View>
-         <View style={styles.exiDisContainer}>
+             </Text>
+          
+         )}
+          {importantHistory.exposure.stonedust.duration.numericValue !== 0 && (
+            <Text style={styles.subHead3}>Exposure:  Stone Dust{"\n"}
+             Duration :   {importantHistory.exposure.stonedust.duration.numericValue}
+              {' '}  Unit :  {importantHistory.exposure.stonedust.duration.unit}  
+             </Text>
+          
+         )}
+         {importantHistory.exposure.others.typeOfExposure !== "NA" && (
+            <Text style={styles.subHead3}>Exposure:  {importantHistory.exposure.others.typeOfExposure}{"\n"}
+            Duration:  {importantHistory.exposure.others.duration.numericValue}
+            {' '}  Unit :  {importantHistory.exposure.chemical.duration.unit}  
+             </Text>
+         )}
+        </View>
+      )}
+       </View>
+    );
+  };
+  const renderPastHospitalization = (pastHospitalization) => {
+    if (!pastHospitalization) return null;
+  
+    return (
+      <View style={styles.exiDisContainer}>
         {pastHospitalization && pastHospitalization.length > 0 && (
           <Text style={styles.texthead2}>Past Hospitalization</Text>
         )}
@@ -604,15 +633,48 @@ const UpdatedDetails = ({patientId}) => {
           </View>
         )}
    </View>
-        <Text style={styles.subHead6}>Status of Sickness: {statusOfSickness}</Text>
-        <Text style={styles.subHead6}>CAT Score: {catScore}</Text>
-        </View>
-        </ScrollView>
-      </SafeAreaView>
     );
-}
+  };
+
+  
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollContent}>
+        <View style={styles.profileContainer}>
+          <View style={styles.backField3}>
+          <Text style={styles.subHead6}>Coordinator: {coordinator}</Text>
+          </View>
+          {visitData.map((visit, index) => renderVisitDetails(visit, index))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+
 export default UpdatedDetails;
 const styles = StyleSheet.create({
+  
+  visitContainer: {
+    marginTop: windowWidth * 0.03,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  visitHeader: {
+    flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+  },
+  visitHeaderText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  visitDetails: {
+    padding: windowWidth * 0.03,
+  },
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
@@ -626,12 +688,21 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     profileContainer: {
-        // alignItems: 'center',
-        marginLeft: windowWidth*0.01,
+        marginLeft: windowWidth*0.02,
         marginTop: windowWidth*0.05,
+        marginRight: windowWidth*0.01,
     },
-backField: {
-    marginLeft: windowWidth*0.02,
+  backField: {
+  marginLeft: -windowWidth*0.04,
+  marginRight: -windowWidth*0.09,
+      },
+      backField2: {
+        marginLeft: -windowWidth*0.05,
+        marginRight: -windowWidth*0.08,
+            },
+      backField3: {
+        marginLeft: -windowWidth*0.01,
+        marginRight: -windowWidth*0.04,
       },
 texthead: {
     marginLeft: windowWidth*0.03,
@@ -640,7 +711,7 @@ texthead: {
     fontSize: 17,
 },
 texthead2: {
-  marginLeft: windowWidth*0.03,
+  marginLeft: -windowWidth*0.01,
   fontWeight: "600",
   fontFamily: 'extrabold01',
   fontSize: 17,
@@ -657,7 +728,6 @@ texthead3: {
 subHead:{
     width: "95%",
     height: windowWidth * 0.10,
-    
     marginTop: windowWidth * 0.01,
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
@@ -742,5 +812,17 @@ subHead6:{
   fontWeight: "700",
   paddingBottom: windowWidth * 0.01,
   fontSize: 15,   
-}
+},
+visitContainer: {
+  marginTop: 20,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 10,
+  padding: 10,
+},
+visitHeader: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  marginBottom: 10,
+},
 })
