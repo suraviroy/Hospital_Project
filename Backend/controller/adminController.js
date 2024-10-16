@@ -323,7 +323,7 @@ export const patientDisease = async (req, res) => {
         patientId: id,
       },
       {
-        visitCount: { $arrayElemAt: ["$visitCount", 0] },
+        visitCount: 1,
         coordinator: 1,
         _id: 0,
       }
