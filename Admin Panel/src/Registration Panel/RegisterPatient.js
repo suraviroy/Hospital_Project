@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 const windowWidth = Dimensions.get('window').width;
 import { useAuth } from '../AuthContext';
 import { CommonActions } from '@react-navigation/native';
+import moment from 'moment-timezone';
 
 
 const AddPatient = () => {
@@ -260,6 +261,11 @@ const savePatientData = async (imageUrl, password, stateToSend) => {
             return;
         }
 
+        const desiredTimezone = "Asia/Kolkata";
+
+        const formattedVisitDate = moment(visitDate).tz(desiredTimezone).format("MMMM D, YYYY");
+        const formattedVisitTime = moment(visitTime).tz(desiredTimezone).format("hh:mm A");
+        
         const requestBody = {
             password: password,
             name: patientName,
@@ -277,9 +283,8 @@ const savePatientData = async (imageUrl, password, stateToSend) => {
             localContactName: localContactName,
             localContactRelation: localContactRelation,
             localContactNumber: localContactNumber,
-            date: visitDate.toLocaleDateString(),
-            time: visitTime.toLocaleTimeString()
-            // existingPatientDiagnosis: existingPatient
+            date: formattedVisitDate, 
+            time: formattedVisitTime 
         };
         const response = await fetch(`${backendURL}/adminRouter/patientregistration`, {
             method: 'POST',
