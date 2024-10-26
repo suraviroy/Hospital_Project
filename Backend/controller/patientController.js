@@ -193,9 +193,9 @@ export const OneAppointmentDetails = async (req, res) => {
       return res.status(404).json({ message: "Visit not found" });
     }
 
-    // Send the details of the specific visit
+    
     res.status(200).json({
-      visitDetails: patient.visitCount[0], // Retrieve the single matching visit
+      visitDetails: patient.visitCount[0],
     });
   } catch (err) {
     console.error(err);
