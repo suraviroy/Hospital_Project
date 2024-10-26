@@ -139,6 +139,31 @@ export const PatientProfile = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+export const PatientCoordinator = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const patientExists = await PatientSchema.exists({ patientId: id });
+    if (!patientExists) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const registeredPatient = await PatientSchema.find(
+      {
+        patientId: id,
+      },
+      {
+        name: 1,
+        patientId: 1,
+        coordinator: 1 ,
+        _id: 0,
+      }
+    );
+    res.status(200).json(registeredPatient);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 export const PatientsAllAppointments = async (req, res) => {
   try {
@@ -155,6 +180,7 @@ export const PatientsAllAppointments = async (req, res) => {
         name: 1,
         patientId: 1,
         consultingDoctor: 1,
+        coordinator: 1 ,
         _id: 0,
       }
     );
@@ -185,7 +211,10 @@ export const OneAppointmentDetails = async (req, res) => {
     // Find the patient document containing the specified visit _id
     const patient = await PatientSchema.findOne(
       { "visitCount._id": visitid },
-      { "visitCount.$": 1, _id: 0 } // Only retrieve the matching visit in visitCount
+      {
+        "visitCount.$": 1,
+        _id: 0
+      } // Only retrieve the matching visit in visitCount
     );
 
     // If no matching visit is found, return a 404 error
@@ -193,7 +222,7 @@ export const OneAppointmentDetails = async (req, res) => {
       return res.status(404).json({ message: "Visit not found" });
     }
 
-    
+
     res.status(200).json({
       visitDetails: patient.visitCount[0],
     });

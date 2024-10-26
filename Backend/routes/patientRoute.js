@@ -7,13 +7,15 @@ import {
     createRequest,
     allrequest,
     request,
-    OneAppointmentDetails
+    OneAppointmentDetails,
+    PatientCoordinator
 } from '../controller/patientController.js'
 const patientRouter = express.Router()
 
 patientRouter.post('/login', login)
 patientRouter.get("/HomePageDetails/:id", HomePageDetails);
 patientRouter.get("/PatientProfile/:id", PatientProfile);
+patientRouter.get("/PatientCoordinator/:id", PatientCoordinator);
 patientRouter.get("/PatientsAllAppointments/:id", PatientsAllAppointments);
 patientRouter.get("/OneAppointmentDetails/:visitid", OneAppointmentDetails);
 patientRouter.post("/RegiseterNewPatientRequest", createRequest);
