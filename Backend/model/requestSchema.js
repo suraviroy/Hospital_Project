@@ -34,6 +34,7 @@ const requestSchema = new mongoose.Schema({
       default: "NA",
     },
     records: { type: String, default: "NA" },
+    dischargeHCertificate: { type: String, default: "NA" },
   },
   disabilities: {
     isSelected: {
