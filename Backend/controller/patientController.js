@@ -167,6 +167,7 @@ export const PatientsAllAppointments = async (req, res) => {
     const allAppointments = patientAppointments.visitCount.map((visit) => ({
       visitDate: visit.visitDate,
       visitTime: visit.visitTime,
+      id: visit._id
     }));
     res
       .status(200)
@@ -176,12 +177,39 @@ export const PatientsAllAppointments = async (req, res) => {
   }
 };
 
+export const OneAppointmentDetails = async (req, res) => {
+
+  try {
+    const visitid = req.params.visitid; // ID of the specific visit inside visitCount
+    console.log(visitid);
+    // Find the patient document containing the specified visit _id
+    const patient = await PatientSchema.findOne(
+      { "visitCount._id": visitid },
+      { "visitCount.$": 1, _id: 0 } // Only retrieve the matching visit in visitCount
+    );
+
+    // If no matching visit is found, return a 404 error
+    if (!patient) {
+      return res.status(404).json({ message: "Visit not found" });
+    }
+
+    // Send the details of the specific visit
+    res.status(200).json({
+      visitDetails: patient.visitCount[0], // Retrieve the single matching visit
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
 export const createRequest = async (req, res) => {
   try {
     const desiredTimezone = 'Asia/Kolkata';
     const currentDate = moment().tz(desiredTimezone).format('MMMM D, YYYY');
     const currentTime = moment().tz(desiredTimezone).format('hh:mm A');
-    
+
     const { patientId, hospitalization, demise, ...rest } = req.body;
     const isCritical = hospitalization?.isSelected === "yes" || demise?.isSelected === "yes";
     const status = isCritical ? 'Critical' : 'Normal';
@@ -231,7 +259,7 @@ export const allrequest = async (req, res) => {
         patientId: id,
       },
       {
-        date:1,
+        date: 1,
         time: 1,
         requestId: 1,
         request: 1,
@@ -259,12 +287,12 @@ export const request = async (req, res) => {
         requestId: id,
       },
       {
-        date:1,
+        date: 1,
         time: 1,
         exacrebation: 1,
         newProblem: 1,
         newConsultation: 1,
-        hospitalization:1,
+        hospitalization: 1,
         disabilities: 1,
         demise: 1,
         report: 1,
