@@ -131,7 +131,7 @@ export const sectionAallPatient = async (req, res) => {
     const registeredPatients = await PatientSchema.find(
       {
         // status: "Registered",
-        
+
       },
       {
         name: 1,
@@ -142,7 +142,7 @@ export const sectionAallPatient = async (req, res) => {
         age: 1,
         time: 1,
         _id: 0,
-        status:1,
+        status: 1,
       }
     );
 
@@ -235,7 +235,7 @@ export const patientEachVistDetails = async (req, res) => {
   try {
     const id = req.params.id;
     const visitData = req.body.visitData;
-   // console.log("data", visitData)
+    // console.log("data", visitData)
     const patientExists = await PatientSchema.exists({ patientId: id });
     if (!patientExists) {
       return res.status(404).json({ message: "Patient not found" });
@@ -344,7 +344,7 @@ export const notification = async (req, res) => {
         patientId: 1,
         status: 1,
         date: 1,
-        time: 1,   
+        time: 1,
         request: 1,
         _id: 0
       });
@@ -395,8 +395,8 @@ export const action = async (req, res) => {
       return res.status(404).json({ message: "Patient request not found" });
     }
 
-    const updatedRequest =await RequestSchema.updateOne({ requestId: id }, { action: action } );
-    
+    const updatedRequest = await RequestSchema.updateOne({ requestId: id }, { action: action });
+
     res.status(200).json({ message: "updated" });
   } catch (err) {
     console.error("Error:", err);
@@ -498,7 +498,7 @@ export const excelFile = async (req, res) => {
 
       { header: "COPD Duration", key: "copdDuration" },
       { header: "Unit", key: "copdDurationUnit" },
-      { header: "Status", key: "copdStatus" },
+      { header: "StatusC", key: "copdStatus" },
 
       { header: "ILD Duration", key: "ildDuration" },
       { header: "Unit", key: "ildDurationUnit" },
@@ -559,10 +559,10 @@ export const excelFile = async (req, res) => {
       { header: "Status", key: "ckdStatus" },
 
       // Others
-      { header: "Others Disease", key: "othersDisease" },
-      { header: "Duration", key: "othersDuration" },
-      { header: "Unit", key: "othersDurationUnit" },
-      { header: "Status", key: "othersStatus" },
+      { header: "Others Disease", key: "othersDiseaseE" },
+      { header: "Duration", key: "othersDurationE" },
+      { header: "Unit", key: "othersDurationUnitE" },
+      { header: "Status", key: "othersStatusE" },
 
       // Problem for consultation 
       { header: "Problem", key: "problem" },
@@ -696,262 +696,263 @@ export const excelFile = async (req, res) => {
     const userData = await PatientSchema.find();
 
 
-    userData.forEach((visit) => {
+    userData.forEach((patient) => {
+      patient.visitCount.forEach((visit, index) => {
+        const rowData = {
+          s_no: counter,
+          name: patient.name,
+          gender: patient.gender,
+          age: patient.age,
+          patientId: patient.patientId,
+          contactNumber: patient.contactNumber,
+          email: patient.email,
+          bloodGroup: patient.bloodGroup,
+          state: patient.state,
+          country: patient.country,
+          date: patient.date,
+          time: patient.time,
+          consultingDoctor: patient.consultingDoctor,
+          localContactName: patient.localContactName,
+          localContactRelation: patient.localContactRelation,
+          coordinator: patient.coordinator,
+          localContactNumber: patient.localContactNumber,
 
-      const rowData = {
-        s_no: counter,
-        name: visit.name,
-        gender: visit.gender,
-        age: visit.age,
-        patientId: visit.patientId,
-        contactNumber: visit.contactNumber,
-        email: visit.email,
-        bloodGroup: visit.bloodGroup,
-        state: visit.state,
-        country: visit.country,
-        date: visit.date,
-        time: visit.time,
-        consultingDoctor: visit.consultingDoctor,
-        localContactName: visit.localContactName,
-        localContactRelation: visit.localContactRelation,
-        coordinator: visit.coordinator,
-        localContactNumber: visit.localContactNumber,
-        visitDate: visit?.visitCount[0]?.visitDate,
-        visitTime: visit?.visitCount[0]?.visitTime,
+          visitDate: visit?.visitDate,
+          visitTime: visit?.visitTime,
 
-        // Existing disease
-        diabetesDuration: visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.numericValue,
-        diabetesDurationUnit: visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.unit,
-        diabetesStatus: visit?.visitCount[0]?.existingDeseases?.diabetes?.statusOfDisease,
+          // Existing disease
+          diabetesDuration: visit?.existingDeseases?.diabetes?.duration?.numericValue,
+          diabetesDurationUnit: visit?.existingDeseases?.diabetes?.duration?.unit,
+          diabetesStatus: visit?.existingDeseases?.diabetes?.statusOfDisease,
 
-        hypertensionDuration: visit?.visitCount[0]?.existingDeseases?.hypertension?.duration?.numericValue,
-        hypertensionDurationUnit: visit?.visitCount[0]?.existingDeseases?.hypertension?.duration?.unit,
-        hypertensionStatus: visit?.visitCount[0]?.existingDeseases?.hypertension?.statusOfDisease,
+          hypertensionDuration: visit?.existingDeseases?.hypertension?.duration?.numericValue,
+          hypertensionDurationUnit: visit?.existingDeseases?.hypertension?.duration?.unit,
+          hypertensionStatus: visit?.existingDeseases?.hypertension?.statusOfDisease,
 
-        HIDDuration: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.numericValue,
-        HIDDurationUnit: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.unit,
-        HIDStatus: visit?.visitCount[0]?.existingDeseases?.ihd?.statusOfDisease,
+          HIDDuration: visit?.existingDeseases?.ihd?.duration?.numericValue,
+          HIDDurationUnit: visit?.existingDeseases?.ihd?.duration?.unit,
+          HIDStatus: visit?.existingDeseases?.ihd?.statusOfDisease,
 
-        hypothyroidismDuration: visit?.visitCount[0]?.existingDeseases?.hypothyroidism?.duration?.numericValue,
-        hypothyroidismDurationUnit: visit?.visitCount[0]?.existingDeseases?.hypothyroidism?.duration?.unit,
-        hypothyroidismStatus: visit?.visitCount[0]?.existingDeseases?.hypothyroidism?.statusOfDisease,
+          hypothyroidismDuration: visit?.existingDeseases?.hypothyroidism?.duration?.numericValue,
+          hypothyroidismDurationUnit: visit?.existingDeseases?.hypothyroidism?.duration?.unit,
+          hypothyroidismStatus: visit?.existingDeseases?.hypothyroidism?.statusOfDisease,
 
-        allergicRhinitisDuration: visit?.visitCount[0]?.existingDeseases?.allergicrhinitis?.duration?.numericValue,
-        allergicRhinitisDurationUnit: visit?.visitCount[0]?.existingDeseases?.allergicrhinitis?.duration?.unit,
-        allergicRhinitisStatus: visit?.visitCount[0]?.existingDeseases?.allergicrhinitis?.statusOfDisease,
+          allergicRhinitisDuration: visit?.existingDeseases?.allergicrhinitis?.duration?.numericValue,
+          allergicRhinitisDurationUnit: visit?.existingDeseases?.allergicrhinitis?.duration?.unit,
+          allergicRhinitisStatus: visit?.existingDeseases?.allergicrhinitis?.statusOfDisease,
 
-        hyperuricemiaDuration: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.numericValue,
-        hyperuricemiaDurationUnit: visit?.visitCount[0]?.existingDeseases?.ihd?.duration?.unit,
-        hyperuricemiaStatus: visit?.visitCount[0]?.existingDeseases?.ihd?.statusOfDisease,
+          hyperuricemiaDuration: visit?.existingDeseases?.ihd?.duration?.numericValue,
+          hyperuricemiaDurationUnit: visit?.existingDeseases?.ihd?.duration?.unit,
+          hyperuricemiaStatus: visit?.existingDeseases?.ihd?.statusOfDisease,
 
-        asthamaDuration: visit?.visitCount[0]?.existingDeseases?.asthama?.duration?.numericValue,
-        asthamaDurationUnit: visit?.visitCount[0]?.existingDeseases?.asthama?.duration?.unit,
-        asthamaStatus: visit?.visitCount[0]?.existingDeseases?.asthama?.statusOfDisease,
+          asthamaDuration: visit?.existingDeseases?.asthama?.duration?.numericValue,
+          asthamaDurationUnit: visit?.existingDeseases?.asthama?.duration?.unit,
+          asthamaStatus: visit?.existingDeseases?.asthama?.statusOfDisease,
 
-        tbDuration: visit?.visitCount[0]?.existingDeseases?.tb?.duration?.numericValue,
-        tbDurationUnit: visit?.visitCount[0]?.existingDeseases?.tb?.duration?.unit,
-        tbStatus: visit?.visitCount[0]?.existingDeseases?.tb?.statusOfDisease,
+          tbDuration: visit?.existingDeseases?.tb?.duration?.numericValue,
+          tbDurationUnit: visit?.existingDeseases?.tb?.duration?.unit,
+          tbStatus: visit?.existingDeseases?.tb?.statusOfDisease,
 
-        copdDuration: visit?.visitCount[0]?.existingDeseases?.copd?.duration?.numericValue,
-        copdDurationUnit: visit?.visitCount[0]?.existingDeseases?.copd?.duration?.unit,
-        copdStatus: visit?.visitCount[0]?.existingDeseases?.copd?.statusOfDisease,
+          copdDuration: visit?.existingDeseases?.copd?.duration?.numericValue,
+          copdDurationUnit: visit?.existingDeseases?.copd?.duration?.unit,
+          copdStatus: visit?.existingDeseases?.copd?.statusOfDisease,
 
-        ildDuration: visit?.visitCount[0]?.existingDeseases?.ild?.duration?.numericValue,
-        ildDurationUnit: visit?.visitCount[0]?.existingDeseases?.ild?.duration?.unit,
-        ildStatus: visit?.visitCount[0]?.existingDeseases?.ild?.statusOfDisease,
+          ildDuration: visit?.existingDeseases?.ild?.duration?.numericValue,
+          ildDurationUnit: visit?.existingDeseases?.ild?.duration?.unit,
+          ildStatus: visit?.existingDeseases?.ild?.statusOfDisease,
 
-        bronchiectasisDuration: visit?.visitCount[0]?.existingDeseases?.bronchiectasis?.duration?.numericValue,
-        bronchiectasisDurationUnit: visit?.visitCount[0]?.existingDeseases?.bronchiectasis?.duration?.unit,
-        bronchiectasisStatus: visit?.visitCount[0]?.existingDeseases?.bronchiectasis?.statusOfDisease,
+          bronchiectasisDuration: visit?.existingDeseases?.bronchiectasis?.duration?.numericValue,
+          bronchiectasisDurationUnit: visit?.existingDeseases?.bronchiectasis?.duration?.unit,
+          bronchiectasisStatus: visit?.existingDeseases?.bronchiectasis?.statusOfDisease,
 
-        osaDuration: visit?.visitCount[0]?.existingDeseases?.osa?.duration?.numericValue,
-        osaDurationUnit: visit?.visitCount[0]?.existingDeseases?.osa?.duration?.unit,
-        osaStatus: visit?.visitCount[0]?.existingDeseases?.osa?.statusOfDisease,
+          osaDuration: visit?.existingDeseases?.osa?.duration?.numericValue,
+          osaDurationUnit: visit?.existingDeseases?.osa?.duration?.unit,
+          osaStatus: visit?.existingDeseases?.osa?.statusOfDisease,
 
-        ibsDuration: visit?.visitCount[0]?.existingDeseases?.ibs?.duration?.numericValue,
-        ibsDurationUnit: visit?.visitCount[0]?.existingDeseases?.ibs?.duration?.unit,
-        ibsStatus: visit?.visitCount[0]?.existingDeseases?.ibs?.statusOfDisease,
+          ibsDuration: visit?.existingDeseases?.ibs?.duration?.numericValue,
+          ibsDurationUnit: visit?.existingDeseases?.ibs?.duration?.unit,
+          ibsStatus: visit?.existingDeseases?.ibs?.statusOfDisease,
 
-        inflammatoryBowelDiseaseDuration: visit?.visitCount[0]?.existingDeseases?.inflammatoryboweldisease?.duration?.numericValue,
-        inflammatoryBowelDiseaseDurationUnit: visit?.visitCount[0]?.existingDeseases?.inflammatoryboweldisease?.duration?.unit,
-        inflammatoryBowelDiseaseStatus: visit?.visitCount[0]?.existingDeseases?.inflammatoryboweldisease?.statusOfDisease,
+          inflammatoryBowelDiseaseDuration: visit?.existingDeseases?.inflammatoryboweldisease?.duration?.numericValue,
+          inflammatoryBowelDiseaseDurationUnit: visit?.existingDeseases?.inflammatoryboweldisease?.duration?.unit,
+          inflammatoryBowelDiseaseStatus: visit?.existingDeseases?.inflammatoryboweldisease?.statusOfDisease,
 
-        depressionDuration: visit?.visitCount[0]?.existingDeseases?.depression?.duration?.numericValue,
-        depressionDurationUnit: visit?.visitCount[0]?.existingDeseases?.depression?.duration?.unit,
-        depressionStatus: visit?.visitCount[0]?.existingDeseases?.depression?.statusOfDisease,
+          depressionDuration: visit?.existingDeseases?.depression?.duration?.numericValue,
+          depressionDurationUnit: visit?.existingDeseases?.depression?.duration?.unit,
+          depressionStatus: visit?.existingDeseases?.depression?.statusOfDisease,
 
-        anxietyDuration: visit?.visitCount[0]?.existingDeseases?.anxiety?.duration?.numericValue,
-        anxietyDurationUnit: visit?.visitCount[0]?.existingDeseases?.anxiety?.duration?.unit,
-        anxietyStatus: visit?.visitCount[0]?.existingDeseases?.anxiety?.statusOfDisease,
+          anxietyDuration: visit?.existingDeseases?.anxiety?.duration?.numericValue,
+          anxietyDurationUnit: visit?.existingDeseases?.anxiety?.duration?.unit,
+          anxietyStatus: visit?.existingDeseases?.anxiety?.statusOfDisease,
 
-        osaDuration: visit?.visitCount[0]?.existingDeseases?.osa?.duration?.numericValue,
-        osaDurationUnit: visit?.visitCount[0]?.existingDeseases?.osa?.duration?.unit,
-        osaStatus: visit?.visitCount[0]?.existingDeseases?.osa?.statusOfDisease,
+          osaDuration: visit?.existingDeseases?.osa?.duration?.numericValue,
+          osaDurationUnit: visit?.existingDeseases?.osa?.duration?.unit,
+          osaStatus: visit?.existingDeseases?.osa?.statusOfDisease,
 
-        collagenVascularDiseaseDuration: visit?.visitCount[0]?.existingDeseases?.collagenvasculardisease?.duration?.numericValue,
-        collagenVascularDiseaseDurationUnit: visit?.visitCount[0]?.existingDeseases?.collagenvasculardisease?.duration?.unit,
-        collagenVascularDiseaseStatus: visit?.visitCount[0]?.existingDeseases?.collagenvasculardisease?.statusOfDisease,
+          collagenVascularDiseaseDuration: visit?.existingDeseases?.collagenvasculardisease?.duration?.numericValue,
+          collagenVascularDiseaseDurationUnit: visit?.existingDeseases?.collagenvasculardisease?.duration?.unit,
+          collagenVascularDiseaseStatus: visit?.existingDeseases?.collagenvasculardisease?.statusOfDisease,
 
-        malignancyOrgan: visit?.visitCount[0]?.existingDeseases?.malignancy?.organ,
-        malignancyDuration: visit?.visitCount[0]?.existingDeseases?.malignancy?.duration?.numericValue,
-        malignancyDurationUnit: visit?.visitCount[0]?.existingDeseases?.malignancy?.duration?.unit,
-        malignancyStatus: visit?.visitCount[0]?.existingDeseases?.malignancy?.statusOfDisease,
+          malignancyOrgan: visit?.existingDeseases?.malignancy?.organ,
+          malignancyDuration: visit?.existingDeseases?.malignancy?.duration?.numericValue,
+          malignancyDurationUnit: visit?.existingDeseases?.malignancy?.duration?.unit,
+          malignancyStatus: visit?.existingDeseases?.malignancy?.statusOfDisease,
 
-        dyslipidemiaDuration: visit?.visitCount[0]?.existingDeseases?.dyslipidemia?.duration?.numericValue,
-        dyslipidemiaDurationUnit: visit?.visitCount[0]?.existingDeseases?.dyslipidemia?.duration?.unit,
-        dyslipidemiaStatus: visit?.visitCount[0]?.existingDeseases?.dyslipidemia?.statusOfDisease,
+          dyslipidemiaDuration: visit?.existingDeseases?.dyslipidemia?.duration?.numericValue,
+          dyslipidemiaDurationUnit: visit?.existingDeseases?.dyslipidemia?.duration?.unit,
+          dyslipidemiaStatus: visit?.existingDeseases?.dyslipidemia?.statusOfDisease,
 
-        cldDuration: visit?.visitCount[0]?.existingDeseases?.cld?.duration?.numericValue,
-        cldDurationUnit: visit?.visitCount[0]?.existingDeseases?.cld?.duration?.unit,
-        cldStatus: visit?.visitCount[0]?.existingDeseases?.cld?.statusOfDisease,
+          cldDuration: visit?.existingDeseases?.cld?.duration?.numericValue,
+          cldDurationUnit: visit?.existingDeseases?.cld?.duration?.unit,
+          cldStatus: visit?.existingDeseases?.cld?.statusOfDisease,
 
-        ckdType: visit?.visitCount[0]?.existingDeseases?.ckd?.typeofckd,
-        ckdDuration: visit?.visitCount[0]?.existingDeseases?.ckd?.duration?.numericValue,
-        ckdDurationUnit: visit?.visitCount[0]?.existingDeseases?.ckd?.duration?.unit,
-        ckdStatus: visit?.visitCount[0]?.existingDeseases?.ckd?.statusOfDisease,
+          ckdType: visit?.existingDeseases?.ckd?.typeofckd,
+          ckdDuration: visit?.existingDeseases?.ckd?.duration?.numericValue,
+          ckdDurationUnit: visit?.existingDeseases?.ckd?.duration?.unit,
+          ckdStatus: visit?.existingDeseases?.ckd?.statusOfDisease,
 
-        othersDisease: visit?.visitCount[0]?.existingDeseases?.others?.disease,
-        othersDuration: visit?.visitCount[0]?.existingDeseases?.others?.duration?.numericValue,
-        othersDurationUnit: visit?.visitCount[0]?.existingDeseases?.others?.duration?.unit,
-        othersStatus: visit?.visitCount[0]?.existingDeseases?.others?.statusOfDisease,
+          othersDiseaseE: visit?.existingDeseases?.others?.disease,
+          othersDurationE: visit?.existingDeseases?.others?.duration?.numericValue,
+          othersDurationUnitE: visit?.existingDeseases?.others?.duration?.unit,
+          othersStatusE: visit?.existingDeseases?.others?.statusOfDisease,
 
-        //Problem for consultation
-        problem: 'Problem for consultation',
+          //Problem for consultation
+          problem: 'Problem for consultation',
 
-        sobDuration: visit?.visitCount[0]?.problemForConsultation?.sob?.duration?.numericValue,
-        sobDurationUnit: visit?.visitCount[0]?.problemForConsultation?.sob?.duration?.unit,
-        sobStatus: visit?.visitCount[0]?.problemForConsultation?.sob?.statusOfDisease,
+          sobDuration: visit?.problemForConsultation?.sob?.duration?.numericValue,
+          sobDurationUnit: visit?.problemForConsultation?.sob?.duration?.unit,
+          sobStatus: visit?.problemForConsultation?.sob?.statusOfDisease,
 
-        // cough
-        coughDuration: visit?.visitCount[0]?.problemForConsultation?.cough?.duration?.numericValue,
-        coughDurationUnit: visit?.visitCount[0]?.problemForConsultation?.cough?.duration?.unit,
-        coughStatus: visit?.visitCount[0]?.problemForConsultation?.cough?.statusOfDisease,
+          // cough
+          coughDuration: visit?.problemForConsultation?.cough?.duration?.numericValue,
+          coughDurationUnit: visit?.problemForConsultation?.cough?.duration?.unit,
+          coughStatus: visit?.problemForConsultation?.cough?.statusOfDisease,
 
-        // bleeding with cough
-        bleedingWithCoughDuration: visit?.visitCount[0]?.problemForConsultation?.bleedingwithcough?.duration?.numericValue,
-        bleedingWithCoughDurationUnit: visit?.visitCount[0]?.problemForConsultation?.bleedingwithcough?.duration?.unit,
-        bleedingWithCoughStatus: visit?.visitCount[0]?.problemForConsultation?.bleedingwithcough?.statusOfDisease,
+          // bleeding with cough
+          bleedingWithCoughDuration: visit?.problemForConsultation?.bleedingwithcough?.duration?.numericValue,
+          bleedingWithCoughDurationUnit: visit?.problemForConsultation?.bleedingwithcough?.duration?.unit,
+          bleedingWithCoughStatus: visit?.problemForConsultation?.bleedingwithcough?.statusOfDisease,
 
-        // chest pain
-        chestPainDuration: visit?.visitCount[0]?.problemForConsultation?.chestpain?.duration?.numericValue,
-        chestPainDurationUnit: visit?.visitCount[0]?.problemForConsultation?.chestpain?.duration?.unit,
-        chestPainStatus: visit?.visitCount[0]?.problemForConsultation?.chestpain?.statusOfDisease,
+          // chest pain
+          chestPainDuration: visit?.problemForConsultation?.chestpain?.duration?.numericValue,
+          chestPainDurationUnit: visit?.problemForConsultation?.chestpain?.duration?.unit,
+          chestPainStatus: visit?.problemForConsultation?.chestpain?.statusOfDisease,
 
-        // wheeze
-        wheezeDuration: visit?.visitCount[0]?.problemForConsultation?.wheeze?.duration?.numericValue,
-        wheezeDurationUnit: visit?.visitCount[0]?.problemForConsultation?.wheeze?.duration?.unit,
-        wheezeStatus: visit?.visitCount[0]?.problemForConsultation?.wheeze?.statusOfDisease,
+          // wheeze
+          wheezeDuration: visit?.problemForConsultation?.wheeze?.duration?.numericValue,
+          wheezeDurationUnit: visit?.problemForConsultation?.wheeze?.duration?.unit,
+          wheezeStatus: visit?.problemForConsultation?.wheeze?.statusOfDisease,
 
-        // phlegm
-        phlegmDuration: visit?.visitCount[0]?.problemForConsultation?.phlagm?.duration?.numericValue,
-        phlegmDurationUnit: visit?.visitCount[0]?.problemForConsultation?.phlagm?.duration?.unit,
-        phlegmStatus: visit?.visitCount[0]?.problemForConsultation?.phlagm?.statusOfDisease,
+          // phlegm
+          phlegmDuration: visit?.problemForConsultation?.phlagm?.duration?.numericValue,
+          phlegmDurationUnit: visit?.problemForConsultation?.phlagm?.duration?.unit,
+          phlegmStatus: visit?.problemForConsultation?.phlagm?.statusOfDisease,
 
-        // nasal congestion
-        nasalCongestionDuration: visit?.visitCount[0]?.problemForConsultation?.nasalcongestion?.duration?.numericValue,
-        nasalCongestionDurationUnit: visit?.visitCount[0]?.problemForConsultation?.nasalcongestion?.duration?.unit,
-        nasalCongestionStatus: visit?.visitCount[0]?.problemForConsultation?.nasalcongestion?.statusOfDisease,
+          // nasal congestion
+          nasalCongestionDuration: visit?.problemForConsultation?.nasalcongestion?.duration?.numericValue,
+          nasalCongestionDurationUnit: visit?.problemForConsultation?.nasalcongestion?.duration?.unit,
+          nasalCongestionStatus: visit?.problemForConsultation?.nasalcongestion?.statusOfDisease,
 
-        // snoring
-        snoringDuration: visit?.visitCount[0]?.problemForConsultation?.snoring?.duration?.numericValue,
-        snoringDurationUnit: visit?.visitCount[0]?.problemForConsultation?.snoring?.duration?.unit,
-        snoringStatus: visit?.visitCount[0]?.problemForConsultation?.snoring?.statusOfDisease,
+          // snoring
+          snoringDuration: visit?.problemForConsultation?.snoring?.duration?.numericValue,
+          snoringDurationUnit: visit?.problemForConsultation?.snoring?.duration?.unit,
+          snoringStatus: visit?.problemForConsultation?.snoring?.statusOfDisease,
 
-        // daytime sleepiness
-        dayTimeSleepinessDuration: visit?.visitCount[0]?.problemForConsultation?.daytimesleepiness?.duration?.numericValue,
-        dayTimeSleepinessDurationUnit: visit?.visitCount[0]?.problemForConsultation?.daytimesleepiness?.duration?.unit,
-        dayTimeSleepinessStatus: visit?.visitCount[0]?.problemForConsultation?.daytimesleepiness?.statusOfDisease,
+          // daytime sleepiness
+          dayTimeSleepinessDuration: visit?.problemForConsultation?.daytimesleepiness?.duration?.numericValue,
+          dayTimeSleepinessDurationUnit: visit?.problemForConsultation?.daytimesleepiness?.duration?.unit,
+          dayTimeSleepinessStatus: visit?.problemForConsultation?.daytimesleepiness?.statusOfDisease,
 
-        // weakness
-        weaknessDuration: visit?.visitCount[0]?.problemForConsultation?.weakness?.duration?.numericValue,
-        weaknessDurationUnit: visit?.visitCount[0]?.problemForConsultation?.weakness?.duration?.unit,
-        weaknessStatus: visit?.visitCount[0]?.problemForConsultation?.weakness?.statusOfDisease,
+          // weakness
+          weaknessDuration: visit?.problemForConsultation?.weakness?.duration?.numericValue,
+          weaknessDurationUnit: visit?.problemForConsultation?.weakness?.duration?.unit,
+          weaknessStatus: visit?.problemForConsultation?.weakness?.statusOfDisease,
 
-        // drowsiness
-        drowsinessDuration: visit?.visitCount[0]?.problemForConsultation?.drowsiness?.duration?.numericValue,
-        drowsinessDurationUnit: visit?.visitCount[0]?.problemForConsultation?.drowsiness?.duration?.unit,
-        drowsinessStatus: visit?.visitCount[0]?.problemForConsultation?.drowsiness?.statusOfDisease,
+          // drowsiness
+          drowsinessDuration: visit?.problemForConsultation?.drowsiness?.duration?.numericValue,
+          drowsinessDurationUnit: visit?.problemForConsultation?.drowsiness?.duration?.unit,
+          drowsinessStatus: visit?.problemForConsultation?.drowsiness?.statusOfDisease,
 
-        // lethargy
-        lethargyDuration: visit?.visitCount[0]?.problemForConsultation?.lethargy?.duration?.numericValue,
-        lethargyDurationUnit: visit?.visitCount[0]?.problemForConsultation?.lethargy?.duration?.unit,
-        lethargyStatus: visit?.visitCount[0]?.problemForConsultation?.lethargy?.statusOfDisease,
+          // lethargy
+          lethargyDuration: visit?.problemForConsultation?.lethargy?.duration?.numericValue,
+          lethargyDurationUnit: visit?.problemForConsultation?.lethargy?.duration?.unit,
+          lethargyStatus: visit?.problemForConsultation?.lethargy?.statusOfDisease,
 
-        // low mood
-        lowMoodDuration: visit?.visitCount[0]?.problemForConsultation?.lowmood?.duration?.numericValue,
-        lowMoodDurationUnit: visit?.visitCount[0]?.problemForConsultation?.lowmood?.duration?.unit,
-        lowMoodStatus: visit?.visitCount[0]?.problemForConsultation?.lowmood?.statusOfDisease,
+          // low mood
+          lowMoodDuration: visit?.problemForConsultation?.lowmood?.duration?.numericValue,
+          lowMoodDurationUnit: visit?.problemForConsultation?.lowmood?.duration?.unit,
+          lowMoodStatus: visit?.problemForConsultation?.lowmood?.statusOfDisease,
 
-        // diarrhea
-        diarrheaDuration: visit?.visitCount[0]?.problemForConsultation?.diarrhoea?.duration?.numericValue,
-        diarrheaDurationUnit: visit?.visitCount[0]?.problemForConsultation?.diarrhoea?.duration?.unit,
-        diarrheaStatus: visit?.visitCount[0]?.problemForConsultation?.diarrhoea?.statusOfDisease,
+          // diarrhea
+          diarrheaDuration: visit?.problemForConsultation?.diarrhoea?.duration?.numericValue,
+          diarrheaDurationUnit: visit?.problemForConsultation?.diarrhoea?.duration?.unit,
+          diarrheaStatus: visit?.problemForConsultation?.diarrhoea?.statusOfDisease,
 
-        uncontrolledDiseaseDuration: visit?.visitCount[0]?.problemForConsultation?.uncontrolleddisease[0]?.duration?.numericValue,
-        uncontrolledDiseaseDurationUnit: visit?.visitCount[0]?.problemForConsultation?.uncontrolleddisease[0]?.duration?.unit,
-        uncontrolledDiseaseStatus: visit?.visitCount[0]?.problemForConsultation?.uncontrolleddisease[0]?.statusOfDisease,
-        uncontrolledDiseaseName: visit?.visitCount[0]?.problemForConsultation?.uncontrolleddisease[0]?.name,
+          uncontrolledDiseaseDuration: visit?.problemForConsultation?.uncontrolleddisease[0]?.duration?.numericValue,
+          uncontrolledDiseaseDurationUnit: visit?.problemForConsultation?.uncontrolleddisease[0]?.duration?.unit,
+          uncontrolledDiseaseStatus: visit?.problemForConsultation?.uncontrolleddisease[0]?.statusOfDisease,
+          uncontrolledDiseaseName: visit?.problemForConsultation?.uncontrolleddisease[0]?.name,
 
-        othersDisease: visit?.visitCount[0]?.problemForConsultation?.others?.disease,
-        othersDuration: visit?.visitCount[0]?.problemForConsultation?.others?.duration?.numericValue,
-        othersDurationUnit: visit?.visitCount[0]?.problemForConsultation?.others?.duration?.unit,
-        othersStatus: visit?.visitCount[0]?.problemForConsultation?.others?.statusOfDisease,
+          othersDisease: visit?.problemForConsultation?.others?.disease,
+          othersDuration: visit?.problemForConsultation?.others?.duration?.numericValue,
+          othersDurationUnit: visit?.problemForConsultation?.others?.duration?.unit,
+          othersStatus: visit?.problemForConsultation?.others?.statusOfDisease,
 
-        history: 'History',
+          history: 'History',
 
-        allergyType: visit?.visitCount[0]?.importantHistory?.allergy?.typeOfAllergy,
-        allergyDuration: visit?.visitCount[0]?.importantHistory?.allergy?.duration?.numericValue,
-        allergyDurationUnit: visit?.visitCount[0]?.importantHistory?.allergy?.duration?.unit,
-        drugType: visit?.visitCount[0]?.importantHistory?.drugReaction?.typeOfDrug,
-        reactionType: visit?.visitCount[0]?.importantHistory?.drugReaction?.typeOfReaction,
-        pastSurgeryType: visit?.visitCount[0]?.importantHistory?.pastSurgery?.typeOfSurgery,
-        yearOfSurgery: visit?.visitCount[0]?.importantHistory?.pastSurgery?.year,
-
-
-        pastDisease: visit?.visitCount[0]?.importantHistory?.pastDisease?.typeOfDisease,
-
-        familyHistory: visit?.visitCount[0]?.importantHistory?.familyHistory,
-        occupation: visit?.visitCount[0]?.importantHistory?.occupation,
-        dustExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.dust?.duration?.numericValue,
-        dustExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.dust?.duration?.unit,
-        cottonDustExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.cottondust?.duration?.numericValue,
-        cottonDustExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.cottondust?.duration?.unit,
-        woodDustExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.wooddust?.duration?.numericValue,
-        woodDustExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.wooddust?.duration?.unit,
-        pigeonExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.pigeon?.duration?.numericValue,
-        pigeonExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.pigeon?.duration?.unit,
-        hayExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.hay?.duration?.numericValue,
-        hayExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.hay?.duration?.unit,
-        mouldsExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.moulds?.duration?.numericValue,
-        mouldsExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.moulds?.duration?.unit,
-        pollenExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.pollen?.duration?.numericValue,
-        pollenExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.pollen?.duration?.unit,
-        chemicalExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.chemical?.duration?.numericValue,
-        chemicalExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.chemical?.duration?.unit,
-        stoneDustExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.stonedust?.duration?.numericValue,
-        stoneDustExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.stonedust?.duration?.unit,
-        otherExposureType: visit?.visitCount[0]?.importantHistory?.exposure?.others?.typeOfExposure,
-        otherExposureDuration: visit?.visitCount[0]?.importantHistory?.exposure?.others?.duration?.numericValue,
-        otherExposureUnit: visit?.visitCount[0]?.importantHistory?.exposure?.others?.duration?.unit,
-
-        Hospitalization: 'Hospitalization',
-
-        pastHospitalizationYear: visit?.visitCount[0]?.pastHospitalization[0]?.yearOfHospitalization,
-        hospitalizationDays: visit?.visitCount[0]?.pastHospitalization[0]?.days,
-        hospitalizationReason: visit?.visitCount[0]?.pastHospitalization[0]?.reason,
-
-        statusOfSickness: visit?.visitCount[0]?.statusOfSickness,
-        catScore: visit?.visitCount[0]?.catScore,
-
-      };
-
-      console.log(visit?.visitCount[0]?.existingDeseases?.diabetes?.duration?.numericValue)
+          allergyType: visit?.importantHistory?.allergy?.typeOfAllergy,
+          allergyDuration: visit?.importantHistory?.allergy?.duration?.numericValue,
+          allergyDurationUnit: visit?.importantHistory?.allergy?.duration?.unit,
+          drugType: visit?.importantHistory?.drugReaction?.typeOfDrug,
+          reactionType: visit?.importantHistory?.drugReaction?.typeOfReaction,
+          pastSurgeryType: visit?.importantHistory?.pastSurgery?.typeOfSurgery,
+          yearOfSurgery: visit?.importantHistory?.pastSurgery?.year,
 
 
-      worksheet.addRow(rowData);
-      counter++;
+          pastDisease: visit?.importantHistory?.pastDisease?.typeOfDisease,
+
+          familyHistory: visit?.importantHistory?.familyHistory,
+          occupation: visit?.importantHistory?.occupation,
+          dustExposureDuration: visit?.importantHistory?.exposure?.dust?.duration?.numericValue,
+          dustExposureUnit: visit?.importantHistory?.exposure?.dust?.duration?.unit,
+          cottonDustExposureDuration: visit?.importantHistory?.exposure?.cottondust?.duration?.numericValue,
+          cottonDustExposureUnit: visit?.importantHistory?.exposure?.cottondust?.duration?.unit,
+          woodDustExposureDuration: visit?.importantHistory?.exposure?.wooddust?.duration?.numericValue,
+          woodDustExposureUnit: visit?.importantHistory?.exposure?.wooddust?.duration?.unit,
+          pigeonExposureDuration: visit?.importantHistory?.exposure?.pigeon?.duration?.numericValue,
+          pigeonExposureUnit: visit?.importantHistory?.exposure?.pigeon?.duration?.unit,
+          hayExposureDuration: visit?.importantHistory?.exposure?.hay?.duration?.numericValue,
+          hayExposureUnit: visit?.importantHistory?.exposure?.hay?.duration?.unit,
+          mouldsExposureDuration: visit?.importantHistory?.exposure?.moulds?.duration?.numericValue,
+          mouldsExposureUnit: visit?.importantHistory?.exposure?.moulds?.duration?.unit,
+          pollenExposureDuration: visit?.importantHistory?.exposure?.pollen?.duration?.numericValue,
+          pollenExposureUnit: visit?.importantHistory?.exposure?.pollen?.duration?.unit,
+          chemicalExposureDuration: visit?.importantHistory?.exposure?.chemical?.duration?.numericValue,
+          chemicalExposureUnit: visit?.importantHistory?.exposure?.chemical?.duration?.unit,
+          stoneDustExposureDuration: visit?.importantHistory?.exposure?.stonedust?.duration?.numericValue,
+          stoneDustExposureUnit: visit?.importantHistory?.exposure?.stonedust?.duration?.unit,
+          otherExposureType: visit?.importantHistory?.exposure?.others?.typeOfExposure,
+          otherExposureDuration: visit?.importantHistory?.exposure?.others?.duration?.numericValue,
+          otherExposureUnit: visit?.importantHistory?.exposure?.others?.duration?.unit,
+
+          Hospitalization: 'Hospitalization',
+
+          pastHospitalizationYear: visit?.pastHospitalization[0]?.yearOfHospitalization,
+          hospitalizationDays: visit?.pastHospitalization[0]?.days,
+          hospitalizationReason: visit?.pastHospitalization[0]?.reason,
+
+          statusOfSickness: visit?.statusOfSickness,
+          catScore: visit?.catScore,
+
+        };
+
+        //console.log(visit?.existingDeseases?.diabetes?.duration?.numericValue)
+
+
+        worksheet.addRow(rowData);
+        counter++;
+      });
     });
-
     worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true };
     })
