@@ -25,6 +25,8 @@ import SOSForm from "./SOSForm";
 import Exposure from "./Exposure";
 import { PickerIos, Picker } from "@react-native-picker/picker";
 import { backendURL } from "../../backendapi";
+import moment from 'moment-timezone';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const DiseaseForm = ({ patientId }) => {
   const [Hosdata, setHosData] = useState([
@@ -78,6 +80,10 @@ const DiseaseForm = ({ patientId }) => {
   const [selectedCoordinator, setSelectedCoordinator] = useState("Select");
   const [basicDetails, setBasicDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [visitDate, setVisitDate] = useState(new Date());
+  const [visitTime, setVisitTime] = useState(new Date());
+  const [showVisitDatePicker, setShowVisitDatePicker] = useState(false);
+  const [showVisitTimePicker, setShowVisitTimePicker] = useState(false);
   const patientDiseaseURL = `${backendURL}/adminRouter/patientEachVisitDetails/${patientId}`;
   useEffect(() => {
     fetch(`${backendURL}/patientRouter/PatientProfile/${patientId}`)
@@ -120,10 +126,13 @@ const DiseaseForm = ({ patientId }) => {
       selectedOption8 === "Select" ? "NA" : selectedOption8;
     const coordinator =
       selectedCoordinator === "Select" ? "NA" : selectedCoordinator;
+      const desiredTimezone = "Asia/Kolkata";
 
+      const formattedVisitDate = moment(visitDate).tz(desiredTimezone).format("MMMM D, YYYY");
+      const formattedVisitTime = moment(visitTime).tz(desiredTimezone).format("hh:mm A");
     const visitData = {
-      visitDate: new Date().toISOString().split("T")[0],
-      visitTime: new Date().toLocaleTimeString(),
+      visitDate: formattedVisitDate,
+      visitTime: formattedVisitTime,
       existingDeseases: {},
       problemForConsultation: {},
       importantHistory: {
@@ -225,6 +234,17 @@ const DiseaseForm = ({ patientId }) => {
       console.error("Error fetching coordinators:", error);
     }
   };
+  const handleVisitDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || visitDate;
+    setShowVisitDatePicker(false);
+    setVisitDate(currentDate);
+};
+
+const handleVisitTimeChange = (event, selectedTime) => {
+    const currentTime = selectedTime || visitTime;
+    setShowVisitTimePicker(false);
+    setVisitTime(currentTime);
+};
 
   const [data, setData] = useState([{ year: "", days: "", reason: "" }]);
   const [data2, setData2] = useState("");
@@ -232,6 +252,37 @@ const DiseaseForm = ({ patientId }) => {
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.disform}>
+      <View style={styles.disheader}>
+          <Text style={styles.texthead}>Visit Date</Text>
+        </View>
+                    <TouchableOpacity onPress={() => setShowVisitDatePicker(true)} style={styles.dropdown13}>
+                    <Text>{visitDate.toLocaleDateString()}</Text>
+                    </TouchableOpacity>
+                    {showVisitDatePicker && (
+                    <DateTimePicker
+                    value={visitDate}
+                    style={styles.input01}
+                    mode="date"
+                    display="default"
+                    onChange={handleVisitDateChange}
+                    />
+                    )}
+             <View style={styles.disheader}>
+          <Text style={styles.texthead}>Visit Time</Text>
+        </View>
+                <TouchableOpacity onPress={() => setShowVisitTimePicker(true)} style={styles.dropdown13}>
+                <Text>{visitTime.toLocaleTimeString()}</Text>
+                </TouchableOpacity>
+                {showVisitTimePicker && (
+                <DateTimePicker
+                style={styles.input01}
+                value={visitTime}
+                mode="time"
+                display="default"
+                onChange={handleVisitTimeChange}
+                />
+                )}
+               
         <View style={styles.disheader}>
           <Text style={styles.texthead}>Existing Disease</Text>
         </View>
@@ -795,7 +846,7 @@ const DiseaseForm = ({ patientId }) => {
         >
           <Text
             style={{
-              color: "#8E7D7D",
+              color:Color.colorBlack,
               fontSize: 15,
               width: windowWidth * 0.73,
             }}
@@ -884,7 +935,7 @@ const DiseaseForm = ({ patientId }) => {
         <View style={styles.disheader}>
           <Text style={styles.texthead}>Status Of Sickness</Text>
         </View>
-        <SOSForm
+        <SOSForm 
           selectedOption={selectedOption8}
           setSelectedOption={setSelectedOption8}
           isClicked={isClicked17}
@@ -990,7 +1041,7 @@ const DiseaseForm = ({ patientId }) => {
             keyboardType="numeric"
             placeholder="Enter here"
             placeholderTextColor={"#8E7D7D"}
-            onChangeText={(text) => setCatScore(parseInt(text) || 0)} // Update catScore state
+            onChangeText={(text) => setCatScore(parseInt(text) || 0)}
           />
         </TouchableOpacity>
         <View style={styles.disheader}>
@@ -1043,7 +1094,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.colorWhite,
   },
   disform: {
-    marginTop: 20,
+    marginTop: windowWidth*0.01,
   },
   disheader: {
     marginLeft: 15,

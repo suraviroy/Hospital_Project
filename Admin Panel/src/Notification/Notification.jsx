@@ -32,16 +32,11 @@ const Notification = ({}) => {
         };
 
         fetchData();
-    }, []);
+    }, [patients]);
 
     const handleViewDetails = (patientId, requestId) => {
         navigation.navigate('NotificationNavbar', { patientId, requestId });
     };
-
-    const handleViewMore = (request) => {
-        setSelectedRequest(request);
-    };
-
     const handleBack = () => {
         navigation.goBack();
     };

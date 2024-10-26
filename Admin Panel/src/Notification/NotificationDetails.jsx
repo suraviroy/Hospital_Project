@@ -4,49 +4,42 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native'; 
 const windowWidth = Dimensions.get('window').width;
 import { backendURL } from "../backendapi";
+import { Ionicons } from '@expo/vector-icons';
 
 const NotificationDetails = ({ patientId }) => { 
     const navigation = useNavigation();
     const [basicDetails, setBasicDetails] = useState(null);
-    const [importantHistory, setImportantHistory] = useState(null);
-    const [existingDeseases,setexistingDeseases] = useState(null)
-    const [problemForConsultation,setproblemForConsultation] = useState(null)
-    const [pastHospitalization,setpastHospitalization] = useState(null)
-    const [statusOfSickness, setStatusOfSickness] = useState(null);
-   const [catScore, setCatScore] = useState(0);
-   const [coordinator,setcoordinator]=useState(null);
-    useEffect(() => {
-      
-      fetchData();
-    }, []);
-    const handleDischargeCertificatePress = (url) => {
-      Linking.openURL(url);
-    };
-  
-    const fetchData = async () => {
-      try {
-        
-        const response = await fetch(`${backendURL}/adminRouter/patientDisease/${patientId}`);
-        const data = await response.json();
-        const importantHistoryData = data[0]?.visitCount[0]?.importantHistory;
-        const existingDeseasesData = data[0]?.visitCount[0]?.existingDeseases;
-        const problemForConsultationData = data[0]?.visitCount[0]?.problemForConsultation;
-        const pastHospitalizationData = data[0]?.visitCount[0]?.pastHospitalization;
-        const statusOfSicknessData = data[0]?.visitCount[0]?.statusOfSickness;
-        const catScoreData = data[0]?.visitCount[0]?.catScore;
-        const coordinatordata = data[0]?.coordinator;
-        setImportantHistory(importantHistoryData);
-        setexistingDeseases(existingDeseasesData);
-        setproblemForConsultation(problemForConsultationData);
-        setpastHospitalization(pastHospitalizationData)
-        setStatusOfSickness(statusOfSicknessData);
-        setCatScore(catScoreData);
-        setcoordinator(coordinatordata);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-  
+    const [visitData, setVisitData] = useState([]);
+  const [coordinator, setCoordinator] = useState(null);
+  const [expandedVisits, setExpandedVisits] = useState({});
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleDischargeCertificatePress = (url) => {
+    Linking.openURL(url);
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${backendURL}/adminRouter/patientDisease/${patientId}`);
+      const data = await response.json();
+
+      setVisitData(data[0]?.visitCount || []);
+      setCoordinator(data[0]?.coordinator);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const toggleVisitExpansion = (index) => {
+    setExpandedVisits(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
+
 
     useEffect(() => {
         fetch(`${backendURL}/adminRouter/PatientBasicDetails/${patientId}`)
@@ -70,309 +63,291 @@ const NotificationDetails = ({ patientId }) => {
             </View>
         );
     }
-
-    return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                {/* <View style={styles.registerTextContainer}>
-                    <Text style={styles.registerText}>Patient Basic Details</Text>
-                </View> */}
-                <View style={styles.profileContainer}>
-                    {basicDetails.image ? (
-                        <Image source={{ uri: basicDetails.image }} style={styles.profileImage} />
-                    ) : (
-                        <Image source={require('../../assets/images/user.png')} style={styles.profileImage} />
-                    )}
-                    <Text style={styles.profileText}>Profile Picture</Text>
-                </View>
-                <View style={styles.detailsContainer}>
-                    <Text style={styles.label}>Patient Name:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.name}</Text></View>
-                    <Text style={styles.label}>Age:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.age}</Text></View>
-                    <Text style={styles.label}>Gender:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.gender}</Text></View>
-                    <Text style={styles.label}>Patient ID:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.patientId}</Text></View>
-                    <Text style={styles.label}>Contact Number:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.contactNumber}</Text></View>
-                    <Text style={styles.label}>Consulting Doctor:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.consultingDoctor}</Text></View>
-                    <Text style={styles.label}>Email:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.email}</Text></View>
-                    <Text style={styles.label}>Blood Group:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.bloodGroup}</Text></View>
-                    <Text style={styles.label}>Address:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.address}</Text></View>
-                    <Text style={styles.label}>State:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.state}</Text></View>
-                    <Text style={styles.label}>Country:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.country}</Text></View>
-                    <Text style={styles.label}>Local Contact Name:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.localContactName}</Text></View>
-                    <Text style={styles.label}>Local Contact Relation:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.localContactRelation}</Text></View>
-                    <Text style={styles.label}>Local Contact Number:</Text>
-                    <View style = {styles.textContainer}>
-                    <Text style={styles.value}>{basicDetails.localContactNumber}</Text></View>
-                </View>
-                <View style={styles.profileContainer}>
-        <Text style={styles.subHead6}>Coordinator : {coordinator}</Text>
+    const renderVisitDetails = (visit, index) => {
+      const isExpanded = expandedVisits[index];
+  
+      return (
+        <View key={index} style={styles.visitContainer}>
+          <TouchableOpacity onPress={() => toggleVisitExpansion(index)} style={styles.visitHeader}>
+          <View style={{flexDirection:'row', marginLeft: windowWidth*0.01}}>
+            <Text style={styles.visitHeaderText}>Visit Date: {visit.visitDate}  Time: {visit.visitTime}</Text>
+            <Ionicons 
+              name={isExpanded ? "chevron-up" : "chevron-down"}   
+              marginLeft={windowWidth*0.03}
+              size={24} 
+              color="#000" 
+            />
+            </View>
+            
+          </TouchableOpacity>
+         
+          {isExpanded && (
+            <View style={styles.visitDetails}>
+              {renderExistingDiseases(visit.existingDeseases)}
+              {renderProblemForConsultation(visit.problemForConsultation)}
+              {renderImportantHistory(visit.importantHistory)}
+              {renderPastHospitalization(visit.pastHospitalization)}
+              <View  style={styles.backField2}>
+              <Text style={styles.subHead6}>Status of Sickness: {visit.statusOfSickness}</Text>
+              <Text style={styles.subHead6}>CAT Score: {visit.catScore}</Text>
+              </View>
+            </View>
+          )}
+        </View>
+      );
+    };
+    const renderExistingDiseases = (existingDeseases) => {
+      if (!existingDeseases) return null;
+    
+      return (
         <View style={styles.exiDisContainer}>
-        {existingDeseases && (
-          <View>
-             <Text style={styles.texthead2}>Existing Diseases</Text>
-        </View>
-         )}
-          {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.diabetes && existingDeseases.diabetes.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Diabetes {"\n"}
-             Duration:  {existingDeseases.diabetes.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.diabetes.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.diabetes.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-        {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.hypertension && existingDeseases.hypertension.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Hypertension {"\n"}
-             Duration:  {existingDeseases.hypertension.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.hypertension.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.hypertension.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-          {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.ihd && existingDeseases.ihd.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  IHD {"\n"}
-             Duration:  {existingDeseases.ihd.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.ihd.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.ihd.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-           {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.hypothyroidism && existingDeseases.hypothyroidism.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Hypothyroidism {"\n"}
-             Duration:  {existingDeseases.hypothyroidism.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.hypothyroidism.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.hypothyroidism.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-          {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.allergicrhinitis && existingDeseases.allergicrhinitis.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Allergic Rhinitis{"\n"}
-             Duration:  {existingDeseases.allergicrhinitis.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.allergicrhinitis.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.allergicrhinitis.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-          {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.hyperuricemia && existingDeseases.hyperuricemia.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Allergic Rhinitis{"\n"}
-             Duration:  {existingDeseases.hyperuricemia.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.hyperuricemia.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.hyperuricemia.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-           {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.asthama && existingDeseases.asthama.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Asthama{"\n"}
-             Duration:  {existingDeseases.asthama.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.asthama.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.asthama.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-          {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.tb && existingDeseases.tb.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  TB{"\n"}
-             Duration:  {existingDeseases.tb.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.tb.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.tb.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-           {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.copd && existingDeseases.copd.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  COPD{"\n"}
-             Duration:  {existingDeseases.copd.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.copd.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.copd.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-           {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.ild && existingDeseases.ild.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  ILD{"\n"}
-             Duration:  {existingDeseases.ild.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.ild.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.ild.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-          {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.ibs && existingDeseases.ibs.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  IBS{"\n"}
-             Duration:  {existingDeseases.ibs.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.ibs.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.ibs.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-          {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.inflammatoryboweldisease && existingDeseases.inflammatoryboweldisease.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Inflammatory Bowel Disease{"\n"}
-             Duration:  {existingDeseases.inflammatoryboweldisease.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.inflammatoryboweldisease.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.inflammatoryboweldisease.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-          {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.depression && existingDeseases.depression.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Depression{"\n"}
-             Duration:  {existingDeseases.depression.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.depression.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.depression.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
          {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.anxiety && existingDeseases.anxiety.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Anxiety{"\n"}
-             Duration:  {existingDeseases.anxiety.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.anxiety.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.anxiety.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-         {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.osa && existingDeseases.osa.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  OSA{"\n"}
-             Duration:  {existingDeseases.osa.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.osa.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.osa.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-         {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.collagenvasculardisease && existingDeseases.collagenvasculardisease.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Collagen Vascular Disease{"\n"}
-             Duration:  {existingDeseases.collagenvasculardisease.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.collagenvasculardisease.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.collagenvasculardisease.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-        {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.malignancy && existingDeseases.malignancy.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Malignancy{"\n"}
-             Organ:   {existingDeseases.malignancy.organ}
-             {' '}  Duration:  {existingDeseases.malignancy.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.malignancy.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.malignancy.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
+            <View>
+               <Text style={styles.texthead2}>Existing Diseases</Text>
+          </View>
+           )}
+            {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.diabetes && existingDeseases.diabetes.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Diabetes {"\n"}
+               Duration:  {existingDeseases.diabetes.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.diabetes.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.diabetes.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+          {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.hypertension && existingDeseases.hypertension.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Hypertension {"\n"}
+               Duration:  {existingDeseases.hypertension.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.hypertension.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.hypertension.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+            {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.ihd && existingDeseases.ihd.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  IHD {"\n"}
+               Duration:  {existingDeseases.ihd.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.ihd.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.ihd.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+             {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.hypothyroidism && existingDeseases.hypothyroidism.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Hypothyroidism {"\n"}
+               Duration:  {existingDeseases.hypothyroidism.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.hypothyroidism.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.hypothyroidism.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+            {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.allergicrhinitis && existingDeseases.allergicrhinitis.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Allergic Rhinitis{"\n"}
+               Duration:  {existingDeseases.allergicrhinitis.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.allergicrhinitis.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.allergicrhinitis.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+            {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.hyperuricemia && existingDeseases.hyperuricemia.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Allergic Rhinitis{"\n"}
+               Duration:  {existingDeseases.hyperuricemia.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.hyperuricemia.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.hyperuricemia.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+             {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.asthama && existingDeseases.asthama.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Asthama{"\n"}
+               Duration:  {existingDeseases.asthama.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.asthama.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.asthama.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+            {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.tb && existingDeseases.tb.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  TB{"\n"}
+               Duration:  {existingDeseases.tb.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.tb.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.tb.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+             {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.copd && existingDeseases.copd.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  COPD{"\n"}
+               Duration:  {existingDeseases.copd.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.copd.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.copd.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+             {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.ild && existingDeseases.ild.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  ILD{"\n"}
+               Duration:  {existingDeseases.ild.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.ild.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.ild.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+            {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.ibs && existingDeseases.ibs.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  IBS{"\n"}
+               Duration:  {existingDeseases.ibs.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.ibs.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.ibs.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+            {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.inflammatoryboweldisease && existingDeseases.inflammatoryboweldisease.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Inflammatory Bowel Disease{"\n"}
+               Duration:  {existingDeseases.inflammatoryboweldisease.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.inflammatoryboweldisease.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.inflammatoryboweldisease.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+            {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.depression && existingDeseases.depression.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Depression{"\n"}
+               Duration:  {existingDeseases.depression.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.depression.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.depression.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
            {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.dyslipidemia && existingDeseases.dyslipidemia.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Dyslipidemia{"\n"}
-             Duration:  {existingDeseases.dyslipidemia.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.dyslipidemia.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.dyslipidemia.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-        {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.cld && existingDeseases.cld.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  CLD{"\n"}
-             Duration:  {existingDeseases.cld.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.cld.duration.unit}{"\n"}
-             Status of Disease:  {existingDeseases.cld.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
+            <View  style={styles.backField}>
+               {existingDeseases.anxiety && existingDeseases.anxiety.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Anxiety{"\n"}
+               Duration:  {existingDeseases.anxiety.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.anxiety.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.anxiety.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
            {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.ckd && existingDeseases.ckd.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  CKD{"\n"}
-             Organ:   {existingDeseases.ckd.typeofckd}
-             {' '}  Duration:  {existingDeseases.ckd.duration.numericValue}{"\n"}
-             Unit:  {existingDeseases.ckd.duration.unit}
-             {' '}  Status of Disease:  {existingDeseases.ckd.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
+            <View  style={styles.backField}>
+               {existingDeseases.osa && existingDeseases.osa.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  OSA{"\n"}
+               Duration:  {existingDeseases.osa.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.osa.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.osa.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
            {existingDeseases && (
-          <View  style={styles.backField}>
-             {existingDeseases.others && existingDeseases.others.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  Others{"\n"}
-             Organ:   {existingDeseases.others.disease}
-             {' '}  Duration:  {existingDeseases.others.duration.numericValue}{"\n"}
-             Unit:  {existingDeseases.others.duration.unit}
-             {' '}  Status of Disease:  {existingDeseases.others.statusOfDisease}
-             </Text>
-            )}
-        </View>
-         )}
-         </View>
-         <View style={styles.exiDisContainer}>
+            <View  style={styles.backField}>
+               {existingDeseases.collagenvasculardisease && existingDeseases.collagenvasculardisease.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Collagen Vascular Disease{"\n"}
+               Duration:  {existingDeseases.collagenvasculardisease.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.collagenvasculardisease.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.collagenvasculardisease.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+          {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.malignancy && existingDeseases.malignancy.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Malignancy{"\n"}
+               Organ:   {existingDeseases.malignancy.organ}
+               {' '}  Duration:  {existingDeseases.malignancy.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.malignancy.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.malignancy.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+             {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.dyslipidemia && existingDeseases.dyslipidemia.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Dyslipidemia{"\n"}
+               Duration:  {existingDeseases.dyslipidemia.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.dyslipidemia.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.dyslipidemia.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+          {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.cld && existingDeseases.cld.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  CLD{"\n"}
+               Duration:  {existingDeseases.cld.duration.numericValue} 
+               {' '}  Unit:  {existingDeseases.cld.duration.unit}{"\n"}
+               Status of Disease:  {existingDeseases.cld.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+             {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.ckd && existingDeseases.ckd.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  CKD{"\n"}
+               Organ:   {existingDeseases.ckd.typeofckd}
+               {' '}  Duration:  {existingDeseases.ckd.duration.numericValue}{"\n"}
+               Unit:  {existingDeseases.ckd.duration.unit}
+               {' '}  Status of Disease:  {existingDeseases.ckd.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+             {existingDeseases && (
+            <View  style={styles.backField}>
+               {existingDeseases.others && existingDeseases.others.duration.numericValue !== 0 && (
+                <Text style={styles.subHead4}>Disease:  Others{"\n"}
+               Organ:   {existingDeseases.others.disease}
+               {' '}  Duration:  {existingDeseases.others.duration.numericValue}{"\n"}
+               Unit:  {existingDeseases.others.duration.unit}
+               {' '}  Status of Disease:  {existingDeseases.others.statusOfDisease}
+               </Text>
+              )}
+          </View>
+           )}
+           </View>
+      );
+    };
+    const renderProblemForConsultation = (problemForConsultation) => {
+      if (!problemForConsultation) return null;
+    
+      return (
+        <View style={styles.exiDisContainer}>
         {problemForConsultation && (
           <View>
              <Text style={styles.texthead2}>Problem For Consultation</Text>
@@ -521,7 +496,7 @@ const NotificationDetails = ({ patientId }) => {
             )}
         </View>
          )}
-      {problemForConsultation && problemForConsultation.uncontrolleddisease && problemForConsultation.uncontrolleddisease.length > 0 && (
+      {problemForConsultation && problemForConsultation.uncontrolleddisease.length > 0 && (
    <View style={styles.backField}>
     {problemForConsultation.uncontrolleddisease.map((disease, index) => (
       <View key={index}>
@@ -533,8 +508,8 @@ const NotificationDetails = ({ patientId }) => {
       </View>
     ))}
   </View>
-)}
- {problemForConsultation && (
+  )}
+  {problemForConsultation && (
           <View  style={styles.backField}>
              {problemForConsultation.others && problemForConsultation.others.duration.numericValue !== 0 && (
               <Text style={styles.subHead4}>Disease:  Others{"\n"}
@@ -547,7 +522,13 @@ const NotificationDetails = ({ patientId }) => {
         </View>
          )}
          </View>
-         <View style={styles.imphisContainer}>
+      );
+    };
+    const renderImportantHistory = (importantHistory) => {
+      if (!importantHistory) return null;
+    
+      return (
+        <View style={styles.imphisContainer}>
         {importantHistory && (
           <View>
              <Text style={styles.texthead2}>Important History</Text>
@@ -646,159 +627,156 @@ const NotificationDetails = ({ patientId }) => {
           </View>
         )}
          </View>
-         <View style={styles.exiDisContainer}>
-  {pastHospitalization && pastHospitalization.length > 0 && (
-    <Text style={styles.texthead2}>Past Hospitalization</Text>
-  )}
-  {pastHospitalization && pastHospitalization.length > 0 && (
-    <View style={styles.backField}>
-      {pastHospitalization.map((hospitalization, index) => (
-        <View key={index} style={styles.hospitalizationItem}>
-          <Text style={styles.subHead5}>
-            Year of Hospitalization: {hospitalization.yearOfHospitalization}
-            {'\n'}
-            Hospitalized for : {hospitalization.days} Days
-            {'\n'}
-            Reason: {hospitalization.reason}
-            {'\n'}
-            Discharge Certificate:{' '}
-            {hospitalization.dischargeCertificate === 'NA' ? (
-              <Text style={{ borderRadius: 4, padding: 7, fontSize: 13, fontWeight: '700' }}>Not Uploaded</Text>
-            ) : (
-              <TouchableOpacity onPress={() => handleDischargeCertificatePress(hospitalization.dischargeCertificate)}>
-                <Text style={{ backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open PDF</Text>
-              </TouchableOpacity>
-            )}
-          </Text>
-        </View>
-      ))}
-    </View>
-  )}
-</View>
-        <Text style={styles.subHead6}>Status of Sickness: {statusOfSickness}</Text>
-        <Text style={styles.subHead6}>CAT Score: {catScore}</Text>
-        </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={[styles.button, styles.deleteButton]} onPress={handleClose}>
-                        <Text style={[styles.buttonText, styles.deleteText]}>Close</Text>
-                    </TouchableOpacity>
-                    {/* <TouchableOpacity style={[styles.button, styles.updateButton]} >
-                        <Text style={[styles.buttonText, styles.updateText]}>Update</Text>
-                    </TouchableOpacity> */}
+      );
+    };
+    const renderPastHospitalization = (pastHospitalization) => {
+      if (!pastHospitalization) return null;
+    
+      return (
+        <View style={styles.exiDisContainer}>
+          {pastHospitalization && pastHospitalization.length > 0 && (
+            <Text style={styles.texthead2}>Past Hospitalization</Text>
+          )}
+          {pastHospitalization && pastHospitalization.length > 0 && (
+            <View style={styles.backField}>
+              {pastHospitalization.map((hospitalization, index) => (
+                <View key={index} style={styles.hospitalizationItem}>
+                  <Text style={styles.subHead5}>
+                    Year of Hospitalization: {hospitalization.yearOfHospitalization}{'\n'}
+                    Hospitalized for : {hospitalization.days}  Days{'\n'}
+                    Reason: {hospitalization.reason}{'\n'}
+                    Discharge Certificate:{'       '}
+                    {hospitalization.dischargeCertificate === 'NA' ? (
+                <Text style={{ borderRadius: 4, padding: 7, fontSize: 13, fontWeight: '700' }}>Not Uploaded</Text>
+              ) : (
+                <TouchableOpacity onPress={() => handleDischargeCertificatePress(hospitalization.dischargeCertificate)}>
+                  <Text style={{ backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open PDF</Text>
+                </TouchableOpacity>
+              )}
+                  </Text>
                 </View>
+              ))}
+            </View>
+          )}
+     </View>
+      );
+    };
+  
+    
+    return (
+        <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+                {/* <View style={styles.registerTextContainer}>
+                    <Text style={styles.registerText}>Patient Basic Details</Text>
+                </View> */}
+                <View style={styles.profileContainer1}>
+                    {basicDetails.image ? (
+                        <Image source={{ uri: basicDetails.image }} style={styles.profileImage} />
+                    ) : (
+                        <Image source={require('../../assets/images/user.png')} style={styles.profileImage} />
+                    )}
+                    <Text style={styles.profileText}>Profile Picture</Text>
+                </View>
+                <View style={styles.detailsContainer}>
+                    <Text style={styles.label}>Patient Name:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.name}</Text></View>
+                    <Text style={styles.label}>Age:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.age}</Text></View>
+                    <Text style={styles.label}>Gender:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.gender}</Text></View>
+                    <Text style={styles.label}>Patient ID:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.patientId}</Text></View>
+                    <Text style={styles.label}>Contact Number:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.contactNumber}</Text></View>
+                    <Text style={styles.label}>Consulting Doctor:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.consultingDoctor}</Text></View>
+                    <Text style={styles.label}>Email:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.email}</Text></View>
+                    <Text style={styles.label}>Blood Group:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.bloodGroup}</Text></View>
+                    <Text style={styles.label}>Address:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.address}</Text></View>
+                    <Text style={styles.label}>State:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.state}</Text></View>
+                    <Text style={styles.label}>Country:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.country}</Text></View>
+                    <Text style={styles.label}>Local Contact Name:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.localContactName}</Text></View>
+                    <Text style={styles.label}>Local Contact Relation:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.localContactRelation}</Text></View>
+                    <Text style={styles.label}>Local Contact Number:</Text>
+                    <View style = {styles.textContainer}>
+                    <Text style={styles.value}>{basicDetails.localContactNumber}</Text></View>
+                </View>
+          <View style={styles.profileContainer}>
+          <View style={styles.backField3}>
+          <Text style={styles.subHead7}>Coordinator: {coordinator}</Text>
+          </View>
+          {visitData.map((visit, index) => renderVisitDetails(visit, index))}
+        </View>
             </ScrollView>
         </SafeAreaView>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
-        paddingTop: windowWidth*-0.5,
-    },
-    scrollContent: {
-        flexGrow: 1,
-    },
-    text45:{
-      marginTop: windowWidth*0.10,
-      fontSize:18,
-      fontFamily: 'bold01',
-      marginLeft: 20,
-  },
-    textContainer:{
-    backgroundColor: '#D9D9D9',
-    padding: 5,
-    borderRadius: windowWidth*0.01,
-    },
-    registerTextContainer: {
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    registerText: {
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    profileContainer: {
-        alignItems: 'center',
-        marginTop: 20,
-        borderRadius: windowWidth*0.01,
-    },
-    profileImage: {
-        width: windowWidth*0.3,
-        height: windowWidth*0.3,
-        resizeMode: 'cover',
-        borderRadius: 75,
-        marginLeft: windowWidth*0.3
-    },
-    profileText: {
-        marginTop: 10,
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginLeft: windowWidth*0.34
-    },
-    detailsContainer: {
-        marginTop: 20,
-        paddingHorizontal: windowWidth*0.025,
-        borderRadius: windowWidth*0.01,
-    },
-    label: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginTop: 10,
-        padding: 5,
-    },
-    value: {
-        fontSize: 16,
-        marginTop: 5,
-    },
-    buttonContainer: {
 
-        paddingTop: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 20,
-        marginBottom: 20, 
-        marginTop: 'auto', 
-    },
-    button: {
-        height: 52,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 5,
-        width: '45%',
-    },
-    deleteButton: {
-        backgroundColor: '#FFFFFF',
-        borderWidth: 1,
-        borderColor: 'red',
-    },
-    deleteText: {
-        color: 'red',
-    },
-    updateButton: {
-        backgroundColor: '#008080',
-    },
-    updateText: {
-        color: '#FFFFFF',
-    },
-    buttonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-        hospitalizationItem: {
+
+const styles = StyleSheet.create({
+  visitContainer: {
+    marginTop: windowWidth * 0.03,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  visitHeader: {
+    flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+  },
+  visitHeaderText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  visitDetails: {
+    padding: windowWidth * 0.03,
+  },
+    hospitalizationItem: {
       marginBottom: 20,
     },
     scrollContent: {
         flexGrow: 1,
     },
     profileContainer: {
-        // alignItems: 'center',
-        marginLeft: windowWidth*0.01,
+        marginLeft: windowWidth*0.02,
         marginTop: windowWidth*0.05,
+        marginRight: windowWidth*0.01,
     },
-backField: {
-    marginLeft: windowWidth*0.02,
+  backField: {
+  marginLeft: -windowWidth*0.04,
+  marginRight: -windowWidth*0.09,
+      },
+      backField2: {
+        marginLeft: -windowWidth*0.02,
+        marginRight: -windowWidth*0.08,
+            },
+      backField3: {
+        marginLeft: windowWidth*0.01,
+        marginRight: -windowWidth*0.02,
       },
 texthead: {
     marginLeft: windowWidth*0.03,
@@ -807,7 +785,7 @@ texthead: {
     fontSize: 17,
 },
 texthead2: {
-  marginLeft: windowWidth*0.03,
+  marginLeft: -windowWidth*0.01,
   fontWeight: "600",
   fontFamily: 'extrabold01',
   fontSize: 17,
@@ -824,7 +802,6 @@ texthead3: {
 subHead:{
     width: "95%",
     height: windowWidth * 0.10,
-    
     marginTop: windowWidth * 0.01,
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
@@ -895,21 +872,156 @@ subHead5:{
 },
 subHead6:{
   marginTop: windowWidth*0.01,
-  width: "95%",
   height: windowWidth * 0.10,
-  marginLeft: windowWidth*0.01,
+  marginLeft: -windowWidth*0.02,
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
-  // borderWidth: 1,
-  // borderColor: '#000000',
+  marginRight: windowWidth*0.04,
   backgroundColor: "#D9D9D9",
   paddingLeft: 15,
   paddingRight: 15,
   fontFamily: 'regular89',
   fontWeight: "700",
   paddingBottom: windowWidth * 0.01,
-  fontSize: 15,   
-}
+  fontSize: 15,  
+},
+subHead7:{
+  marginTop: windowWidth*0.01,
+  height: windowWidth * 0.10,
+  marginLeft: windowWidth*0.01,
+  paddingTop: windowWidth * 0.02,
+  borderRadius: windowWidth*0.01,
+  marginRight: windowWidth*0.04,
+  backgroundColor: "#D9D9D9",
+  paddingLeft: 15,
+  paddingRight: 15,
+  fontFamily: 'regular89',
+  fontWeight: "700",
+  paddingBottom: windowWidth * 0.01,
+  fontSize: 15,  
+},
+visitContainer: {
+  marginTop: 20,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 10,
+  padding: 10,
+},
+visitHeader: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  marginBottom: 10,
+},
+    container: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        paddingTop: windowWidth*-0.5,
+        
+    },
+    scrollContent: {
+        flexGrow: 1,
+    },
+    text45:{
+      marginTop: windowWidth*0.10,
+      fontSize:18,
+      fontFamily: 'bold01',
+      marginLeft: 20,
+  },
+    textContainer:{
+    backgroundColor: '#D9D9D9',
+    padding: 5,
+    borderRadius: windowWidth*0.01,
+    },
+    registerTextContainer: {
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    registerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+    },
+    profileContainer1: {
+        alignItems: 'center',
+        marginTop: 20,
+        borderRadius: windowWidth*0.01,
+        marginRight:windowWidth*0.3,
+    },
+    profileImage: {
+        width: windowWidth*0.3,
+        height: windowWidth*0.3,
+        resizeMode: 'cover',
+        borderRadius: 75,
+        marginLeft: windowWidth*0.3
+    },
+    profileText: {
+        marginTop: 10,
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginLeft: windowWidth*0.34
+    },
+    detailsContainer: {
+        marginTop: 20,
+        paddingHorizontal: windowWidth*0.025,
+        borderRadius: windowWidth*0.01,
+        marginLeft:windowWidth*0.01
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginTop: 10,
+        padding: 5,
+    },
+    value: {
+        fontSize: 16,
+       padding:windowWidth*0.01
+    },
+    buttonContainer: {
+
+        paddingTop: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        marginBottom: 20, 
+        marginTop: 'auto', 
+    },
+    button: {
+        height: 52,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 5,
+        width: '45%',
+    },
+    deleteButton: {
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: 'red',
+    },
+    deleteText: {
+        color: 'red',
+    },
+    updateButton: {
+        backgroundColor: '#008080',
+    },
+    updateText: {
+        color: '#FFFFFF',
+    },
+    buttonText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+        hospitalizationItem: {
+      marginBottom: 20,
+    },
+    scrollContent: {
+        flexGrow: 1,
+    },
+    profileContainer: {
+        // alignItems: 'center',
+        marginLeft: windowWidth*0.01,
+        marginTop: windowWidth*0.05,
+    },
+
+
 });
 
 export default NotificationDetails;

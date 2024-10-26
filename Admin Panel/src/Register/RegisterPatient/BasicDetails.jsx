@@ -27,7 +27,7 @@ const BasicDetails = ({ patientId }) => {
     if (!basicDetails) {
         return (
             <View style={styles.loadingContainer}>
-                <Text>Loading...</Text>
+                <Text style={styles.text45}>Loading...</Text>
             </View>
         );
     }
@@ -176,6 +176,12 @@ const styles = StyleSheet.create({
     },
     deleteText: {
         color: 'red',
+    },
+    text45:{
+        marginTop: windowWidth*0.10,
+        fontSize:18,
+        fontFamily: 'bold01',
+        marginLeft: 20,
     },
     updateButton: {
         backgroundColor: '#008080',
