@@ -8,7 +8,8 @@ import {
     allrequest,
     request,
     OneAppointmentDetails,
-    PatientCoordinator
+    PatientCoordinator,
+    requestNotification
 } from '../controller/patientController.js'
 const patientRouter = express.Router()
 
@@ -21,5 +22,6 @@ patientRouter.get("/OneAppointmentDetails/:visitid", OneAppointmentDetails);
 patientRouter.post("/RegiseterNewPatientRequest", createRequest);
 patientRouter.get("/allrequest/:id", allrequest);
 patientRouter.get("/request/:rid", request);
+patientRouter.get("/requestNotification/:id", requestNotification);
 
 export default patientRouter

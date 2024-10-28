@@ -155,7 +155,7 @@ export const PatientCoordinator = async (req, res) => {
       {
         name: 1,
         patientId: 1,
-        coordinator: 1 ,
+        coordinator: 1,
         _id: 0,
       }
     );
@@ -180,7 +180,7 @@ export const PatientsAllAppointments = async (req, res) => {
         name: 1,
         patientId: 1,
         consultingDoctor: 1,
-        coordinator: 1 ,
+        coordinator: 1,
         _id: 0,
       }
     );
@@ -243,11 +243,12 @@ export const createRequest = async (req, res) => {
     const isCritical = hospitalization?.isSelected === "yes" || demise?.isSelected === "yes";
     const status = isCritical ? 'Critical' : 'Normal';
 
-    // Get the total count of documents in the collection
-    const documentCount = await RequestSchema.countDocuments();
 
-    // Determine the next requestId
-    const nextRequestId = documentCount + 1;
+    // const documentCount = await RequestSchema.countDocuments();
+    // const nextRequestId = documentCount + 1;
+
+    const largestRequest = await RequestSchema.findOne().sort({ requestId: -1 });
+    const nextRequestId = largestRequest ? largestRequest.requestId + 1 : 1;
 
     const newRequest = {
       date: currentDate,
@@ -261,7 +262,7 @@ export const createRequest = async (req, res) => {
     };
 
     //this console.log prints the new request object perfectly with all the fields
-    console.log(newRequest)
+    //console.log(newRequest)
 
     // Create a new document with the new request
     const requestDocument = await RequestSchema.create(newRequest);
@@ -336,4 +337,31 @@ export const request = async (req, res) => {
   }
 };
 
+
+export const requestNotification = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const requestExists = await RequestSchema.exists({ patientId: id });
+    if (!requestExists) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const patientRequest = await RequestSchema.find(
+      {
+        patientId: id,
+        action: { $ne: "NA" }
+      },
+      {
+        requestId: 1,
+        action: 1,
+        request: 1,
+        _id: 0,
+      }
+    );
+    res.status(200).json(patientRequest.reverse());
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
