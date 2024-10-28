@@ -346,6 +346,7 @@ export const notification = async (req, res) => {
         date: 1,
         time: 1,
         request: 1,
+        action: 1,
         _id: 0
       });
 
@@ -369,7 +370,8 @@ export const notification = async (req, res) => {
           time: patient.time,
           request: patient.request,
           name: patientDetails.name,
-          image: patientDetails.image
+          image: patientDetails.image,
+          action: patient.action
         };
 
         // Push the patient object to the array
