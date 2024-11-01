@@ -397,9 +397,9 @@ export const action = async (req, res) => {
       return res.status(404).json({ message: "Patient request not found" });
     }
 
-    const updatedRequest = await RequestSchema.updateOne({ requestId: id }, { action: action });
+    const updatedRequest = await RequestSchema.updateOne({ requestId: id }, { action: action, viewed: false});
 
-    res.status(200).json({ message: "updated" });
+    res.status(200).json({ message: "updated"});
   } catch (err) {
     console.error("Error:", err);
     res.status(500).json({ message: "Internal server error" });

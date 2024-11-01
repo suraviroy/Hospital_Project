@@ -60,6 +60,7 @@ const requestSchema = new mongoose.Schema({
   },
   request: { type: String, default: "NA" },
   action: { type: String, default: "NA" },
+  viewed: { type: String, default: "true" },
 });
 
 const RequestSchema = mongoose.model("RequestList", requestSchema);

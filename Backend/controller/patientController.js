@@ -251,6 +251,7 @@ export const createRequest = async (req, res) => {
     const nextRequestId = largestRequest ? largestRequest.requestId + 1 : 1;
 
     const newRequest = {
+      viewed: true,
       date: currentDate,
       time: currentTime,
       requestId: nextRequestId,
@@ -365,3 +366,29 @@ export const requestNotification = async (req, res) => {
   }
 };
 
+export const countNotification = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const count = await RequestSchema.countDocuments({ patientId: id, viewed: false });
+
+    res.status(200).json({ count });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const seenNotification = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+ const result = await RequestSchema.updateMany(
+  { patientId: id, viewed: false },
+  { viewed: true }
+);
+
+res.status(200).json({ message: "All notifications marked as seen" });
+} catch (err) {
+res.status(500).json({ message: err.message });
+}
+};
