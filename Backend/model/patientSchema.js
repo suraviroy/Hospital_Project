@@ -914,6 +914,35 @@ const patientSchema = new mongoose.Schema({
             },
           ],
         },
+        ////////////////////////
+
+        otherdocuments: {
+          type: [
+            {
+              documentname: {
+                type: String,
+                default: "NA",
+              },
+              document: {
+                type: String,
+                default: "NA",
+              },
+            },
+          ],
+        },
+
+        prescription: {
+          type: [
+            {
+              prescriptiondocument: {
+                type: String,
+                default: "NA",
+              },
+            },
+          ],
+        },
+
+        //////////////////////////
         statusOfSickness: {
           type: String,
           default: "NA",

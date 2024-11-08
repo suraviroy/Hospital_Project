@@ -34,7 +34,7 @@ export const patientregistration = async (req, res) => {
 
     const finduser = await PatientSchema.findOne({ patientId: patientId });
     if (finduser) {
-      console.log("user exist");
+      //console.log("user exist");
       return res.status(200).json({ message: "ID already exists" });
     } else {
       const newUser = await PatientSchema.create({
@@ -268,7 +268,7 @@ export const patientEachVistDetails = async (req, res) => {
     patient.visitCount.push(visitData);
     patient.status = "Updated";
 
-    console.log(patient)
+    //console.log(patient)
 
     const updatedPatient = await patient.save();
 

@@ -34,7 +34,7 @@ import moment from "moment-timezone";
 // };
 export const login = async (req, res) => {
   const { patientId, password } = req.body;
-  console.log(patientId, password);
+  //console.log(patientId, password);
   try {
     const existingUser = await PatientSchema.findOne({ patientId });
     if (!existingUser)
@@ -71,15 +71,15 @@ export const HomePageDetails = async (req, res) => {
   try {
     const id = req.params.id;
 
+    // Check if patient exists
     const patientExists = await PatientSchema.exists({ patientId: id });
     if (!patientExists) {
       return res.status(404).json({ message: "Patient not found" });
     }
 
+    // Fetch patient details
     const registeredPatientsName = await PatientSchema.find(
-      {
-        patientId: id,
-      },
+      { patientId: id },
       {
         name: 1,
         gender: 1,
@@ -92,7 +92,39 @@ export const HomePageDetails = async (req, res) => {
         time: 1,
       }
     );
-    res.status(200).json(registeredPatientsName);
+
+    // Create variables for degree and medicine
+    let degree = null;
+    let medicine = null;
+
+    // Assign degree and medicine based on the consulting doctor
+    if (registeredPatientsName[0]?.consultingDoctor === 'Dr. Parthasarathi Bhattacharyya') {
+      degree = 'MD, DNBE';
+      medicine = 'Pulmonary Medicine';
+    } else if (registeredPatientsName[0]?.consultingDoctor === 'Dr. Avishek Kar') {
+      degree = 'MD';
+      medicine = 'Pulmonary Medicine';
+    } else if (registeredPatientsName[0]?.consultingDoctor === 'Dr. Abhra Ch. Chowdhury') {
+      degree = 'DNB, DM';
+      medicine = null;  // No specific medicine
+    } else if (registeredPatientsName[0]?.consultingDoctor === 'Dr. Ashok Saha') {
+      degree = 'MS, DNB, D.Orth';
+      medicine = null;  // No specific medicine
+    }
+
+    // Add degree and medicine to each patient's details
+    const updatedPatientsName = registeredPatientsName.map(patient => ({
+      ...patient.toObject(),
+      degree: degree,
+      medicine: medicine,
+    }));
+
+    // Log the details for debugging purposes
+   // console.log("Registered Patients Details:", updatedPatientsName);
+
+    // Send the response with patient details including degree and medicine
+    res.status(200).json(updatedPatientsName);
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -169,12 +201,13 @@ export const PatientsAllAppointments = async (req, res) => {
   try {
     const id = req.params.id;
 
+    // Check if patient exists
     const patientExists = await PatientSchema.exists({ patientId: id });
     if (!patientExists) {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    const patientInfo = await PatientSchema.findOne(
+    let patientInfo = await PatientSchema.findOne(
       { patientId: id },
       {
         name: 1,
@@ -185,29 +218,64 @@ export const PatientsAllAppointments = async (req, res) => {
       }
     );
 
+  
+    let degree = null;
+    let medicine = null;
+
+  
+    if (patientInfo.consultingDoctor === 'Dr. Parthasarathi Bhattacharyya') {
+      degree = 'MD, DNBE';
+      medicine = 'Pulmonary Medicine';
+    } else if (patientInfo.consultingDoctor === 'Dr. Avishek Kar') {
+      degree = 'MD';
+      medicine = 'Pulmonary Medicine';
+    } else if (patientInfo.consultingDoctor === 'Dr. Abhra Ch. Chowdhury') {
+      degree = 'DNB, DM';
+      medicine = null;  
+    } else if (patientInfo.consultingDoctor === 'Dr. Ashok Saha') {
+      degree = 'MS, DNB, D.Orth';
+      medicine = null;  
+    }
+
+    patientInfo = patientInfo.toObject();
+
+    
+    // console.log("Patient Info:", patientInfo);
+    // console.log("Degree:", degree);
+    // console.log("Medicine:", medicine);
+
+   
     const patientAppointments = await PatientSchema.findOne(
       { patientId: id },
       { visitCount: 1, _id: 0 }
     );
 
-    const allAppointments = patientAppointments.visitCount.map((visit) => ({
+ 
+    const allAppointments = patientAppointments?.visitCount?.map((visit) => ({
       visitDate: visit.visitDate,
       visitTime: visit.visitTime,
       id: visit._id
-    }));
-    res
-      .status(200)
-      .json({ patientInfo: patientInfo, appointments: allAppointments });
+    })) || []; 
+
+  
+    res.status(200).json({
+      patientInfo: patientInfo,
+      degree: degree,
+      medicine: medicine,
+      appointments: allAppointments
+    });
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
+
 export const OneAppointmentDetails = async (req, res) => {
 
   try {
     const visitid = req.params.visitid; // ID of the specific visit inside visitCount
-    console.log(visitid);
+    //console.log(visitid);
     // Find the patient document containing the specified visit _id
     const patient = await PatientSchema.findOne(
       { "visitCount._id": visitid },
@@ -270,7 +338,7 @@ export const createRequest = async (req, res) => {
     // const savedRequest = await requestDocument.save();
 
     res.status(200).json(requestDocument);
-    console.log('New document created');
+    //console.log('New document created');
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
