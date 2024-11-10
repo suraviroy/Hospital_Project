@@ -255,7 +255,8 @@ export const PatientsAllAppointments = async (req, res) => {
       visitDate: visit.visitDate,
       visitTime: visit.visitTime,
       id: visit._id
-    })) || []; 
+    }))
+    .reverse();
 
   
     res.status(200).json({
