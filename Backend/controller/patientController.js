@@ -88,8 +88,8 @@ export const HomePageDetails = async (req, res) => {
         image: 1,
         _id: 0,
         consultingDoctor: 1,
-        date: 1,
-        time: 1,
+        date: { $arrayElemAt: ["$visitCount.visitDate", -1] },
+        time: { $arrayElemAt: ["$visitCount.visitTime", -1] },
       }
     );
 
