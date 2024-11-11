@@ -318,7 +318,7 @@ export const patientDisease = async (req, res) => {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    const registeredPatientsName = await PatientSchema.findOne(
+    const registeredPatientsName = await PatientSchema.find(
       {
         patientId: id,
       },
@@ -328,9 +328,9 @@ export const patientDisease = async (req, res) => {
         _id: 0,
       }
     );
-    if (registeredPatientsName?.visitCount) {
-      registeredPatientsName.visitCount = registeredPatientsName.visitCount.reverse();
-    }
+    // if (registeredPatientsName.visitCount) {
+    //   registeredPatientsName.visitCount = registeredPatientsName.visitCount.reverse();
+    // }
     res.status(200).json(registeredPatientsName);
   } catch (err) {
     res.status(500).json({ message: err.message });
