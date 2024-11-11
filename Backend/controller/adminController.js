@@ -331,6 +331,11 @@ export const patientDisease = async (req, res) => {
     // if (registeredPatientsName.visitCount) {
     //   registeredPatientsName.visitCount = registeredPatientsName.visitCount.reverse();
     // }
+    registeredPatientsName.forEach(patient => {
+      if (patient.visitCount) {
+        patient.visitCount = patient.visitCount.reverse();
+      }
+    });
     res.status(200).json(registeredPatientsName);
   } catch (err) {
     res.status(500).json({ message: err.message });
