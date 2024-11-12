@@ -3,6 +3,7 @@ import RequestSchema from "../model/requestSchema.js";
 import AdminSchema from "../model/adminSchema.js";
 import moment from "moment-timezone";
 import excelJS from 'exceljs';
+import FeedbackSchema from "../model/feedbackSchema.js";
 
 export const patientregistration = async (req, res) => {
   try {
@@ -379,7 +380,9 @@ export const notification = async (req, res) => {
           request: patient.request,
           name: patientDetails.name,
           image: patientDetails.image,
-          action: patient.action
+          action: patient.action,
+          coordinator: patientDetails.coordinator,
+          contactNumber: patientDetails.contactNumber
         };
 
         // Push the patient object to the array
@@ -389,6 +392,7 @@ export const notification = async (req, res) => {
 
     // Send the array of patient details as the response
     patientDetailsArray.reverse();
+    //console.log(patientDetailsArray)
     res.status(200).json(patientDetailsArray);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -405,9 +409,9 @@ export const action = async (req, res) => {
       return res.status(404).json({ message: "Patient request not found" });
     }
 
-    const updatedRequest = await RequestSchema.updateOne({ requestId: id }, { action: action, viewed: false});
+    const updatedRequest = await RequestSchema.updateOne({ requestId: id }, { action: action, viewed: false });
 
-    res.status(200).json({ message: "updated"});
+    res.status(200).json({ message: "updated" });
   } catch (err) {
     console.error("Error:", err);
     res.status(500).json({ message: "Internal server error" });
@@ -442,6 +446,118 @@ export const coordinatorPatients = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+export const updateBasicDetails = async (req, res) => {
+  try {
+    const { id } = req.params; // Get patient ID from route parameter
+    const updateData = req.body; // Get updated fields from request body
+
+    // Check if the patient with the given patientId exists
+    const updatedUser = await PatientSchema.findOneAndUpdate(
+      { patientId: id },
+      updateData,
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    res.status(200).json({ message: "Profile updated successfully", data: updatedUser });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ error: "An error occurred while updating profile" });
+  }
+};
+
+export const countAdminNotification = async (req, res) => {
+  try {
+    const id = req.params.cid;
+
+    const count = await RequestSchema.countDocuments({ coordinatorId: id, coordinatorviewed: false });
+
+    res.status(200).json({ count });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const seenAdminNotification = async (req, res) => {
+  try {
+    const id = req.params.cid;
+
+    const result = await RequestSchema.updateMany(
+      { coordinatorId: id, coordinatorviewed: false },
+      { coordinatorviewed: true }
+    );
+
+    res.status(200).json({ message: "All notifications marked as seen" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const oneAdminNotification = async (req, res) => {
+
+  const id = req.params.cid;
+
+  try {
+    const requestedPatients = await RequestSchema.find({
+      coordinatorId: id
+    },
+      {
+        requestId: 1,
+        patientId: 1,
+        status: 1,
+        date: 1,
+        time: 1,
+        request: 1,
+        action: 1,
+        coordinatorId: 1,
+        _id: 0
+      });
+
+    // Array to hold details for all patients
+    const patientDetailsArray = [];
+
+    // Iterate through each requested patient
+    for (const patient of requestedPatients) {
+      const patientId = patient.patientId;
+
+      // Fetch details for the current patient ID from another schema (assuming PatientSchema)
+      const patientDetails = await PatientSchema.findOne({ patientId });
+
+      if (patientDetails) {
+
+        const patientObject = {
+          requestId: patient.requestId,
+          patientId: patient.patientId,
+          status: patient.status,
+          date: patient.date,
+          time: patient.time,
+          request: patient.request,
+          name: patientDetails.name,
+          image: patientDetails.image,
+          action: patient.action,
+          coordinator: patientDetails.coordinator,
+          contactNumber: patientDetails.contactNumber,
+          coordinatorId: patient.coordinatorId
+        };
+
+        // Push the patient object to the array
+        patientDetailsArray.push(patientObject);
+      }
+    }
+
+    // Send the array of patient details as the response
+    patientDetailsArray.reverse();
+    //console.log(patientDetailsArray)
+    res.status(200).json(patientDetailsArray);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 
 
 export const excelFile = async (req, res) => {
@@ -967,6 +1083,63 @@ export const excelFile = async (req, res) => {
       cell.font = { bold: true };
     })
 
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheatml.sheet"
+    )
+    res.setHeader("Content-Disposition", `attachment; filename= users.xlsx`);
+
+    return workbook.xlsx.write(res).then(() => {
+      res.status(200)
+    })
+
+  } catch (error) {
+    console.log(error.message)
+  }
+};
+
+
+export const excelFileFeedback = async (req, res) => {
+  //
+  try {
+    const workbook = new excelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Feedback Details");
+
+    worksheet.columns = [
+      { header: "Sl No", key: "s_no" },
+      { header: "Name", key: "name" },
+      { header: "PatientId", key: "patientId" },
+      { header: "Phone number", key: "phonenumber" },
+      { header: "Date", key: "date" },
+      { header: "Time", key: "time" },
+      { header: "Rating", key: "rating" },
+      { header: "Feedback", key: "feedback" },
+    ]
+
+    let counter = 1;
+    const userData = await FeedbackSchema.find();
+
+    userData.forEach((patient) => {
+      const rowData = {
+        s_no: counter,
+        name: patient.name,
+        patientId: patient.patientId,
+        phonenumber: patient.phonenumber,
+        date: patient.date,
+        time: patient.time,
+        rating: patient.rating,
+        feedback: patient.feedback,
+      };
+
+      //console.log(visit?.existingDeseases?.diabetes?.duration?.numericValue)
+
+
+      worksheet.addRow(rowData);
+      counter++;
+    });
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.font = { bold: true };
+    })
     res.setHeader(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheatml.sheet"

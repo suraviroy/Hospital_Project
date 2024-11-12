@@ -11,7 +11,8 @@ import {
     PatientCoordinator,
     requestNotification,
     countNotification,
-    seenNotification
+    seenNotification,
+    sendFeedback
 } from '../controller/patientController.js'
 const patientRouter = express.Router()
 
@@ -27,5 +28,6 @@ patientRouter.get("/request/:rid", request);
 patientRouter.get("/requestNotification/:id", requestNotification);
 patientRouter.get("/countNotification/:id", countNotification);
 patientRouter.post("/seenNotification/:id", seenNotification);
+patientRouter.post("/sendFeedback", sendFeedback);
 
 export default patientRouter

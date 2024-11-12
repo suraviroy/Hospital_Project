@@ -1,6 +1,8 @@
 import PatientSchema from "../model/patientSchema.js";
 import RequestSchema from "../model/requestSchema.js";
+import FeedbackSchema from "../model/feedbackSchema.js";
 import moment from "moment-timezone";
+import AdminSchema from "../model/adminSchema.js";
 
 // export const login = async (req, res) => {
 //   const { patientId, password } = req.body;
@@ -312,6 +314,10 @@ export const createRequest = async (req, res) => {
     const isCritical = hospitalization?.isSelected === "yes" || demise?.isSelected === "yes";
     const status = isCritical ? 'Critical' : 'Normal';
 
+    const patientDetails = await PatientSchema.findOne({ patientId });
+
+    const coordinator = await AdminSchema.findOne({ name: patientDetails.coordinator });
+    const coordinatorId = coordinator?.idNumber; // assuming `_id` is the unique identifier in AdminSchema
 
     // const documentCount = await RequestSchema.countDocuments();
     // const nextRequestId = documentCount + 1;
@@ -321,6 +327,9 @@ export const createRequest = async (req, res) => {
 
     const newRequest = {
       viewed: true,
+      coordinatorviewed: false,
+      coordinatorName: patientDetails.coordinator,
+      coordinatorId: coordinatorId,
       date: currentDate,
       time: currentTime,
       requestId: nextRequestId,
@@ -460,4 +469,43 @@ res.status(200).json({ message: "All notifications marked as seen" });
 } catch (err) {
 res.status(500).json({ message: err.message });
 }
+};
+
+
+//Feedback
+
+
+export const sendFeedback = async (req, res) => {
+  try {
+    const desiredTimezone = 'Asia/Kolkata';
+    const currentDate = moment().tz(desiredTimezone).format('MMMM D, YYYY');
+    const currentTime = moment().tz(desiredTimezone).format('hh:mm A');
+
+    const { patientId, name, phonenumber, rating, feedback  } = req.body;
+    
+
+    const largestFeedback = await FeedbackSchema.findOne().sort({ feedbackId: -1 });
+    const nextFeedbackId = largestFeedback ? largestFeedback.feedbackId + 1 : 1;
+
+    const newFeedback = {
+      date: currentDate,
+      time: currentTime,
+      feedbackId: nextFeedbackId,
+      patientId,
+      name,
+      phonenumber,
+      rating,
+      feedback,
+    };
+
+
+    // Create a new document with the new request
+    const requestDocument = await FeedbackSchema.create(newFeedback);
+    // const savedRequest = await requestDocument.save();
+
+    res.status(200).json(requestDocument);
+    //console.log('New document created');
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };

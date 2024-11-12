@@ -13,7 +13,12 @@ import {
   excelFile,
   notification,
   action,
-  coordinatorPatients
+  coordinatorPatients,
+  excelFileFeedback,
+  updateBasicDetails,
+  countAdminNotification,
+  seenAdminNotification,
+  oneAdminNotification
 } from "../controller/adminController.js";
 const adminRouter = express.Router();
 
@@ -30,5 +35,12 @@ adminRouter.get("/excelFile", excelFile);
 adminRouter.get("/notification", notification);
 adminRouter.post("/action/:rid", action);
 adminRouter.get("/coordinatorPatients/:coname", coordinatorPatients);
+adminRouter.put("/updateBasicDetails/:id", updateBasicDetails);
+
+adminRouter.get("/excelFileFeedback", excelFileFeedback);
+
+adminRouter.get("/countAdminNotification/:cid", countAdminNotification);
+adminRouter.post("/seenAdminNotification/:cid", seenAdminNotification);
+adminRouter.get("/oneAdminNotification/:cid", oneAdminNotification);
 
 export default adminRouter;

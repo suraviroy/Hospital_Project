@@ -13,6 +13,11 @@ export const adminregistration = async (req, res) => {
       picture,
     } = req.body;
 
+
+    const existingUser = await AdminSchema.findOne({ idNumber });
+    if (existingUser) {
+      return res.status(400).json({ message: "ID number already exists" });
+    }
     // Get the desired time zone (e.g., server's time zone or a specific time zone)
     const desiredTimezone = "Asia/Kolkata"; // Replace with your desired time zone
 

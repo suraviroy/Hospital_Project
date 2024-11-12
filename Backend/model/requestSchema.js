@@ -61,6 +61,9 @@ const requestSchema = new mongoose.Schema({
   request: { type: String, default: "NA" },
   action: { type: String, default: "NA" },
   viewed: { type: String, default: "true" },
+  coordinatorviewed: { type: String, default: "false" },
+  coordinatorName: { type: String },
+  coordinatorId: { type: String },
 });
 
 const RequestSchema = mongoose.model("RequestList", requestSchema);
