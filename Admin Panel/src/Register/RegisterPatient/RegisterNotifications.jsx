@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {View, StyleSheet, Text, TouchableOpacity, FlatList, Dimensions} from 'react-native';
+import {View, StyleSheet, Platform,StatusBar,Text, TouchableOpacity, FlatList, Dimensions} from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -30,6 +30,11 @@ const RegisterNotifications =() => {
     );
     return (
         <SafeAreaView style = {styles.appbar13}>
+             <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF"  // Match your app's background color
+            translucent={false}
+        />
             <View style={styles.container}>
             <View style={styles.headerContainer}>
                 {headerRegPatients()}

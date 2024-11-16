@@ -30,7 +30,7 @@ const BottomNavigation = () => {
     return (
         <Tab.Navigator
             initialRouteName='Home'
-            activeColor='#0E79B5'
+            activeColor='#357EEA'
             tabBarHideKeyBoard={true}
             headShown={false}
             inactiveColor="#3e2465"
@@ -40,20 +40,20 @@ const BottomNavigation = () => {
                     let iconName;
                     if (route.name === 'Home') {
                         iconName = focused ? 'home-sharp' : 'home-outline';
-                        return <Ionicons name={iconName} size={26} color={focused ? '#0E79B5' : '#706767'} />;
+                        return <Ionicons name={iconName} size={26} color={focused ? '#357EEA' : '#706767'} />;
                     } else if (route.name === 'Notification') {
                         iconName = focused ? 'hand-holding-medical' : 'hand-holding-medical';
-                        return <FontAwesome6 name={iconName} size={26} color={focused ? '#0E79B5' : '#706767'} />;
+                        return <FontAwesome6 name={iconName} size={26} color={focused ? '#357EEA' : '#706767'} />;
                     } else if (route.name === 'Reports') {
                         iconName = focused ? 'prescription' : 'prescription';
-                        return <Fontisto name={iconName} size={26} color={focused ? '#0E79B5' : '#706767'} />;
+                        return <Fontisto name={iconName} size={26} color={focused ? '#357EEA' : '#706767'} />;
                     } else if (route.name === 'MyProfile') {
                         iconName = focused ? 'person-circle-sharp' : 'person-circle-outline';
-                        return <Ionicons name={iconName} size={26} color={focused ? '#0E79B5' : '#706767'} />;
+                        return <Ionicons name={iconName} size={26} color={focused ? '#357EEA' : '#706767'} />;
                     }
                 },
                 tabBarLabelStyle: tabBarLabelStyle,
-                tabBarActiveTintColor: '#0E79B5',
+                tabBarActiveTintColor: '#357EEA',
                 tabBarInactiveTintColor: '#706767',
                 tabBarStyle: tabBarStyle,
             })}

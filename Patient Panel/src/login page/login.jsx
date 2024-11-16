@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback, useMemo } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, ActivityIndicator, Alert } from 'react-native';
+import { View,Platform,StatusBar, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, ActivityIndicator, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 import { backendURL } from "../backendapi";
@@ -24,7 +24,7 @@ const Login = () => {
         setIsLoading(true);
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            const timeoutId = setTimeout(() => controller.abort(), 50000);
 
             const response = await fetch(patientLoginURL, {
                 method: 'POST',
@@ -76,6 +76,11 @@ const Login = () => {
 
     return (
         <View style={styles.container01}>
+            <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF" 
+            translucent={false}
+        />
             <View style={styles.backgroundOverlay01}></View>
             <Text style={[styles.loginText01, { top: height * 0.1 }]}>LOG IN</Text>
 

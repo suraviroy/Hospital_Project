@@ -27,7 +27,7 @@ const Exposure = forwardRef((props, ref) => {
         { value: 'Days', key: 'DY' },
         { value: 'Weeks', key: 'WK' },
         { value: 'Months', key: 'MT' },
-        { value: 'Years', key: 'YR' },
+        { value: 'Year/s', key: 'YR' },
     ];
 
     const handleTypeOfExposureChange = (text) => {

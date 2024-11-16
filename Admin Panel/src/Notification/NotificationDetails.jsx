@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text,Platform,StatusBar, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions,Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native'; 
 const windowWidth = Dimensions.get('window').width;
@@ -73,8 +73,7 @@ const NotificationDetails = ({ patientId }) => {
             <Text style={styles.visitHeaderText}>Visit Date: {visit.visitDate}  Time: {visit.visitTime}</Text>
             <Ionicons 
               name={isExpanded ? "chevron-up" : "chevron-down"}   
-              marginLeft={windowWidth*0.03}
-              size={24} 
+              size={20} 
               color="#000" 
             />
             </View>
@@ -87,6 +86,8 @@ const NotificationDetails = ({ patientId }) => {
               {renderProblemForConsultation(visit.problemForConsultation)}
               {renderImportantHistory(visit.importantHistory)}
               {renderPastHospitalization(visit.pastHospitalization)}
+              {renderPrescription(visit.prescription)}
+              {renderOtherDocuments(visit.otherdocuments)}
               <View  style={styles.backField2}>
               <Text style={styles.subHead6}>Status of Sickness: {visit.statusOfSickness}</Text>
               <Text style={styles.subHead6}>CAT Score: {visit.catScore}</Text>
@@ -282,52 +283,52 @@ const NotificationDetails = ({ patientId }) => {
               )}
           </View>
            )}
-          {existingDeseases && (
-            <View  style={styles.backField}>
-               {existingDeseases.malignancy && existingDeseases.malignancy.duration.numericValue !== 0 && (
-                <Text style={styles.subHead4}>Disease:  Malignancy{"\n"}
-               Organ:   {existingDeseases.malignancy.organ}
-               {' '}  Duration:  {existingDeseases.malignancy.duration.numericValue} 
-               {' '}  Unit:  {existingDeseases.malignancy.duration.unit}{"\n"}
-               Status of Disease:  {existingDeseases.malignancy.statusOfDisease}
-               </Text>
-              )}
-          </View>
-           )}
-             {existingDeseases && (
-            <View  style={styles.backField}>
-               {existingDeseases.dyslipidemia && existingDeseases.dyslipidemia.duration.numericValue !== 0 && (
-                <Text style={styles.subHead4}>Disease:  Dyslipidemia{"\n"}
-               Duration:  {existingDeseases.dyslipidemia.duration.numericValue} 
-               {' '}  Unit:  {existingDeseases.dyslipidemia.duration.unit}{"\n"}
-               Status of Disease:  {existingDeseases.dyslipidemia.statusOfDisease}
-               </Text>
-              )}
-          </View>
-           )}
-          {existingDeseases && (
-            <View  style={styles.backField}>
-               {existingDeseases.cld && existingDeseases.cld.duration.numericValue !== 0 && (
-                <Text style={styles.subHead4}>Disease:  CLD{"\n"}
-               Duration:  {existingDeseases.cld.duration.numericValue} 
-               {' '}  Unit:  {existingDeseases.cld.duration.unit}{"\n"}
-               Status of Disease:  {existingDeseases.cld.statusOfDisease}
-               </Text>
-              )}
-          </View>
-           )}
-             {existingDeseases && (
-            <View  style={styles.backField}>
-               {existingDeseases.ckd && existingDeseases.ckd.duration.numericValue !== 0 && (
-                <Text style={styles.subHead4}>Disease:  CKD{"\n"}
-               Organ:   {existingDeseases.ckd.typeofckd}
-               {' '}  Duration:  {existingDeseases.ckd.duration.numericValue}{"\n"}
-               Unit:  {existingDeseases.ckd.duration.unit}
-               {' '}  Status of Disease:  {existingDeseases.ckd.statusOfDisease}
-               </Text>
-              )}
-          </View>
-           )}
+        {existingDeseases && (
+          <View  style={styles.backField}>
+             {existingDeseases.malignancy && existingDeseases.malignancy.duration.numericValue !== 0 && (
+              <Text style={styles.subHead4}>Disease:  Malignancy{"\n"}
+             Organ:   {existingDeseases.malignancy.organ}
+             {' '} Duration:  {existingDeseases.malignancy.duration.numericValue}{"\n"} 
+              Unit:  {existingDeseases.malignancy.duration.unit} {' '} 
+             Status of Disease:  {existingDeseases.malignancy.statusOfDisease}
+             </Text>
+            )}
+        </View>
+         )}
+           {existingDeseases && (
+          <View  style={styles.backField}>
+             {existingDeseases.dyslipidemia && existingDeseases.dyslipidemia.duration.numericValue !== 0 && (
+              <Text style={styles.subHead4}>Disease:  Dyslipidemia{"\n"}
+             Duration:  {existingDeseases.dyslipidemia.duration.numericValue} 
+             {' '}  Unit:  {existingDeseases.dyslipidemia.duration.unit}{"\n"}
+             Status of Disease:  {existingDeseases.dyslipidemia.statusOfDisease}
+             </Text>
+            )}
+        </View>
+         )}
+        {existingDeseases && (
+          <View  style={styles.backField}>
+             {existingDeseases.cld && existingDeseases.cld.duration.numericValue !== 0 && (
+              <Text style={styles.subHead4}>Disease:  CLD{"\n"}
+             Duration:  {existingDeseases.cld.duration.numericValue} 
+             {' '}  Unit:  {existingDeseases.cld.duration.unit}{"\n"}
+             Status of Disease:  {existingDeseases.cld.statusOfDisease}
+             </Text>
+            )}
+        </View>
+         )}
+           {existingDeseases && (
+          <View  style={styles.backField}>
+             {existingDeseases.ckd && existingDeseases.ckd.duration.numericValue !== 0 && (
+              <Text style={styles.subHead5}>Disease:  CKD {"\n"}
+             Type of CKD:   {existingDeseases.ckd.typeofckd} {"\n"}
+            Duration:  {existingDeseases.ckd.duration.numericValue}  {' '}  
+             Unit:  {existingDeseases.ckd.duration.unit} {"\n"}
+            Status of Disease:  {existingDeseases.ckd.statusOfDisease}
+             </Text>
+            )}
+        </View>
+         )}
              {existingDeseases && (
             <View  style={styles.backField}>
                {existingDeseases.others && existingDeseases.others.duration.numericValue !== 0 && (
@@ -661,10 +662,72 @@ const NotificationDetails = ({ patientId }) => {
      </View>
       );
     };
+    const renderOtherDocuments = (otherdocuments) => {
+      if (!otherdocuments) return null;
+    
+      return (
+        <View style={styles.exiDisContainer}>
+        {  otherdocuments &&   otherdocuments.length > 0 && (
+          <Text style={styles.texthead2}>Other Docmunets</Text>
+        )}
+        {  otherdocuments &&   otherdocuments.length > 0 && (
+          <View style={styles.backField}>
+            {  otherdocuments.map((hospitalization, index) => (
+              <View key={index} style={styles.hospitalizationItem}>
+              <Text style={styles.subHead5}>
+             Document Name: {hospitalization.documentname}{'\n'}
+                  {hospitalization.document === 'NA' ? (
+              <Text style={{ borderRadius: 4, padding: 7, fontSize: 13, fontWeight: '700' }}>Not Uploaded</Text>
+            ) : (
+              <TouchableOpacity onPress={() => handleDischargeCertificatePress(hospitalization.document)}>
+                <Text style={{marginTop: windowWidth*0.03, marginLeft: windowWidth*0.05,width:windowWidth*0.2, backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open PDF</Text>
+              </TouchableOpacity>
+            )}
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
+   </View>
+    );
+  };
+  
+      const renderPrescription = (prescription) => {
+        if (!prescription) return null;
+      
+      return (
+        <View style={styles.exiDisContainer}>
+        {  prescription &&   prescription.length > 0 && (
+          <Text style={styles.texthead2}>Prescription</Text>
+        )}
+        {  prescription &&   prescription.length > 0 && (
+          <View style={styles.backField}>
+            {  prescription.map((hospitalization, index) => (
+              <View key={index} style={styles.hospitalizationItem}>
+                    {hospitalization. prescriptiondocument === 'NA' ? (
+                <Text style={{ borderRadius: 4, padding: 7, fontSize: 13, fontWeight: '700' }}>Not Uploaded</Text>
+              ) : (
+                <TouchableOpacity onPress={() => handleDischargeCertificatePress(hospitalization.prescriptiondocument)}>
+                  <Text style={{marginLeft: windowWidth*0.05,width:windowWidth*0.2, backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open PDF</Text>
+                </TouchableOpacity>
+              )}
+                  
+                </View>
+              ))}
+            </View>
+          )}
+     </View>
+      );
+    };
   
     
     return (
         <SafeAreaView style={styles.container}>
+           <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF"
+            translucent={false}
+        />
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* <View style={styles.registerTextContainer}>
                     <Text style={styles.registerText}>Patient Basic Details</Text>
@@ -723,7 +786,8 @@ const NotificationDetails = ({ patientId }) => {
                 </View>
           <View style={styles.profileContainer}>
           <View style={styles.backField3}>
-          <Text style={styles.subHead7}>Coordinator: {coordinator}</Text>
+          <Text style={styles.label}>Coordinator:</Text>
+          <Text style={styles.subHead7}>{coordinator}</Text>
           </View>
           {visitData.map((visit, index) => renderVisitDetails(visit, index))}
         </View>
@@ -749,7 +813,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
   },
   visitHeaderText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
   },
   visitDetails: {
@@ -762,7 +826,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     profileContainer: {
-        marginLeft: windowWidth*0.02,
+        marginLeft: windowWidth*0.01,
         marginTop: windowWidth*0.05,
         marginRight: windowWidth*0.01,
     },
@@ -801,7 +865,7 @@ texthead3: {
 },
 subHead:{
     width: "95%",
-    height: windowWidth * 0.10,
+    // height: windowWidth * 0.10,
     marginTop: windowWidth * 0.01,
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
@@ -815,7 +879,7 @@ subHead:{
 subHead2:{
     marginTop: windowWidth*0.01,
     width: "95%",
-    height: windowWidth * 0.10,
+    // height: windowWidth * 0.10,
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
     backgroundColor: "#D9D9D9",
@@ -828,7 +892,7 @@ subHead2:{
 subHead3:{
     marginTop: windowWidth*0.01,
     width: "95%",
-    height: windowWidth * 0.15,
+    // height: windowWidth * 0.15,
     backgroundColor: "#e3e3e3",
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
@@ -843,7 +907,7 @@ subHead3:{
 subHead4:{
   marginTop: windowWidth*0.01,
   width: "95%",
-  height: windowWidth * 0.20,
+  // height: windowWidth * 0.20,
   backgroundColor: "#e3e3e3",
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
@@ -858,7 +922,7 @@ subHead4:{
 subHead5:{
   marginTop: windowWidth*0.01,
   width: "95%",
-  height: windowWidth * 0.28,
+  // height: windowWidth * 0.28,
   backgroundColor: "#e3e3e3",
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
@@ -872,7 +936,7 @@ subHead5:{
 },
 subHead6:{
   marginTop: windowWidth*0.01,
-  height: windowWidth * 0.10,
+  // height: windowWidth * 0.10,
   marginLeft: -windowWidth*0.02,
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
@@ -887,7 +951,7 @@ subHead6:{
 },
 subHead7:{
   marginTop: windowWidth*0.01,
-  height: windowWidth * 0.10,
+  // height: windowWidth * 0.10,
   marginLeft: windowWidth*0.01,
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,

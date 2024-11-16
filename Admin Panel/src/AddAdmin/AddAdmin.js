@@ -1,6 +1,22 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, SafeAreaView, TextInput, TouchableOpacity, Image, Dimensions, FlatList, ActivityIndicator } from 'react-native';
+import { 
+    View, 
+    StyleSheet, 
+    Text, 
+    SafeAreaView, 
+    TextInput, 
+    TouchableOpacity, 
+    Image, 
+    ScrollView, 
+    ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
+    StatusBar,
+    Dimensions,
+    Alert,
+} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
 import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
@@ -33,20 +49,67 @@ const AddAdmin = () => {
         {label: 'Other', value: 'other'}
     ]);
 
+    // const pickImage = async () => {
+
+    //     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        
+    //     if (status !== 'granted') {
+    //         alert('Sorry, we need camera roll permissions to make this work!');
+    //         return;
+    //     }
+    //     let result = await ImagePicker.launchImageLibraryAsync({
+    //         mediaTypes: ImagePicker.MediaTypeOptions.All,
+    //         allowsEditing: true,
+    //         aspect: [4, 3],
+    //         quality: 1,
+    //         base64: true,
+    //     });
+    
+    //     if (!result.cancelled && result.assets.length > 0) {
+    //         setImage(result.assets[0].uri);
+    //     }
+    // };
     const pickImage = async () => {
+        const options = [
+            { text: 'Choose from Library', onPress: pickFromLibrary },
+            { text: 'Take Photo', onPress: takePhoto },
+            { text: 'Cancel', style: 'cancel' }
+        ];
+    
+        Alert.alert('Select Image', 'Choose an option', options);
+    };
+    
+    const pickFromLibrary = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             aspect: [4, 3],
             quality: 1,
-            base64: true,
         });
-
-        if (!result.cancelled && result.assets.length > 0) {
+    
+        if (!result.canceled && result.assets.length > 0) {
             setImage(result.assets[0].uri);
         }
     };
-
+    
+    const takePhoto = async () => {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        
+        if (status !== 'granted') {
+            Alert.alert('Camera permission needed', 'Please enable camera permissions in your settings.');
+            return;
+        }
+    
+        let result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+    
+        if (!result.canceled && result.assets.length > 0) {
+            setImage(result.assets[0].uri);
+        }
+    };
     const handleCancel = () => {
         navigation.goBack();
     };
@@ -155,80 +218,13 @@ const AddAdmin = () => {
         navigation.goBack();
     };
 
-    const renderHeader = () => (
-        <View style={styles.innerContainer}>
-            <View style={styles.imagePickerContainer}>
-                {!image && <Image source={require("../../assets/images/user.png")} style={styles.backgroundImage} />}
-                {image && <Image source={{ uri: image }} style={styles.selectedImage} />}
-                <TouchableOpacity onPress={pickImage}>
-                    <Text style={styles.buttonText}>Add Picture</Text>
-                </TouchableOpacity>
-            </View>
-            <Text style={styles.label}>Your Name*</Text>
-            <TextInput
-                style={[styles.input, nameError && styles.inputError]}
-                placeholder="Enter here"
-                value={name}
-                onChangeText={setName}
-            />
-            {nameError && <Text style={styles.errorText}>*Required field</Text>}
-            <Text style={styles.label}>Your Phone Number*</Text>
-            <TextInput
-                style={[styles.input, phoneError && styles.inputError]}
-                placeholder="Enter here"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-                keyboardType="phone-pad"
-            />
-            {phoneError && <Text style={styles.errorText}>*Required field</Text>}
-            <Text style={styles.label}>Educational Qualification*</Text>
-            <TextInput
-                style={[styles.input, educationError && styles.inputError]}
-                placeholder="Enter here"
-                value={education}
-                onChangeText={setEducation}
-            />
-            {educationError && <Text style={styles.errorText}>*Required field</Text>}
-            <Text style={styles.label}>Gender*</Text>
-            <View style={[styles.inputContainer, genderError && styles.inputError]}>
-                <DropDownPicker
-                    open={open}
-                    value={gender}
-                    items={items}
-                    setOpen={setOpen}
-                    setValue={setGender}
-                    setItems={setItems}
-                    placeholder="Select Gender"
-                    style={styles.dropdown}
-                    dropDownContainerStyle={styles.dropdownContainer}
-                />
-            </View>
-            {genderError && <Text style={styles.errorText}>*Required field</Text>}
-            <Text style={styles.label}>ID Number</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter here"
-                value={idNumber}
-                onChangeText={setIdNumber}
-                keyboardType="numeric"
-            />
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
-                    <Text style={[styles.buttonText, styles.cancelText]}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
-                    {isLoading ? (
-                        <ActivityIndicator size="small" color={Color.colorWhite} />
-                    ) : (
-                        <Text style={[styles.buttonText, styles.saveText]}>Save</Text>
-                    )}
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
-
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
+             <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF" 
+            translucent={false}
+        />
             <View style={styles.header}>
                 <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                     <Text><Icon name="angle-left" size={34} color={Color.colorBlack} /></Text>
@@ -240,23 +236,116 @@ const AddAdmin = () => {
                     </View>
                 </View>
             </View>
-            <FlatList
-                data={[]}
-                renderItem={null}
-                ListHeaderComponent={renderHeader}
+            
+            <KeyboardAwareScrollView
                 contentContainerStyle={styles.scrollViewContent}
-            />
-        </SafeAreaView>
+                enableOnAndroid={true}
+                enableAutomaticScroll={Platform.OS === 'ios'}
+                keyboardShouldPersistTaps="handled"
+                extraScrollHeight={Platform.OS === 'ios' ? 20 : 0}
+                extraHeight={120}
+            >
+                <View style={styles.innerContainer}>
+                    <View style={styles.imagePickerContainer}>
+                        {!image && <Image source={require("../../assets/images/user.png")} style={styles.backgroundImage} />}
+                        {image && <Image source={{ uri: image }} style={styles.selectedImage} />}
+                        <TouchableOpacity onPress={pickImage}>
+                            <Text style={styles.buttonText}>Add Picture</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <Text style={styles.label}>Your Name*</Text>
+                    <TextInput
+                        style={[styles.input, nameError && styles.inputError]}
+                        placeholder="Enter here"
+                        value={name}
+                        onChangeText={setName}
+                        autoCorrect={false}
+                        autoCapitalize="words"
+                        returnKeyType="next"
+                    />
+                    {nameError && <Text style={styles.errorText}>*Required field</Text>}
+
+                    <Text style={styles.label}>Your Phone Number*</Text>
+                    <TextInput
+                        style={[styles.input, phoneError && styles.inputError]}
+                        placeholder="Enter here"
+                        value={phoneNumber}
+                        onChangeText={setPhoneNumber}
+                        keyboardType="phone-pad"
+                        maxLength={10}
+                        returnKeyType="next"
+                    />
+                    {phoneError && <Text style={styles.errorText}>*Required field</Text>}
+
+                    <Text style={styles.label}>Educational Qualification*</Text>
+                    <TextInput
+                        style={[styles.input, educationError && styles.inputError]}
+                        placeholder="Enter here"
+                        value={education}
+                        onChangeText={setEducation}
+                        autoCapitalize="words"
+                        returnKeyType="next"
+                    />
+                    {educationError && <Text style={styles.errorText}>*Required field</Text>}
+
+                    <Text style={styles.label}>Gender*</Text>
+                    <View style={[styles.inputContainer, genderError && styles.inputError]}>
+                        <DropDownPicker
+                            open={open}
+                            value={gender}
+                            items={items}
+                            setOpen={setOpen}
+                            setValue={setGender}
+                            setItems={setItems}
+                            placeholder="Select Gender"
+                            style={styles.dropdown}
+                            dropDownContainerStyle={styles.dropdownContainer}
+                            zIndex={1000}
+                            listMode="SCROLLVIEW"
+                        />
+                    </View>
+                    {genderError && <Text style={styles.errorText}>*Required field</Text>}
+
+                    <Text style={styles.label}>ID Number</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter here"
+                        value={idNumber}
+                        onChangeText={setIdNumber}
+                        keyboardType="numeric"
+                        returnKeyType="done"
+                    />
+
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
+                            <Text style={[styles.buttonText, styles.cancelText]}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
+                            {isLoading ? (
+                                <ActivityIndicator size="small" color={Color.colorWhite} />
+                            ) : (
+                                <Text style={[styles.buttonText, styles.saveText]}>Save</Text>
+                            )}
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </KeyboardAwareScrollView>
+        </View>
     );
 };
+
 
 const windowWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
-        paddingTop: windowWidth*0.10,
+        backgroundColor: '#fff',
+    },
+    scrollViewContent: {
+        flexGrow: 1,
+        paddingBottom: 20,
     },
     header: {
         flexDirection: 'row',

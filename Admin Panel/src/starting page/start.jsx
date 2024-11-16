@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Platform,StatusBar,StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
@@ -14,8 +14,13 @@ const Start = (props) => {
 
     return (
         <View style={styles.startingPage}>
+             <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF"  // Match your app's background color
+            translucent={false}
+        />
             <Image
-                source={require("../../assets/images/back.png")}
+                source={require("../../assets/images/back.jpeg")}
                 style={styles.backgroundImage}
             />
             <Text style={[styles.getStartedFlexBox]}>

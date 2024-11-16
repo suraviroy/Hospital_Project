@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, Text,Platform,StatusBar, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Color } from '../../GlobalStyles';
 
@@ -12,12 +12,17 @@ const ActionError = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+       <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF" 
+            translucent={false}
+        />
       <View style={styles.header}>
         <Text style={styles.title}>Action Details</Text>
       </View>
       <View style={[styles.contentContainer, { marginTop: windowHeight * 0.01 }]}>
         <Image source={require('../../assets/images/error.png')} style={[styles.image, { width: windowWidth * 0.7, height: windowWidth * 0.85 }]} />
-        <Text style={styles.actionTaken}>No Action Is Taken Till Now</Text>
+        {/* <Text style={styles.actionTaken}>No Action Is Taken Till Now</Text> */}
         <Text style={[styles.description, { width: windowWidth * 0.8 }]}>
           We will get back to you within office hours
         </Text>

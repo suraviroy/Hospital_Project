@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity,Platform,StatusBar, StyleSheet, Image, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Color } from '../../GlobalStyles';
 
@@ -12,13 +12,18 @@ const ActionOk = ({ navigation, action }) => {
 
   return (
     <View style={styles.container}>
+       <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF" 
+            translucent={false}
+        />
       <View style={styles.header}>
         <Text style={styles.title}>Action Details</Text>
       </View>
       <View style={[styles.contentContainer, { marginTop: -windowHeight * 0.02 }]}>
         <Image source={require('../../assets/images/ok.png')} style={[styles.image, { width: windowWidth * 0.7, height: windowWidth * 0.65 }]} />
         <Text style={styles.actionTaken}>Action Taken</Text>
-        <Text style={[styles.description, { width: windowWidth * 0.8 }]}>
+        <Text style={[styles.description, { width: windowWidth * 0.9 }]}>
           {action !== null ? action : 'No action specified'}
         </Text>
         <Text style={styles.thankYou}>Thank You !!</Text>
@@ -57,13 +62,14 @@ const styles = StyleSheet.create({
   },
   actionTaken: {
     fontSize: 20,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     marginBottom: 10,
   },
   description: {
-    fontSize: 16,
+    fontSize: windowWidth*0.06,
     textAlign: 'center',
     marginBottom: 60,
+    fontWeight: 'bold',
     color: '#676464',
     fontWeight: '700'
   },

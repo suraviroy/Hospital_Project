@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Dimensions, SafeAreaView, ScrollView, Alert } from 'react-native';
+import { View, Text,Platform,StatusBar, StyleSheet, TouchableOpacity, Image, TextInput, Dimensions, SafeAreaView, ScrollView, Alert } from 'react-native';
 import { MaterialIcons, FontAwesome6 } from '@expo/vector-icons';
 import axios from 'axios';
 import { backendURL } from "../backendapi";
@@ -44,7 +44,39 @@ const MyProfile = () => {
       console.error('Error fetching patient profile:', error);
     }
   };
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const storedPatientId = await AsyncStorage.getItem('patientId');
+        if (storedPatientId) {
+          const response = await fetch(`${backendURL}/patientRouter/PatientProfile/${storedPatientId}`);
+          const data = await response.json();
+          setPatientData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching patient profile:', error);
+      }
+    };
+    fetchData();
+  }, []);
+  const handleSend = async () => {
+    try {
+      const response = await axios.post(`${backendURL}/patientRouter/sendFeedback`, {
+        patientId: patientData.patientId,
+        name: patientData.name,
+        phonenumber: patientData.contactNumber,
+        rating: defaultRating.toString(),
+        feedback: improvementText,
+      });
+      console.log('Feedback submitted:', response.data);
+      setDefaultRating(2),
+      setImprovementText('')
+      Alert.alert('Feedback Submitted', 'Thank you for your feedback!');
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      Alert.alert('Error', 'Failed to submit feedback. Please try again later.');
+    }
+  };
   const handleLogout = async () => {
     Alert.alert(
       "Logout",
@@ -67,12 +99,12 @@ const MyProfile = () => {
       ]
     );
   };
-  const handleSend = async =>{
-    Alert.alert(
-      "Sorry",
-      "This functionality is not available right now."
-    )
-  }
+  // const handleSend = async =>{
+  //   Alert.alert(
+  //     "Sorry",
+  //     "This functionality is not available right now."
+  //   )
+  // }
 
   const CustomRatingBar = () => {
     return (
@@ -94,6 +126,11 @@ const MyProfile = () => {
   };
     return (
       <SafeAreaView style={styles.container01}>
+        <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF" 
+            translucent={false}
+        />
         <ScrollView style={styles.scrollViewContent}>
          <View style = {styles.bgprofile}>
             <View style = {styles.textContainer}>
@@ -105,11 +142,11 @@ const MyProfile = () => {
                 <Text style= {styles.textStyle}>Username:{patientData.patientId}</Text>
                 <Text style= {styles.textStyle}>Age: {patientData.age}    Blood Group: {patientData.bloodGroup}</Text>
                 </View>
-                {patientData.image ? (
+                {/* {patientData.image ? (
             <Image source={{ uri: patientData.image }} style={styles.docImage} />
         ) : (
             <Image source={require('../../assets/images/user2.png')} style={styles.docImage} />
-        )}
+        )} */}
              </View>
              <Text style= {styles.textStyle01}>Address: {patientData.address}</Text>
              <Text style= {styles.textStyle02}>State: {patientData.state}</Text>
@@ -121,7 +158,7 @@ const MyProfile = () => {
             <TouchableOpacity style={styles.logbutton} onPress={handleLogout}>
               <MaterialIcons name='logout' size={25} color='#357EEA' marginRight={20} paddingLeft={20} paddingTop={5}/>
               <Text style={styles.textbutton}>Logout</Text>
-              <FontAwesome6 name='arrow-right-long' size={25} color='#357EEA' marginRight={20} paddingLeft={windowWidth*0.5} paddingTop={5}/>
+              <FontAwesome6 name='arrow-right-long' size={25} color='#357EEA' marginRight={20} paddingLeft={windowWidth*0.2} paddingTop={5}/>
             </TouchableOpacity>
           </View>
         <View style= {styles.feedpage}>
@@ -138,9 +175,9 @@ const MyProfile = () => {
             placeholder="Enter your feedback..."
           />
             </View> 
-            <TouchableOpacity>
-            <Text style={styles.sendbutton} onPress={handleSend}>Send</Text>
-            </TouchableOpacity>
+            <TouchableOpacity onPress={handleSend}>
+  <Text style={styles.sendbutton}>Send</Text>
+</TouchableOpacity>
         </View>
       </View>
       </ScrollView>
@@ -150,11 +187,8 @@ const MyProfile = () => {
 const styles = StyleSheet.create({
     container01: {
         flex:1,
-        // alignItems: 'center',
-        // justifyContent: 'center',
         backgroundColor: 'white',
-        // flexDirection: 'column',
-        marginBottom: windowWidth*0.05
+        marginBottom: windowWidth*0.2,
       },
       scrollViewContent: {
         flexGrow: 1,
@@ -221,11 +255,12 @@ const styles = StyleSheet.create({
        paddingTop: windowWidth * 0.03,
        paddingLeft: windowWidth * 0.03,
        backgroundColor: 'white',
-       height: windowWidth*0.5,
+       minheight: windowWidth*0.6,
+       paddingBottom:windowWidth*0.05,
        width: windowWidth*0.8,
        position:'absolute',
        left: windowWidth*0.1,
-       top: windowWidth*0.18,
+       top: windowWidth*0.10,
        borderRadius: windowWidth * 0.05,
        flexDirection: 'column'
       },

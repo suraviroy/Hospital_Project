@@ -1,100 +1,144 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
-
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+  StatusBar,
+  SafeAreaView,
+  Platform,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
-const Start = (props) => {
-    const navigation = useNavigation();
+const { width, height } = Dimensions.get('window');
+const scale = Math.min(width, height) / 375;
+const statusBarHeight = StatusBar.currentHeight || 0;
 
-  const handleGetStarted = () => {
-  
-    navigation.navigate('Alert');
-  };
-    return (
-        <View style={styles.startingPage}>
-            <Image
-                source={require("../../assets/images/back.png")}
-                style={styles.backgroundImage}
-            />
-            <Text style={[styles.getStartedFlexBox]}>
-                <Text style={styles.doctor}>Institute of Pulmocare</Text>
-                <Text style={styles.text}>{` `}</Text>
-                <Text style={styles.laboratory}>& Research</Text>
-            </Text>
-            <TouchableOpacity
-                style={styles.getStartedButton}
-                onPress={handleGetStarted}
-            >
-                <Text style={styles.buttonText}>Get Started</Text>
-                <Icon name="arrow-right" size={20} color='#357EEA' style={styles.icon} />
-            
-            </TouchableOpacity>
-        </View>
-    );
+const normalize = (size) => {
+  return Math.round(scale * size);
 };
 
-const windowWidth = Dimensions.get('window').width;
+const Start = () => {
+  const navigation = useNavigation();
+
+  const handleGetStarted = () => {
+    navigation.navigate('Alert');
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+       <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF" 
+            translucent={false}
+        />
+      <StatusBar
+        backgroundColor="#357EEA"
+        barStyle="light-content"
+      />
+      <View style={styles.container}>
+        <Image
+          source={require("../../assets/images/start.jpg")}
+          style={styles.backgroundImage}
+          resizeMode="contain"
+        />
+        
+        <View style={styles.textContainer}>
+          <Text style={styles.titleText}>
+            <Text style={styles.institute}>Institute of Pulmocare</Text>
+            {' '}
+            <Text style={styles.research}>& Research</Text>
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.getStartedButton}
+          onPress={handleGetStarted}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.buttonText}>Get Started</Text>
+          <Icon 
+            name="arrow-right" 
+            size={normalize(20)} 
+            color='#357EEA' 
+            style={styles.icon} 
+          />
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
-    startingPage: {
-        backgroundColor: '#357EEA',
-        flex: 1,
-        height: "100%",
-        overflow: "hidden",
-        width: "100%",
-        alignItems: 'center',
-        justifyContent: 'center',
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#357EEA',
+    paddingTop: Platform.OS === 'android' ? statusBarHeight : 0,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#357EEA',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    position: 'relative',
+    paddingHorizontal: width * 0.05,
+  },
+  backgroundImage: {
+    marginTop:height*0.1,
+    borderRadius: 45,
+    bottom: 60,
+    width: width * 0.9, 
+    height: height * 0.55, 
+    borderRadius:width*0.15,
+},
+  textContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: height * 0.05,
+  },
+  titleText: {
+    textAlign: 'center',
+    marginBottom: height * 0.02,
+  },
+  institute: {
+    fontSize: normalize(24),
+    color: '#FFFFFF',
+    fontWeight: '500',
+  },
+  research: {
+    fontSize: normalize(24),
+    color: '#FFFFFF',
+    fontWeight: '500',
+  },
+  getStartedButton: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: normalize(8),
+    width: '100%',
+    height: normalize(52),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: height * 0.05,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    backgroundImage: {
-        top: 69,
-        //left: 10,
-        borderRadius: 45,
-        width: 386,
-        height: 426,
-        position: "absolute"
-    },
-    getStartedFlexBox: {
-        alignItems: "center",
-        position: "absolute",
-        top: '75%',
-      },
-    doctor: {
-       
-        color: '#FFFFFF',
-        fontSize: 24,
-    },
-    text: {
-        fontWeight: "500",
-       
-        color: '#FFFFFF',
-        fontSize: 24,
-    },
-    laboratory: {
-        
-        color: '#FFFFFF',
-        fontSize: 24,
-    },
-    getStartedButton: {
-        borderRadius: 8,
-        backgroundColor: '#FFFFFF',
-        width: windowWidth * 0.8,
-        height: 52,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: "absolute",
-        bottom: 50,
-    },
-    buttonText: {
-        fontSize: 16,
-        fontWeight: "700",
-       
-        color: '#357EEA',
-    },
-    icon: {
-        marginLeft: 10,
-    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  buttonText: {
+    fontSize: normalize(16),
+    fontWeight: '700',
+    color: '#357EEA',
+  },
+  icon: {
+    marginLeft: normalize(10),
+  },
 });
 
 export default Start;

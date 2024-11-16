@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
+import { View, Text, StatusBar, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, Platform, ActivityIndicator } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,208 +9,219 @@ import { backendURL } from "../backendapi";
 const TodayListURL = `${backendURL}/adminRouter/sectionAtodaysPatient`;
 const BasicDetailsURL = `${backendURL}/adminRouter/PatientBasicDetails`;
 
-
 const TodayList = ({ searchText }) => {
     const navigation = useNavigation();
     const [patients, setPatients] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(TodayListURL);
-                const data = await response.json();
-                setPatients(data);
-                setFilteredPatients(data);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching patient data:', error);
-            }
-        };
+    const fetchData = async () => {
+        try {
+            const response = await fetch(TodayListURL);
+            const data = await response.json();
+            setPatients(data);
+            setFilteredPatients(data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching patient data:', error);
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchData();
-    }, [patients]);
+        const intervalId = setInterval(fetchData, 20000);
+        return () => clearInterval(intervalId);
+    }, []);
 
     useEffect(() => {
-        const filtered = patients.filter(patient =>
-            patient.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            patient.patientId.toLowerCase().includes(searchText.toLowerCase())
-        );
+        let filtered = patients;
+        if (searchText) {
+          filtered = patients.filter(patient =>
+            searchText.test(patient.name.toLowerCase()) ||
+            searchText.test(patient.patientId.toLowerCase())
+          );
+        }
         setFilteredPatients(filtered);
-    }, [searchText, patients]);
+      }, [searchText, patients]);
 
-    const handleViewDetails = (patientId) => {
-           fetch(`${BasicDetailsURL}/${patientId}`)
-            .then(response => response.json())
-            .then(data => {
-                navigation.navigate('PatientBasicDetails', { details: data[0] });
-            })
-            .catch(error => {
-                console.error('Error fetching patient details:', error);
-            });
+    const handleViewDetails = async (patientId) => {
+        try {
+            const response = await fetch(`${BasicDetailsURL}/${patientId}`);
+            const data = await response.json();
+            navigation.navigate('PatientBasicDetails', { details: data[0] });
+        } catch (error) {
+            console.error('Error fetching patient details:', error);
+        }
     };
 
     const renderPatientItem = ({ item }) => (
-        <View style={styles.patientView2451}>
-            {item.image ? (
-            <Image source={{ uri: item.image }} style={styles.patientImage2451} />
-        ) : (
-            <Image source={require('../../assets/images/user.png')} style={styles.patientImage2451} />
-        )}
-            <View style={styles.patientDetails13}>
-                <Text style={styles.patientDetails2451}>{item.name}</Text>
-                <Text style={styles.patientDetails2450}>{item.gender}</Text>
-                <Text style={styles.patientDetails2450}>{item.age}</Text>
+        <View style={styles.patientView}>
+            <View style={styles.contentContainer}>
+                <View style={styles.imageContainer}>
+                    {item.image ? (
+                        <Image 
+                            source={{ uri: item.image }} 
+                            style={styles.patientImage} 
+                        />
+                    ) : (
+                        <Image 
+                            source={require('../../assets/images/user.png')} 
+                            style={styles.defaultImage}
+                            resizeMode="contain"
+                        />
+                    )}
+                </View>
+                
+                <View style={styles.patientDetails}>
+                    <Text style={styles.patientName} ellipsizeMode="tail">
+                     {item.name}
+                    </Text>
+                    <Text style={styles.patientInfo}>Gender: {item.gender}</Text>
+                    <Text style={styles.patientInfo}>Age: {item.age}</Text>
+                    <Text style={styles.patientId}>Id: {item.patientId}</Text>
+                </View>
             </View>
-            <View style={styles.patientId2451}>
-                <Text style={styles.patientId13}>{item.patientId}</Text>
-            </View>
+
             <TouchableOpacity
-                style={styles.viewButton2451}
+                style={styles.viewButton}
                 onPress={() => handleViewDetails(item.patientId)}
             >
-                <Text style={styles.viewDetails}>View Details</Text>
+                <Text style={styles.viewButtonText}>View Details</Text>
             </TouchableOpacity>
         </View>
     );
 
     if (loading) {
-        return <Text style={styles.text45}>Loading...</Text>;
+        return (
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#096759" />
+                <Text style={styles.loadingText}>Loading ...</Text>
+            </View>
+        );
     }
-    
+
     if (filteredPatients.length === 0) {
-        return <Text style={styles.text45}>No patients registered today!!</Text>;
+        return <Text style={styles.emptyText}>No patients registered today!!</Text>;
     }
-    
+
     return (
-        <SafeAreaView style={styles.patientContainer2451}>
+        <SafeAreaView style={styles.container}>
+            <StatusBar 
+                barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+                backgroundColor="#FFFFFF"
+                translucent={false}
+            />
             <FlatList
                 nestedScrollEnabled
                 data={filteredPatients}
                 renderItem={renderPatientItem}
                 keyExtractor={item => item.patientId}
+                contentContainerStyle={styles.listContainer}
             />
         </SafeAreaView>
     );
 };
 
-export default TodayList;
-
-
 const styles = StyleSheet.create({
-    patientContainer2451:{
-        flex: 1, 
+    container: {
+        flex: 1,
         marginBottom: 85,
-        marginTop: windowWidth*-0.08,
-        
     },
-    text45:{
-        marginTop: windowWidth*0.10,
-        fontSize:18,
+    listContainer: {
+        paddingHorizontal: windowWidth * 0.025,
+        paddingTop: 10,
+    },
+    patientView: {
+        backgroundColor: '#fff',
+        marginBottom: 10,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#077547',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        padding: 10,
+        margin:windowWidth*0.03,
+    },
+    contentContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    imageContainer: {
+        width: windowWidth * 0.15, // Reduced from 0.2
+        height: windowWidth * 0.15, // Added fixed height
+        marginRight: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f5f5f5',
+        borderRadius: 8,
+        overflow: 'hidden',
+    },
+    patientImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 8,
+    },
+    defaultImage: {
+        width: '100%', // Smaller proportion of the container
+        height: '100%', // Smaller proportion of the container
+        opacity: 0.7, // Slightly faded
+    },
+    patientDetails: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    patientName: {
+        fontSize: 16,
+        fontFamily: FontFamily.font_bold,
+        marginBottom: 4,
+        flexWrap: 'wrap',
+        fontWeight:'600'
+    },
+    patientInfo: {
+        fontSize: 13,
+        color: '#011411',
+        fontFamily: 'regular89',
+        marginBottom: 2,
+    },
+    patientId: {
+        fontSize: 14,
+        fontFamily: 'bold01',
+        marginTop: 2,
+    },
+    viewButton: {
+        alignSelf: 'flex-end',
+        paddingHorizontal: windowWidth*0.05,
+        paddingVertical: windowWidth*0.03,
+        borderWidth: 1.5,
+        borderColor: '#077547',
+        borderRadius: 6,
+        marginTop: 8,
+    },
+    viewButtonText: {
+        color: '#077547',
+        fontSize: windowWidth*0.03,
+        fontFamily: 'bold01',
+    },
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 16,
+        fontSize: Platform.OS === 'ios' ? 16 : 14,
+        color: '#666666',
+    },
+    emptyText: {
+        marginTop: windowWidth * 0.1,
+        fontSize: 18,
         fontFamily: 'bold01',
         marginLeft: 20,
     },
-    patientView2451: {
-        width: windowWidth * 0.95, 
-        height: windowWidth * 0.4,
-        backgroundColor: '#fff',
-        alignSelf: 'center',
-        marginTop: 10,
-        flexDirection: 'row',
-        borderRadius: 10,
-        borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: '#077547',
-        elevation: 5,
-    },
-    patientId2451: {
-        width: windowWidth*0.26,
-        height: 30,
-        backgroundColor: '#85DBCD',
-        borderTopLeftRadius: 12,
-        borderBottomLeftRadius: 12,
-        marginLeft: windowWidth*0.020,
-        marginTop: 7,
-        alignContent: 'center',
-        textAlignVertical: 'center',
-        position:'relative'
-    },
-    viewButton2451: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: "absolute",
-        width: 109,
-        height: 34,
-        borderColor: '#077547',
-        borderWidth: 2,
-        borderStyle: 'solid',
-        borderRadius: 5,
-        marginTop: 70,
-        marginLeft: windowWidth*0.65,
-    },
-    viewDetails: {
-        color: '#077547',
-        fontSize: 12,
-        alignContent: 'center',
-    },
-    appointment2451: {
-        color: '#666',
-        fontSize: 12,
-        alignSelf: 'center',
-    },
-    patientImage2451: {
-        marginTop: 5,
-        marginLeft: 5,
-        marginRight: 10,
-        width: windowWidth * 0.2, 
-        height: windowWidth * 0.25,
-        borderRadius: 8,
-    },
-    patientDetails2451: {
-        fontWeight: 'bold',
-        alignItems: 'center',
-        marginLeft: 10,
-        marginTop: 30,
-        fontSize: 14,
-        fontFamily: FontFamily.font_bold,
-    },
-    patientDetails2450: {
-        // marginTop: 55,
-        marginLeft: 10,
-        alignItems: 'center',
-        color: '#011411',
-        fontSize: 12,
-        fontFamily: 'regular89',
-        padding: 3,
-    },
-    patientDetails2452: {
-        marginTop: 15,
-        marginLeft: 15,
-        alignItems: 'center',
-        color: 'grey',
-        fontSize: 14,
-    },
-    patientDetails13: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '45%',
-    },
-    appointmentdet13: {
-        position: 'absolute',
-        bottom: 10,
-        left: 10,
-    },
-    patientId13: {
-        alignSelf: 'center',
-        fontWeight: 'bold',
-        marginTop: 4,
-        marginLeft: 3,
-    },
-    time2451: {
-        color: '#011411',
-        alignSelf: 'center',
-        fontFamily: 'bold01'
-    },
 });
+
+export default TodayList;

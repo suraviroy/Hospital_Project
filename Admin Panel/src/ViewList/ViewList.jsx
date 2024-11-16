@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity,Dimensions ,Linking,Alert} from 'react-native';
+import { View, Platform,StatusBar,Text, StyleSheet, FlatList, TouchableOpacity,Dimensions ,Linking,Alert,ActivityIndicator} from 'react-native';
 import SearchList from './SearchList';
 import PatientList from './PatientList';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,6 +14,7 @@ import { fromByteArray } from 'base64-js';
 const ViewList = () => {
     const navigation = useNavigation();
     const [searchText, setSearchText] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleBack = () => {
         navigation.goBack();
@@ -50,6 +51,7 @@ const ViewList = () => {
     
     const downloadExcel = async () => {
         try {
+            setIsLoading(true);
             const response = await fetch(`${backendURL}/adminRouter/excelFile`);
     
             if (!response.ok) {
@@ -82,6 +84,8 @@ const ViewList = () => {
         } catch (error) {
             console.error('Error downloading Excel file:', error);
             Alert.alert('Download Failed', 'Failed to download Excel file.');
+        } finally {
+            setIsLoading(false);
         }
     };
     const headerPatients = () => (
@@ -92,8 +96,13 @@ const ViewList = () => {
                 </TouchableOpacity>
                 <Text style={styles.text2451}>All Patients</Text>
                 <View style={{ alignItems: "flex-end" }}>
-                        <TouchableOpacity style={[styles.button457,{ marginLeft: 90 }]} onPress={downloadExcel}>
-                            <Text style={styles.text568}>Download Excel</Text>
+                        <TouchableOpacity style={[styles.button457,{ marginLeft: windowWidth*0.15 }]} onPress={downloadExcel}>
+                        {isLoading ? (
+              <ActivityIndicator   style={styles.but568}/>
+          ) : (
+            <Text style={styles.text568}>Download Excel</Text>
+          )}
+                            {/* <Text style={styles.text568}>Download Excel</Text> */}
                         </TouchableOpacity>
                     </View>
             </View>
@@ -103,6 +112,11 @@ const ViewList = () => {
 
     return (
         <SafeAreaView style={styles.appbar2451}>
+             <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF"  // Match your app's background color
+            translucent={false}
+        />
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     {headerPatients()}
@@ -137,6 +151,12 @@ const styles = StyleSheet.create({
         color: "#096759",
         fontFamily: "bold01",
         fontSize: 14,
+    },
+    but568:{
+        color: "#096759",
+        fontFamily: "bold01",
+        fontSize: 20,
+        width: windowWidth*0.25,
     },
     headerContainer: {
         paddingHorizontal: 3,

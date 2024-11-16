@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Image, ScrollView } from 'react-native';
+import { View, Text, Platform,StatusBar,TouchableOpacity, StyleSheet, Dimensions, Image, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Color } from '../../GlobalStyles';
 import { useNavigation,useRoute } from '@react-navigation/native';
@@ -71,6 +71,11 @@ const NotiAction = () => {
 
   return (
     <View style={styles.container}>
+       <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF" 
+            translucent={false}
+        />
       <ScrollView style={{ flex: 1 }}>
         <View style={styles.bottomContainer}>
           <Image source={require('../../assets/images/action.png')} style={styles.bottomImage} />

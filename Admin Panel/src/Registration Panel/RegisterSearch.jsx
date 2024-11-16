@@ -4,11 +4,10 @@ import { Octicons } from 'react-native-vector-icons';
 const windowWidth = Dimensions.get('window').width;
 const RegisterSearch = ({ setSearchText }) => {
     const [searchTextLocal, setSearchTextLocal] = useState('');
-
     const handleSearchChange = (text) => {
         setSearchTextLocal(text);
-        setSearchText(text);
-    };
+        setSearchText(new RegExp(`^${text}`, 'i'));
+      };
 
     return (
         <View style={styles.searchBox2451}>

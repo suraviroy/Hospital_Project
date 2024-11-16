@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Image, ScrollView, TextInput, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator,Dimensions, Image, ScrollView, TextInput, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Color } from '../../GlobalStyles';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -11,6 +11,7 @@ const Action = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { patientId, requestId } = route.params;
+    const [isLoading1, setIsLoading1] = useState(false);
     const [selectedOption, setSelectedOption] = useState(null);
     const [customAction, setCustomAction] = useState('');
 
@@ -71,6 +72,7 @@ const Action = () => {
             };
             
             try {
+                setIsLoading1(true);
                 const response = await fetch(`${backendURL}/adminRouter/action/${requestId}`, requestOptions);
                 const data = await response.json();
                 Alert.alert(
@@ -80,11 +82,14 @@ const Action = () => {
                         { text: "OK", onPress: () => navigation.navigate('BottomNavigation') }
                     ]
                 );
+                setIsLoading1(false);
             } catch (error) {
+                setIsLoading1(false);
                 console.error('Error:', error);
                 Alert.alert("Error", "An error occurred while sending the action. Please try again.");
             }
         } else {
+            setIsLoading1(false);
             Alert.alert("No Action", "Please select an action or type a custom action.");
         }
     };
@@ -108,7 +113,13 @@ const Action = () => {
                         </View>
                     </View>
                     <TouchableOpacity style={styles.sendButton} onPress={sendAction}>
-                        <Text style={styles.sendButtonText}>Send</Text>
+                    {isLoading1 ? (
+                            <ActivityIndicator size="small" color={Color.colorWhite} />
+                        ) : (
+                            <Text style={{ color: "#fff", fontWeight: "700", fontSize: 15 }}>
+                                Submit
+                            </Text>
+                        )}
                     </TouchableOpacity>
                 </View>
             </ScrollView>

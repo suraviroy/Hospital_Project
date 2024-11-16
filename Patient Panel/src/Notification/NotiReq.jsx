@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, ScrollView, Linking } from 'react-native';
+import { View,Platform,StatusBar, Text, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, ScrollView, Linking } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily } from '../../GlobalStyles';
@@ -32,6 +32,11 @@ const NotiReq = () => {
     
     return (
         <SafeAreaView style={styles.container}>
+             <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF" 
+            translucent={false}
+        />
             <ScrollView style={styles.scrollContent}>
                 <View style={styles.profileContainer}>
                     <Text style={styles.texthead2}>Your Request</Text>
@@ -51,10 +56,10 @@ const NotiReq = () => {
             </Text>
         )}
         {requestDetails.exacrebation && requestDetails.exacrebation.isSelected !== "NA" && (
-            <Text style={styles.subHead2}>Exacerbation: {requestDetails.exacrebation.isSelected}    Type {" "}{requestDetails.exacrebation.details}</Text>
+            <Text style={styles.subHead2}>Exacerbation: {requestDetails.exacrebation.isSelected}    Type: {" "}{requestDetails.exacrebation.details}</Text>
         )}
         {requestDetails.newProblem && requestDetails.newProblem.isSelected !== "NA" && (
-            <Text style={styles.subHead2}>New Problem: {requestDetails.newProblem.isSelected}      Type {" "}{requestDetails.newProblem.details}</Text>
+            <Text style={styles.subHead2}>New Problem: {requestDetails.newProblem.isSelected}      Type: {" "}{requestDetails.newProblem.details}</Text>
         )}
         {requestDetails.newConsultation && requestDetails.newConsultation.isSelected !== "NA" && (
             <View>
@@ -68,10 +73,16 @@ const NotiReq = () => {
             </View>
         )}
         {requestDetails.hospitalization && requestDetails.hospitalization.isSelected !== "NA" && (
-            <Text style={styles.subHead2}>Hospitalization: {requestDetails.hospitalization.isSelected}    Reason {" "}{requestDetails.hospitalization.records}</Text>
+            <Text style={styles.subHead5}>Hospitalization: {requestDetails.hospitalization.isSelected}    Reason {" "}{requestDetails.hospitalization.records}
+             {requestDetails.hospitalization.dischargeHCertificate !== "NA" && (
+                    <TouchableOpacity onPress={() => handleDischargeCertificatePress(requestDetails.hospitalization .dischargeHCertificate)}>
+                        <Text style={{top: windowWidth*0.02,width: windowWidth*0.2,marginLeft: windowWidth*0.05,backgroundColor: '#B21515', borderRadius: 4,padding: 5, color: 'white', fontSize: 12, fontWeight: '700'}}>  Open PDF</Text>
+                    </TouchableOpacity>
+                )}
+            </Text>
         )}
         {requestDetails.disabilities && requestDetails.disabilities.isSelected !== "NA" && (
-            <Text style={styles.subHead2}>Disabilities: {requestDetails.hospitalization.isSelected}     Organ {" "}{requestDetails.disabilities.details}</Text>
+            <Text style={styles.subHead2}>Disabilities: {requestDetails.hospitalization.isSelected}     Organ: {" "}{requestDetails.disabilities.details}</Text>
         )}
         {requestDetails.demise && requestDetails.demise.isSelected !== "NA" && (
             <Text style={styles.subHead3}>Demise: {requestDetails.demise.isSelected}    deathCertificate:
@@ -122,7 +133,6 @@ const styles = StyleSheet.create({
     subHead6: {
         marginTop: windowWidth * 0.01,
         width: "95%",
-        height: windowWidth * 0.10,
         marginLeft: windowWidth * 0.01,
         paddingTop: windowWidth * 0.02,
         borderRadius: windowWidth * 0.01,
@@ -131,13 +141,12 @@ const styles = StyleSheet.create({
         paddingRight: 15,
         fontFamily: 'regular',
         fontWeight: "700",
-        paddingBottom: windowWidth * 0.01,
+        paddingBottom: windowWidth * 0.02,
         fontSize: 15,
     },
     subHead2: {
         marginTop: windowWidth * 0.01,
         width: "95%",
-        height: windowWidth * 0.10,
         paddingTop: windowWidth * 0.02,
         borderRadius: windowWidth * 0.01,
         backgroundColor: "#D9D9D9",
@@ -146,11 +155,11 @@ const styles = StyleSheet.create({
         fontFamily: 'bold02',
         fontWeight: "700",
         fontSize: 15,
+        paddingBottom: windowWidth * 0.02,
     },
     subHead3:{
         marginTop: windowWidth * 0.01,
         width: "95%",
-        height: windowWidth * 0.15,
         paddingTop: windowWidth * 0.02,
         borderRadius: windowWidth * 0.01,
         backgroundColor: "#D9D9D9",
@@ -159,12 +168,11 @@ const styles = StyleSheet.create({
         fontFamily: 'bold02',
         fontWeight: "700",
         fontSize: 15,
-
+        paddingBottom: windowWidth * 0.02,
     },
     subHead4:{
         marginTop: windowWidth * 0.01,
         width: "95%",
-        height: windowWidth * 0.20,
         paddingTop: windowWidth * 0.02,
         borderRadius: windowWidth * 0.01,
         backgroundColor: "#D9D9D9",
@@ -173,12 +181,11 @@ const styles = StyleSheet.create({
         fontFamily: 'bold02',
         fontWeight: "700",
         fontSize: 15,
-
+        paddingBottom: windowWidth * 0.02,
     },
     subHead5:{
         marginTop: windowWidth * 0.01,
         width: "95%",
-        height: windowWidth * 0.18,
         paddingTop: windowWidth * 0.02,
         borderRadius: windowWidth * 0.01,
         backgroundColor: "#D9D9D9",
@@ -187,6 +194,6 @@ const styles = StyleSheet.create({
         fontFamily: 'bold02',
         fontWeight: "700",
         fontSize: 15,
-
+        paddingBottom: windowWidth * 0.04,
     }
 });
