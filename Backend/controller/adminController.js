@@ -5,6 +5,9 @@ import moment from "moment-timezone";
 import excelJS from 'exceljs';
 import FeedbackSchema from "../model/feedbackSchema.js";
 import nodemailer from "nodemailer";
+import { decryptPassword, encryptPassword } from "../middleware/auth.js";
+import dotenv from 'dotenv';
+dotenv.config()
 
 export const patientregistration = async (req, res) => {
   try {
@@ -34,6 +37,9 @@ export const patientregistration = async (req, res) => {
     // const currentDate = moment().tz(desiredTimezone).format("MMMM D, YYYY");
     // const currentTime = moment().tz(desiredTimezone).format("hh:mm A");
 
+    const encryptedPassword = encryptPassword(password);
+    //console.log("encryptedPassword",encryptedPassword)
+
     const finduser = await PatientSchema.findOne({ patientId: patientId });
     if (finduser) {
       //console.log("user exist");
@@ -46,7 +52,7 @@ export const patientregistration = async (req, res) => {
         contactNumber,
         email,
         bloodGroup,
-        password,
+        password : encryptedPassword,
         age,
         address,
         state,
@@ -203,7 +209,7 @@ export const PatientBasicDetails = async (req, res) => {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    const registeredPatientsName = await PatientSchema.find(
+    const patient = await PatientSchema.findOne(
       {
         patientId: id,
       },
@@ -227,7 +233,28 @@ export const PatientBasicDetails = async (req, res) => {
         _id: 0,
       }
     );
-    res.status(200).json(registeredPatientsName);
+    // res.status(200).json(registeredPatientsName);
+    const decryptedPassword = decryptPassword(patient.password);
+
+    // Send the patient details along with the decrypted password
+    res.status(200).json({
+      name: patient.name,
+      gender: patient.gender,
+      patientId: patient.patientId,
+      contactNumber: patient.contactNumber,
+      email: patient.email,
+      bloodGroup: patient.bloodGroup,
+      password: decryptedPassword, // Include decrypted password
+      age: patient.age,
+      address: patient.address,
+      state: patient.state,
+      country: patient.country,
+      image: patient.image,
+      consultingDoctor: patient.consultingDoctor,
+      localContactName: patient.localContactName,
+      localContactRelation: patient.localContactRelation,
+      localContactNumber: patient.localContactNumber,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -570,7 +597,7 @@ export const sendMail = async (req, res) => {
     port: 465,
     auth: {
       user: "pulmocareresearch01@gmail.com", // Replace with your email
-      pass: "bzxbbrvzaydznvtc", // Replace with your app password
+      pass: process.env.EMAILPASSWORD, // Replace with your app password
     },
   });
 
@@ -588,8 +615,10 @@ export const sendMail = async (req, res) => {
     // Extract required details
     const patientName = patient.name;
     const patientUniqueId = patient.patientId; // Rename this variable to avoid conflict
-    const password = patient.password; // Ensure password is hashed in production!
+    const password = decryptPassword(patient.password); // Ensure password is hashed in production!
     const email = patient.email;
+
+    //console.log("decryptPassword",password)
 
     // Email subject and body
     const subject = "Patient Registration Details";

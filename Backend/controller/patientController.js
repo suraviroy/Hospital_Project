@@ -3,6 +3,7 @@ import RequestSchema from "../model/requestSchema.js";
 import FeedbackSchema from "../model/feedbackSchema.js";
 import moment from "moment-timezone";
 import AdminSchema from "../model/adminSchema.js";
+import { decryptPassword } from "../middleware/auth.js";
 
 // export const login = async (req, res) => {
 //   const { patientId, password } = req.body;
@@ -44,7 +45,9 @@ export const login = async (req, res) => {
         .status(404)
         .json({ status: "error", message: "Patient does not exist" });
 
-    if (password !== existingUser.password)
+    const decryptedPassword = decryptPassword(existingUser.password);
+
+    if (password !== decryptedPassword)
       return res
         .status(401)
         .json({ status: "error", message: "Invalid credentials" });
@@ -122,7 +125,7 @@ export const HomePageDetails = async (req, res) => {
     }));
 
     // Log the details for debugging purposes
-   // console.log("Registered Patients Details:", updatedPatientsName);
+    // console.log("Registered Patients Details:", updatedPatientsName);
 
     // Send the response with patient details including degree and medicine
     res.status(200).json(updatedPatientsName);
@@ -220,11 +223,11 @@ export const PatientsAllAppointments = async (req, res) => {
       }
     );
 
-  
+
     let degree = null;
     let medicine = null;
 
-  
+
     if (patientInfo.consultingDoctor === 'Dr. Parthasarathi Bhattacharyya') {
       degree = 'MD, DNBE';
       medicine = 'Pulmonary Medicine';
@@ -233,34 +236,34 @@ export const PatientsAllAppointments = async (req, res) => {
       medicine = 'Pulmonary Medicine';
     } else if (patientInfo.consultingDoctor === 'Dr. Abhra Ch. Chowdhury') {
       degree = 'DNB, DM';
-      medicine = null;  
+      medicine = null;
     } else if (patientInfo.consultingDoctor === 'Dr. Ashok Saha') {
       degree = 'MS, DNB, D.Orth';
-      medicine = null;  
+      medicine = null;
     }
 
     patientInfo = patientInfo.toObject();
 
-    
+
     // console.log("Patient Info:", patientInfo);
     // console.log("Degree:", degree);
     // console.log("Medicine:", medicine);
 
-   
+
     const patientAppointments = await PatientSchema.findOne(
       { patientId: id },
       { visitCount: 1, _id: 0 }
     );
 
- 
+
     const allAppointments = patientAppointments?.visitCount?.map((visit) => ({
       visitDate: visit.visitDate,
       visitTime: visit.visitTime,
       id: visit._id
     }))
-    .reverse();
+      .reverse();
 
-  
+
     res.status(200).json({
       patientInfo: patientInfo,
       degree: degree,
@@ -460,15 +463,15 @@ export const seenNotification = async (req, res) => {
   try {
     const id = req.params.id;
 
- const result = await RequestSchema.updateMany(
-  { patientId: id, viewed: false },
-  { viewed: true }
-);
+    const result = await RequestSchema.updateMany(
+      { patientId: id, viewed: false },
+      { viewed: true }
+    );
 
-res.status(200).json({ message: "All notifications marked as seen" });
-} catch (err) {
-res.status(500).json({ message: err.message });
-}
+    res.status(200).json({ message: "All notifications marked as seen" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 
@@ -481,8 +484,8 @@ export const sendFeedback = async (req, res) => {
     const currentDate = moment().tz(desiredTimezone).format('MMMM D, YYYY');
     const currentTime = moment().tz(desiredTimezone).format('hh:mm A');
 
-    const { patientId, name, phonenumber, rating, feedback  } = req.body;
-    
+    const { patientId, name, phonenumber, rating, feedback } = req.body;
+
 
     const largestFeedback = await FeedbackSchema.findOne().sort({ feedbackId: -1 });
     const nextFeedbackId = largestFeedback ? largestFeedback.feedbackId + 1 : 1;
