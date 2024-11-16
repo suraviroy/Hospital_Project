@@ -4,6 +4,7 @@ import AdminSchema from "../model/adminSchema.js";
 import moment from "moment-timezone";
 import excelJS from 'exceljs';
 import FeedbackSchema from "../model/feedbackSchema.js";
+import nodemailer from "nodemailer";
 
 export const patientregistration = async (req, res) => {
   try {
@@ -558,6 +559,78 @@ export const oneAdminNotification = async (req, res) => {
   }
 };
 
+
+export const sendMail = async (req, res) => {
+  const { patientId } = req.body; // Destructure patientId from the request body
+
+  // Configure Nodemailer
+  const transporter = nodemailer.createTransport({
+    service: "gmail", // Or another provider
+    secure: true,
+    port: 465,
+    auth: {
+      user: "pulmocareresearch01@gmail.com", // Replace with your email
+      pass: "bzxbbrvzaydznvtc", // Replace with your app password
+    },
+  });
+
+  if (!patientId) {
+    return res.status(400).json({ message: "ID is required." });
+  }
+
+  try {
+    // Find the patient by ID
+    const patient = await PatientSchema.findOne({ patientId }); // Find the patient using the extracted patientId
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
+    }
+
+    // Extract required details
+    const patientName = patient.name;
+    const patientUniqueId = patient.patientId; // Rename this variable to avoid conflict
+    const password = patient.password; // Ensure password is hashed in production!
+    const email = patient.email;
+
+    // Email subject and body
+    const subject = "Patient Registration Details";
+    const body = `
+Congratulations!! ${patientName}
+You are Successfully Registered!!
+
+Your Patient ID: ${patientUniqueId}
+
+Your Login Credentials:
+Username: ${patientUniqueId}
+Password: ${password}
+
+Please use this username and password to login into our system.
+
+Please tap on the below link to download our patient care app.
+
+https://www.dropbox.com/scl/fi/81wxouppgsrxterhxzk8d/IpcrConnect_1.0.0.apk?rlkey=bmnwr51qu5w0xurvgudxd9l3i&st=f56jgf30&dl=0
+
+Thank You,
+Best Wishes From IPCR
+Visit our website for more details - https://www.pulmocareindia.org
+    `;
+
+    const mailOptions = {
+      from: "pulmocareresearch01@gmail.com",
+      to: email,
+      subject,
+      text: body,
+    };
+
+    // Send the email
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({ message: "Email sent successfully!" });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return res.status(500).json({ message: "Error sending email." });
+  }
+};
 
 
 export const excelFile = async (req, res) => {

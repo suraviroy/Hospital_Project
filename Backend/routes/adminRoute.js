@@ -18,7 +18,8 @@ import {
   updateBasicDetails,
   countAdminNotification,
   seenAdminNotification,
-  oneAdminNotification
+  oneAdminNotification,
+  sendMail
 } from "../controller/adminController.js";
 const adminRouter = express.Router();
 
@@ -42,5 +43,7 @@ adminRouter.get("/excelFileFeedback", excelFileFeedback);
 adminRouter.get("/countAdminNotification/:cid", countAdminNotification);
 adminRouter.post("/seenAdminNotification/:cid", seenAdminNotification);
 adminRouter.get("/oneAdminNotification/:cid", oneAdminNotification);
+
+adminRouter.post("/sendMail", sendMail);
 
 export default adminRouter;
