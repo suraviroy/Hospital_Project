@@ -579,7 +579,6 @@ export const sendMail = async (req, res) => {
   }
 
   try {
-    // Find the patient by ID
     const patient = await PatientSchema.findOne({ patientId }); // Find the patient using the extracted patientId
 
     if (!patient) {
