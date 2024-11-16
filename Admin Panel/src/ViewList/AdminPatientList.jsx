@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { View, StatusBar,Text, StyleSheet, FlatList, TouchableOpacity, Dimensions, Image,ActivityIndicator,Platform } from 'react-native';
 import SearchList from './SearchList';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -69,28 +69,49 @@ const AdminPatientList = () => {
     };
 
     const renderPatientItem = ({ item }) => (
-        <View style={styles.patientView2451}>
-            {item.image ? (
-                <Image source={{ uri: item.image }} style={styles.patientImage2451} />
-            ) : (
-                <Image source={require('../../assets/images/user2.png')} style={styles.patientImage2451} />
-            )}
-            <View style={styles.patientDetails13}>
-                <Text style={styles.patientDetails2451}>{item.name}</Text>
-                <Text style={styles.patientDetails2450}>{item.gender}</Text>
-                <Text style={styles.patientDetails2452}>{item.age}</Text>
+        <View style={styles.patientView}>
+            <View style={styles.contentContainer}>
+                <View style={styles.imageContainer}>
+                    {item.image ? (
+                        <Image 
+                            source={{ uri: item.image }} 
+                            style={styles.patientImage} 
+                        />
+                    ) : (
+                        <Image 
+                            source={require('../../assets/images/user.png')} 
+                            style={styles.defaultImage}
+                            resizeMode="contain"
+                        />
+                    )}
+                </View>
+
+                <View style={styles.infoContainer}>
+                    <View style={styles.patientDetails}>
+                        <Text style={styles.patientName}  ellipsizeMode="tail">
+                          Name:  {item.name}
+                        </Text>
+                        <Text style={styles.patientInfo}>Gender: {item.gender}</Text>
+                        <Text style={styles.patientInfo}>Age: {item.age}</Text>
+                        <Text style={styles.patientId}>Id: {item.patientId}</Text>
+                    </View>
+
+                    <TouchableOpacity
+                        style={styles.viewButton}
+                        onPress={() => handleViewDetails(item.patientId)}
+                    >
+                        <Text style={styles.viewButtonText}>View Details</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-            <View style={styles.patientId2451}>
-                <Text style={styles.patientId13}>{item.patientId}</Text>
-            </View>
-            <TouchableOpacity
-                style={styles.viewButton2451}
-                onPress={() => handleViewDetails(item.patientId)}
-            >
-                <Text style={styles.viewDetails}>View Details</Text>
-            </TouchableOpacity>
-            <View style={styles.appointmentdet13}>
-                <Text style={styles.appointment2451}>Last Appointment On: <Text style={styles.time2451}>{item.visitDate},  {item.visitTime}</Text></Text>
+            
+            <View style={styles.appointmentContainer}>
+                <Text style={styles.appointmentText}>
+                    Last Appointment On: {' '}
+                    <Text style={styles.appointmentTime}>
+                        {item.visitDate}, {item.visitTime}
+                    </Text>
+                </Text>
             </View>
         </View>
     );
@@ -109,8 +130,14 @@ const AdminPatientList = () => {
 
     const renderContent = () => {
         if (loading) {
-            return <Text style={styles.text45}>Loading...</Text>;
+            return (
+                <View style={styles.loaderContainer}>
+                    <ActivityIndicator size="large" color="#096759" />
+                    <Text style={styles.text45}>Loading ...</Text>
+                </View>
+            );
         }
+    
 
         if (filteredPatients.length === 0) {
             return <Text style={styles.text45}>No patients found for this admin.</Text>;
@@ -128,6 +155,11 @@ const AdminPatientList = () => {
 
     return (
         <SafeAreaView style={styles.appbar2451}>
+             <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF"  // Match your app's background color
+            translucent={false}
+        />
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     {headerPatients()}
@@ -138,12 +170,6 @@ const AdminPatientList = () => {
     );
 };
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        // paddingTop: 35,
-        paddingTop: windowWidth*0.08,
-    },
     button457: {
         marginLeft: 110,
         borderWidth: 2,
@@ -156,6 +182,13 @@ const styles = StyleSheet.create({
         fontSize:18,
         fontFamily: 'bold01',
         marginLeft: 20,
+    },
+    loadingText: {
+        marginTop: 16,
+        fontSize: Platform.OS === 'ios' ? 16 : 14,
+        textAlign:'center',
+        justifyContent:'center',
+        color: '#666666',
     },
     text568:{
         color: "#096759",
@@ -175,7 +208,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     text2451: {
-        fontSize: 25,
+        fontSize: windowWidth*0.05,
         marginLeft: 30,
         fontFamily: "bold01",
     },
@@ -191,119 +224,125 @@ const styles = StyleSheet.create({
     flatList: {
         paddingHorizontal: 2
     },
-    patientContainer2451:{
-        flex: 1, 
-        marginBottom: 85,
-        paddingTop: -windowWidth*0.14,
+    
+  
+    container: {
+        flex: 1,
+        paddingTop: windowWidth*0.08,
+        paddingBottom:windowWidth*0.05,
     },
-    patientView2451: {
-        width: windowWidth*0.95,
-        height: windowWidth * 0.4,
+    listContainer: {
+        paddingHorizontal: windowWidth * 0.025,
+        paddingTop: 10,
+    },
+    patientView: {
         backgroundColor: '#fff',
-        alignSelf: 'center',
-        marginTop: 10,
-        flexDirection: 'row',
-        borderRadius: 10,
+        marginBottom: 10,
+        borderRadius: 8,
         borderWidth: 1,
-        borderStyle: 'solid',
         borderColor: '#077547',
         elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        padding: 10,
+        margin:windowWidth*0.02,
     },
-    patientId2451: {
-        width: windowWidth*0.28,
-        height: 30,
-        backgroundColor: '#85DBCD',
-        borderTopLeftRadius: 12,
-        borderBottomLeftRadius: 12,
-        marginLeft: windowWidth*0.027,
-        marginTop: 7,
-        alignContent: 'center',
-        textAlignVertical: 'center',
-        position:'relative'
-    },
-    viewButton2451: {
+    contentContainer: {
         flexDirection: 'row',
+        marginBottom: 8,
+    },
+    imageContainer: {
+        width: windowWidth * 0.18,
+        height: windowWidth * 0.20,
+        marginRight: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        position: "absolute",
-        width: windowWidth*0.28,
-        height: 34,
-        borderColor: '#077547',
-        borderWidth: 2,
-        borderStyle: 'solid',
-        borderRadius: 5,
-        marginTop: 70,
-        marginLeft: windowWidth*0.65,
+        backgroundColor: '#f5f5f5',
+        borderRadius: 8,
+        overflow: 'hidden',
     },
-    viewDetails: {
-        color: '#077547',
-        fontSize: 12,
-        alignContent: 'center',
-    },
-    appointment2451: {
-        color: '#666',
-        fontSize: 12,
-        alignSelf: 'center',
-    },
-    patientImage2451: {
-        marginTop: 5,
-        marginLeft: 5,
-        marginRight: 10,
-        width: windowWidth * 0.2, 
-        height: windowWidth * 0.25,
+    patientImage: {
+        width: '100%',
+        height: '100%',
         borderRadius: 8,
     },
-    patientDetails2451: {
-        fontWeight: 'bold',
-        alignItems: 'center',
-        marginLeft: 10,
-        marginTop: 25,
-        fontSize: 14,
+    defaultImage: {
+        width: '100%',
+        height: '100%',
+        opacity: 0.7,
+    },
+    infoContainer: {
+        flex: 1,
+        flexDirection: 'row',
+    },
+    patientDetails: {
+        flex: 1,
+        paddingRight: 8,
+    },
+    patientName: {
+        fontSize: 15,
         fontFamily: FontFamily.font_bold,
+        marginBottom: 4,
+        fontWeight:'600'
     },
-    patientDetails2450: {
-        // marginTop: 55,
-        marginLeft: 10,
-        alignItems: 'center',
-        color: 'grey',
-        fontSize: 12,
-        fontFamily: FontFamily.font_bold,
-    },
-    patientDetails2452: {
-        // marginTop: 55,
-        marginLeft: 10,
-        alignItems: 'center',
-        color: 'black',
-        fontSize: 12,
-        fontFamily: 'bold01'
-    },
-    // patientDetails2452: {
-    //     marginTop: 15,
-    //     marginLeft: 15,
-    //     alignItems: 'center',
-    //     color: 'grey',
-    //     fontSize: 14,
-    // },
-    patientDetails13: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: windowWidth*0.4,
-    },
-    appointmentdet13: {
-        position: 'absolute',
-        bottom: 10,
-        left: 10,
-    },
-    patientId13: {
-        alignSelf: 'center',
-        fontWeight: 'bold',
-        marginTop: 4,
-        marginLeft: 3,
-    },
-    time2451: {
+    patientInfo: {
+        fontSize: 13,
         color: '#011411',
-        alignSelf: 'center',
-        fontFamily: 'bold01'
+        fontFamily: 'regular89',
+        marginBottom: 2,
+    },
+    patientId: {
+        fontSize: 13,
+        fontFamily: 'bold01',
+        color: 'black',
+        marginTop: 2,
+    },
+    viewButton: {
+        alignSelf: 'flex-start',
+        paddingHorizontal: windowWidth*0.05,
+        paddingVertical: windowWidth*0.03,
+        borderWidth: 1.5,
+        borderColor: '#077547',
+        borderRadius: 6,
+        marginLeft: 4,
+    },
+    viewButtonText: {
+        color: '#077547',
+        fontSize: windowWidth*0.03,
+        fontFamily: 'bold01',
+    },
+    appointmentContainer: {
+        marginTop: 4,
+        paddingTop: 8,
+        borderTopWidth: 1,
+        borderTopColor: '#eee',
+    },
+    appointmentText: {
+        fontSize: 12,
+        color: '#666',
+        fontFamily: 'regular89',
+    },
+    appointmentTime: {
+        color: '#011411',
+        fontFamily: 'bold01',
+    },
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 16,
+        fontSize: Platform.OS === 'ios' ? 16 : 14,
+        color: '#666666',
+    },
+    emptyText: {
+        marginTop: windowWidth * 0.1,
+        fontSize: 18,
+        fontFamily: 'bold01',
+        marginLeft: 20,
     },
 });
 

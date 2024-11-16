@@ -16,6 +16,9 @@ import NotiReq from './src/Notification/NotiReq';
 import NotiAction from './src/Notification/NotiAction';
 import { AuthProvider, AuthContext } from './src/AuthContext'; 
 import AlertNoti from './src/alert/alert';
+import AppList from './src/Reports/AppList';
+import UpdatedDetails from './src/Reports/UpdatedDetails';
+import NotiList from './src/Notification/NotiList';
 
 const Stack = createNativeStackNavigator();
 
@@ -74,9 +77,12 @@ function AppNavigator() {
           <Stack.Screen name="Notification" component={Notification} />
           <Stack.Screen name="MyProfile" component={MyProfile} />
           <Stack.Screen name="Reports" component={Reports} />
+          <Stack.Screen name="AppList" component={AppList} />
+          <Stack.Screen name="UpdatedDetails" component={UpdatedDetails} />
           <Stack.Screen name="Request" component={Request} />
           <Stack.Screen name="NotificationNavbar" component={NotificationNavbar} />
           <Stack.Screen name="NotiReq" component={NotiReq} />
+          <Stack.Screen name="NotiList" component={NotiList} />
           <Stack.Screen name="NotiAction" component={NotiAction} />
         </>
       )}

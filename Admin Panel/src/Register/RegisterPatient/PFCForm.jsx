@@ -45,7 +45,7 @@ const PFCForm = forwardRef( (props,ref ) =>  {
       key: 'MT',
     },
     {
-      value: 'Years',
+      value: 'Year/s',
       key: 'YR',
     },
   ]

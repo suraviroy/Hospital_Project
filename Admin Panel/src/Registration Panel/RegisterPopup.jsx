@@ -22,6 +22,10 @@ Your Login Credentials
 Please use this username and password 
 to login into our system
 
+Please tap on the below link to download our patient care app.
+
+https://www.dropbox.com/scl/fi/81wxouppgsrxterhxzk8d/IpcrConnect_1.0.0.apk?rlkey=bmnwr51qu5w0xurvgudxd9l3i&st=f56jgf30&dl=0
+
 Thank You,
 Best Wishes From IPCR `;
     Linking.openURL(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
@@ -60,12 +64,12 @@ const RegisterPopup = ({ visible, setVisible, loading, patientName, handleCancel
                                     <View style={styles.BelowBottom}>
                                         <TouchableOpacity style={styles.gmailButton} onPress={() => openEmail(email, patientName, patientId, password)}>
                                             <MaterialCommunityIcons name="gmail" size={20} color={'#000000'} />
-                                            <Text style={styles.BelowText}>Send To Gmail</Text>
+                                            <Text style={styles.BelowText}>Send To mail</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={styles.callButton}>
+                                        {/* <TouchableOpacity style={styles.callButton}>
                                             <MaterialCommunityIcons name="phone-message" size={20} color={'#000000'} />
-                                            <Text style={styles.BelowText}>Send To Phone Number</Text>
-                                        </TouchableOpacity>
+                                            <Text style={styles.BelowText}>Send To Mobile</Text>
+                                        </TouchableOpacity> */}
                                     </View>
                                 </View>
                             </View>
@@ -154,10 +158,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: '#DBF4F1',
         width: 0.43 * windowWidth, 
+        marginTop:windowWidth*0.02,
         borderRadius: 8,
     },
     BelowText: {
-        fontSize: 0.027 * windowWidth,
+        fontSize: 0.03 * windowWidth,
         fontFamily: 'bold09',
         marginLeft: 0.02 * windowWidth,
         color: "#000000",

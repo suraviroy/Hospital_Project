@@ -11,7 +11,10 @@ import {
   Dimensions,
   ScrollView,
   FlatList,
+  Platform,
+  StatusBar,
   ActivityIndicator,
+  Alert
 } from "react-native";
 const windowWidth = Dimensions.get("window").width;
 import Icon from "react-native-vector-icons/FontAwesome5";
@@ -23,6 +26,8 @@ import axios from "axios";
 import PFCForm from "./PFCForm";
 import SOSForm from "./SOSForm";
 import Exposure from "./Exposure";
+import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
 import { PickerIos, Picker } from "@react-native-picker/picker";
 import { backendURL } from "../../backendapi";
 import moment from 'moment-timezone';
@@ -84,6 +89,7 @@ const DiseaseForm = ({ patientId }) => {
   const [visitTime, setVisitTime] = useState(new Date());
   const [showVisitDatePicker, setShowVisitDatePicker] = useState(false);
   const [showVisitTimePicker, setShowVisitTimePicker] = useState(false);
+  const [pickedFile, setPickedFile] = useState(null);
   const patientDiseaseURL = `${backendURL}/adminRouter/patientEachVisitDetails/${patientId}`;
   useEffect(() => {
     fetch(`${backendURL}/patientRouter/PatientProfile/${patientId}`)
@@ -114,14 +120,474 @@ const DiseaseForm = ({ patientId }) => {
       key: "YR",
     },
   ];
+  
+  const [prescriptionFields, setPrescriptionFields] = useState([
+    { id: 1, file: null, uploading: false }
+  ]);
+    const [otherFields, setOtherFields] = useState([
+      { id: 1, documentName: '', file: null, uploading: false }
+    ]);
+  
+    const handleDocumentNameChange = (id, text) => {
+      setOtherFields(fields =>
+        fields.map(field =>
+          field.id === id
+            ? { ...field, documentName: text }
+            : field
+        )
+      );
+    };
+  
+    const addOtherField = () => {
+      setOtherFields(fields => [
+        ...fields,
+        { id: fields.length + 1, documentName: '', file: null, uploading2: false }
+      ]);
+    };
+  
+    const removeOtherField = (id) => {
+      setOtherFields(fields => fields.filter(field => field.id !== id));
+    };
+  // Reusing your existing file handling functions
+  const requestPermissions = async () => {
+    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+    const { status: libraryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (cameraStatus !== 'granted' || libraryStatus !== 'granted') {
+      Alert.alert('Permission required', 'Please grant camera and media library permissions to use this feature.');
+      return false;
+    }
+    return true;
+  };
 
+  const uploadToCloudinary = async (fileInfo, fieldId) => {
+    setPrescriptionFields(fields => 
+      fields.map(field => 
+        field.id === fieldId 
+          ? { ...field, uploading: true }
+          : field
+      )
+    );
+
+    const formData = new FormData();
+    formData.append('file', {
+      uri: fileInfo.uri,
+      name: fileInfo.name || 'file',
+      type: fileInfo.type || 'application/octet-stream',
+    });
+    formData.append('upload_preset', 'pulmocareapp');
+    formData.append('cloud_name', 'pulmocare01');
+
+    try {
+      const response = await fetch(
+        'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        return {
+          name: data.original_filename || fileInfo.name,
+          type: fileInfo.type,
+          uri: data.secure_url,
+        };
+      } else {
+        throw new Error('Upload failed');
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      Alert.alert('Upload Error', 'Failed to upload file. Please try again.');
+      return null;
+    } finally {
+      setPrescriptionFields(fields => 
+        fields.map(field => 
+          field.id === fieldId 
+            ? { ...field, uploading: false }
+            : field
+        )
+      );
+    }
+  };
+  const uploadToCloudinary2 = async (fileInfo, fieldId) => {
+    setOtherFields(fields => 
+      fields.map(field => 
+        field.id === fieldId 
+          ? { ...field, uploading: true }
+          : field
+      )
+    );
+
+    const formData = new FormData();
+    formData.append('file', {
+      uri: fileInfo.uri,
+      name: fileInfo.name || 'file',
+      type: fileInfo.type || 'application/octet-stream',
+    });
+    formData.append('upload_preset', 'pulmocareapp');
+    formData.append('cloud_name', 'pulmocare01');
+
+    try {
+      const response = await fetch(
+        'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        return {
+          name: data.original_filename || fileInfo.name,
+          type: fileInfo.type,
+          uri: data.secure_url,
+        };
+      } else {
+        throw new Error('Upload failed');
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      Alert.alert('Upload Error', 'Failed to upload file. Please try again.');
+      return null;
+    } finally {
+      setOtherFields(fields => 
+        fields.map(field => 
+          field.id === fieldId 
+            ? { ...field, uploading: false }
+            : field
+        )
+      );
+    }
+  };
+  const handleFileUpload = async (fileInfo, fieldId) => {
+    const uploadedFile = await uploadToCloudinary(fileInfo, fieldId);
+    if (uploadedFile) {
+      setPrescriptionFields(fields =>
+        fields.map(field =>
+          field.id === fieldId
+            ? { ...field, file: uploadedFile }
+            : field
+        )
+      );
+    }
+  };
+  const handleFileUpload2 = async (fileInfo, fieldId) => {
+    const uploadedFile = await uploadToCloudinary2(fileInfo, fieldId);
+    if (uploadedFile) {
+      setOtherFields(fields =>
+        fields.map(field =>
+          field.id === fieldId
+            ? { ...field, file: uploadedFile }
+            : field
+        )
+      );
+    }
+  };
+
+  const showFilePickerOptions = (fieldId) => {
+    if (Platform.OS === 'ios') {
+      Alert.alert(
+        'Select File',
+        'Choose a method',
+        [
+          {
+            text: 'Take Photo',
+            onPress: () => takePhoto(fieldId)
+          },
+          {
+            text: 'Choose from Gallery',
+            onPress: () => pickImage(fieldId)
+          },
+          {
+            text: 'Upload Document',
+            onPress: () => pickDocument(fieldId)
+          },
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          }
+        ]
+      );
+    } else {
+      Alert.alert(
+        'Select File',
+        'Choose a method',
+        [
+          {
+            text: 'Take Photo',
+            onPress: () => takePhoto(fieldId)
+          },
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          },
+          {
+            text: 'More Options',
+            onPress: () => {
+              Alert.alert(
+                'More Options',
+                '',
+                [
+                  {
+                    text: 'Upload Document',
+                    onPress: () => pickDocument(fieldId)
+                  },
+                  {
+                    text: 'Choose from Gallery',
+                    onPress: () => pickImage(fieldId)
+                  },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel'
+                  },
+                ]
+              );
+            }
+          }
+        ]
+      );
+    }
+  };
+
+  const pickDocument = async (fieldId) => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: ['application/pdf', 'application/msword', 
+               'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+        copyToCacheDirectory: true
+      });
+
+      if (!result.canceled) {
+        const fileInfo = result.assets[0];
+        handleFileUpload(fileInfo, fieldId);
+      }
+    } catch (error) {
+      console.error('Error picking document:', error);
+      Alert.alert('Error', 'Failed to pick document. Please try again.');
+    }
+  };
+
+  const pickImage = async (fieldId) => {
+    if (!await requestPermissions()) return;
+
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.7,
+      });
+
+      if (!result.canceled) {
+        const fileInfo = {
+          uri: result.assets[0].uri,
+          type: 'image/jpeg',
+          name: 'image.jpg',
+        };
+        handleFileUpload(fileInfo, fieldId);
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      Alert.alert('Error', 'Failed to pick image. Please try again.');
+    }
+  };
+
+  const takePhoto = async (fieldId) => {
+    if (!await requestPermissions()) return;
+
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.7,
+      });
+
+      if (!result.canceled) {
+        const fileInfo = {
+          uri: result.assets[0].uri,
+          type: 'image/jpeg',
+          name: 'camera.jpg',
+        };
+        handleFileUpload(fileInfo, fieldId);
+      }
+    } catch (error) {
+      console.error('Error taking photo:', error);
+      Alert.alert('Error', 'Failed to take photo. Please try again.');
+    }
+  };
+  const showFilePickerOptions2 = (fieldId) => {
+    if (Platform.OS === 'ios') {
+      Alert.alert(
+        'Select File',
+        'Choose a method',
+        [
+          {
+            text: 'Take Photo',
+            onPress: () => takePhoto2(fieldId)
+          },
+          {
+            text: 'Choose from Gallery',
+            onPress: () => pickImage2(fieldId)
+          },
+          {
+            text: 'Upload Document',
+            onPress: () => pickDocument2(fieldId)
+          },
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          }
+        ]
+      );
+    } else {
+      Alert.alert(
+        'Select File',
+        'Choose a method',
+        [
+          {
+            text: 'Take Photo',
+            onPress: () => takePhoto2(fieldId)
+          },
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          },
+          {
+            text: 'More Options',
+            onPress: () => {
+              Alert.alert(
+                'More Options',
+                '',
+                [
+                  {
+                    text: 'Upload Document',
+                    onPress: () => pickDocument2(fieldId)
+                  },
+                  {
+                    text: 'Choose from Gallery',
+                    onPress: () => pickImage2(fieldId)
+                  },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel'
+                  },
+                ]
+              );
+            }
+          }
+        ]
+      );
+    }
+  };
+
+  const pickDocument2 = async (fieldId) => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: ['application/pdf', 'application/msword', 
+               'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+        copyToCacheDirectory: true
+      });
+
+      if (!result.canceled) {
+        const fileInfo = result.assets[0];
+        handleFileUpload2(fileInfo, fieldId);
+      }
+    } catch (error) {
+      console.error('Error picking document:', error);
+      Alert.alert('Error', 'Failed to pick document. Please try again.');
+    }
+  };
+
+  const pickImage2 = async (fieldId) => {
+    if (!await requestPermissions()) return;
+
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.7,
+      });
+
+      if (!result.canceled) {
+        const fileInfo = {
+          uri: result.assets[0].uri,
+          type: 'image/jpeg',
+          name: 'image.jpg',
+        };
+        handleFileUpload2(fileInfo, fieldId);
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      Alert.alert('Error', 'Failed to pick image. Please try again.');
+    }
+  };
+
+  const takePhoto2 = async (fieldId) => {
+    if (!await requestPermissions()) return;
+
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.7,
+      });
+
+      if (!result.canceled) {
+        const fileInfo = {
+          uri: result.assets[0].uri,
+          type: 'image/jpeg',
+          name: 'camera.jpg',
+        };
+        handleFileUpload2(fileInfo, fieldId);
+      }
+    } catch (error) {
+      console.error('Error taking photo:', error);
+      Alert.alert('Error', 'Failed to take photo. Please try again.');
+    }
+  };
+
+
+  const addPrescriptionField = () => {
+    setPrescriptionFields(fields => [
+      ...fields,
+      { id: Date.now(), file: null, uploading: false }
+    ]);
+  };
+  const removePrescriptionField = (id) => {
+    setPrescriptionFields(fields => fields.filter(field => field.id !== id));
+  };
   const handleDataChange = (index, newData) => {
     let tempData = [...Hosdata];
     tempData[index] = newData;
     setHosData(tempData);
   };
+
   const handleSave = async () => {
     setIsLoading(true);
+    const prescriptionData = prescriptionFields
+      .filter(field => field.file && field.file.uri)
+      .map(field => ({
+        prescriptiondocument: field.file.uri
+      }));
+
+    // If no prescriptions uploaded, add default "NA" entry
+    if (prescriptionData.length === 0) {
+      prescriptionData.push({
+        prescriptiondocument: "NA"
+      });
+    }
+    const otherDocumentData = otherFields
+      .filter(field => field.file && field.file.uri)
+      .map(field => ({
+        documentname: field.documentName || "NA",
+        document: field.file.uri
+      }));
+
+    if (otherDocumentData.length === 0) {
+      otherDocumentData.push({
+        documentname: "NA",
+        document: "NA"
+      });
+    }
+
     const statusOfSickness =
       selectedOption8 === "Select" ? "NA" : selectedOption8;
     const coordinator =
@@ -159,8 +625,11 @@ const DiseaseForm = ({ patientId }) => {
         occupation: occupation || "NA",
       },
       pastHospitalization: Hosdata,
+
       statusOfSickness: statusOfSickness,
       catScore: catScore || 0,
+      prescription: prescriptionData,
+      otherdocuments: otherDocumentData,
     };
     if (exiDisRef && exiDisRef.current) {
       visitData.existingDeseases = exiDisRef.current.getData();
@@ -206,13 +675,18 @@ const DiseaseForm = ({ patientId }) => {
 
         if (response.status === 200) {
           console.log("Data sent successfully");
-          alert('Patient Disease Updated Successfully');
-          navigation.navigate('ViewList');
+          Alert.alert("Success",
+            "Patient Disease Updated Successfully");
+          navigation.navigate('BottomNavigation');
         } else {
           console.error("Failed to send data:", response.status);
+          Alert.alert("Sorry",
+            "Something went wrong. Please try again.");
         }
       } catch (error) {
         console.error("Error sending data:", error.message);
+        Alert.alert("Sorry",
+          "Something went wrong. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -251,6 +725,11 @@ const handleVisitTimeChange = (event, selectedTime) => {
 
   return (
     <View style={styles.container}>
+       <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF" 
+            translucent={false}
+        />
       <SafeAreaView style={styles.disform}>
       <View style={styles.disheader}>
           <Text style={styles.texthead}>Visit Date</Text>
@@ -304,7 +783,7 @@ const handleVisitTimeChange = (event, selectedTime) => {
               setIsClicked3(!isClicked3);
             }}
           >
-            <Text style={{ color: "#8E7D7D", fontSize: 15, width: "50%" }}>
+            <Text style={{ color: "#8E7D7D", fontSize: 14, width: "50%" }}>
               {selectedOption1}
             </Text>
             {isClicked3 ? (
@@ -418,7 +897,7 @@ const handleVisitTimeChange = (event, selectedTime) => {
               setIsClicked4(!isClicked4);
             }}
           >
-            <Text style={{ color: "#8E7D7D", fontSize: 15, width: "50%" }}>
+            <Text style={{ color: "#8E7D7D", fontSize: 14, width: "50%" }}>
               {selectedOption2}
             </Text>
             {isClicked4 ? (
@@ -513,7 +992,7 @@ const handleVisitTimeChange = (event, selectedTime) => {
               setIsClicked5(!isClicked5);
             }}
           >
-            <Text style={{ color: "#8E7D7D", fontSize: 15, width: "50%" }}>
+            <Text style={{ color: "#8E7D7D", fontSize: 14, width: "50%" }}>
               {selectedOption3}
             </Text>
             {isClicked5 ? (
@@ -617,7 +1096,7 @@ const handleVisitTimeChange = (event, selectedTime) => {
               setIsClicked6(!isClicked6);
             }}
           >
-            <Text style={{ color: "#8E7D7D", fontSize: 15, width: "50%" }}>
+            <Text style={{ color: "#8E7D7D", fontSize: 14, width: "50%" }}>
               {selectedOption4}
             </Text>
             {isClicked6 ? (
@@ -693,7 +1172,7 @@ const handleVisitTimeChange = (event, selectedTime) => {
               setIsClicked7(!isClicked7);
             }}
           >
-            <Text style={{ color: "#8E7D7D", fontSize: 15, width: "50%" }}>
+            <Text style={{ color: "#8E7D7D", fontSize: 14, width: "50%" }}>
               {selectedOption5}
             </Text>
             {isClicked7 ? (
@@ -765,7 +1244,7 @@ const handleVisitTimeChange = (event, selectedTime) => {
           </View>
           <TouchableOpacity style={styles.dropdown15}>
             <TextInput
-              style={{ fontSize: 15, width: windowWidth * 0.45 }}
+              style={{ fontSize: 14, width: windowWidth * 0.45 }}
               placeholder="Enter here"
               placeholderTextColor={"#8E7D7D"}
               onChangeText={(text) => setOccupation(text)}
@@ -782,7 +1261,7 @@ const handleVisitTimeChange = (event, selectedTime) => {
               setIsClicked8(!isClicked8);
             }}
           >
-            <Text style={{ color: "#8E7D7D", fontSize: 15, width: "50%" }}>
+            <Text style={{ color: "#8E7D7D", fontSize: 14, width: "50%" }}>
               {selectedOption6}
             </Text>
             {isClicked8 ? (
@@ -1068,6 +1547,116 @@ const handleVisitTimeChange = (event, selectedTime) => {
             ))}
           </Picker>
         </View>
+        <View style={styles.disheader}>
+        <Text style={styles.texthead}>Upload Prescription</Text>
+      </View>
+      
+      {prescriptionFields.map((field) => (
+        <View key={field.id} style={styles.hosopt1}>
+          <Icon name="paperclip" size={22} color="#8E7D7D" />
+          <Text
+            style={{
+              fontWeight: '700',
+              fontSize: 15,
+              width: windowWidth * 0.42,
+              color: '#8E7D7D',
+              marginLeft: windowWidth * 0.05,
+            }}
+          >
+            {field.file ? field.file.name : 'Upload Prescription'}
+          </Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.uploadbutton}
+              onPress={() => showFilePickerOptions(field.id)}
+              disabled={field.uploading}
+            >
+              {field.uploading ? (
+                <ActivityIndicator size="small" color="#096759" />
+              ) : (
+                <Text style={styles.uploadText}>Upload</Text>
+              )}
+            </TouchableOpacity>
+            
+            {prescriptionFields.length > 1 && (
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => removePrescriptionField(field.id)}
+              >
+                <Icon name="times" size={20} color="#FF4444" />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      ))}
+      
+      <View style={styles.actionButtons}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={addPrescriptionField}
+        >
+          <Text style={styles.addButtonText}>Add More</Text>
+        </TouchableOpacity>
+        </View>
+        <View style={styles.disheader}>
+        <Text style={styles.texthead}>Upload Other Documents</Text>
+      </View>
+      {otherFields.map((field) => (
+        <View key={field.id} style={styles.hosopt2}>
+          <TouchableOpacity style={styles.dropdown67}>
+            <TextInput
+              style={{ fontSize: 15, width: windowWidth * 0.9 }}
+              placeholder="Enter document name"
+              placeholderTextColor={"#8E7D7D"}
+              value={field.documentName}
+              onChangeText={(text) => handleDocumentNameChange(field.id, text)}
+            />
+          </TouchableOpacity>
+          <View  style={styles.hosopt3}>
+          <Icon name="paperclip" size={22} color="#8E7D7D" />
+          <Text
+            style={{
+              fontWeight: '700',
+              fontSize: 15,
+              width: windowWidth * 0.42,
+              color: '#8E7D7D',
+              marginLeft: windowWidth * 0.05,
+            }}
+          >
+            {field.file ? field.file.name : 'Upload Document'}
+          </Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.uploadbutton}
+              onPress={() => showFilePickerOptions2(field.id)}
+              disabled={field.uploading}
+            >
+              {field.uploading ? (
+                <ActivityIndicator size="small" color="#096759" />
+              ) : (
+                <Text style={styles.uploadText}>Upload</Text>
+              )}
+            </TouchableOpacity>
+            </View>
+            {otherFields.length > 1 && (
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => removeOtherField(field.id)}
+              >
+                <Icon name="times" size={20} color="#FF4444" />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      ))}
+      <View style={styles.actionButtons}>
+        <TouchableOpacity
+          style={styles.addButton2}
+          onPress={addOtherField}
+        >
+          <Text style={styles.addButtonText}>Add More</Text>
+        </TouchableOpacity>
+      </View>
         <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
           {isLoading ? (
             <ActivityIndicator size="small" color={Color.colorWhite} />
@@ -1100,9 +1689,126 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginTop: windowWidth * 0.05,
   },
+  hosopt1: {
+    width: windowWidth * 0.95,
+    height: windowWidth * 0.17,
+    alignSelf: 'center',
+    marginTop: windowWidth * 0.05,
+    backgroundColor: '#e3e3e3',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 5,
+  },
+  hosopt3: {
+    width: windowWidth * 0.95,
+    height: windowWidth * 0.17,
+    alignSelf: 'center',
+    marginTop: windowWidth * 0.01,
+    backgroundColor: '#e3e3e3',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 5,
+  },
+  hosopt2: {
+    width: windowWidth * 0.95,
+    height: windowWidth * 0.25,
+    alignSelf: 'center',
+    marginTop: windowWidth * 0.1,
+    backgroundColor: '#e3e3e3',
+    padding: 15,
+    borderRadius: 5,
+  },
+  
+  dropdown67: {
+    width: '100%',
+    height: 50,
+    borderRadius: 5,
+    borderWidth: 0.5,
+    borderColor: '#A99F9F',
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    marginBottom: 10, // Added spacing
+  },
+  // uploadbutton: {
+  //   width: windowWidth * 0.3,
+  //   height: windowWidth * 0.1,
+  //   backgroundColor: '#fff',
+  //   borderWidth: 2,
+  //   borderColor: '#096759',
+  //   borderRadius: 5,
+  //   justifyContent: 'center',
+  // },
   texthead: {
     fontWeight: "700",
     fontSize: 17,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  uploadbutton: {
+    backgroundColor: '#E8F3F1',
+    padding: 8,
+    borderRadius: 5,
+    minWidth: 80,
+    justifyContent: 'center',
+  },
+  uploadText: {
+    fontWeight: '700',
+    fontSize: 15,
+    color: '#096759',
+    alignSelf: 'center',
+  },
+  removeButton: {
+    padding: 8,
+    marginLeft: 10,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
+    marginVertical: 15,
+  },
+  addButton: {
+    width: windowWidth * 0.9,
+    height: windowWidth * 0.13,
+    backgroundColor: "#DBF4F1",
+    borderWidth: 1.24,
+    borderColor: "#096759",
+    borderRadius: 5,
+    justifyContent: "center",
+    alignSelf: "center",
+    marginTop: windowWidth * 0.03,
+  },
+  addButton2: {
+    width: windowWidth * 0.9,
+    height: windowWidth * 0.13,
+    backgroundColor: "#DBF4F1",
+    borderWidth: 1.24,
+    borderColor: "#096759",
+    borderRadius: 5,
+    justifyContent: "center",
+    alignSelf: "center",
+    marginTop: windowWidth * 0.1,
+  },
+  addButtonText: {
+    fontWeight: "700",
+                  fontSize: 15,
+                  color: "#096759",
+                  alignSelf: "center",
+  },
+  saveButton: {
+    backgroundColor: '#096759',
+    padding: 12,
+    borderRadius: 5,
+    flex: 1,
+    marginLeft: 10,
   },
   dropdown13: {
     width: "95%",

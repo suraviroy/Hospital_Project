@@ -7,6 +7,7 @@ import { Color } from '../../../GlobalStyles';
 import { MultipleSelectList } from 'react-native-dropdown-select-list';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import { PickerIos, Picker } from '@react-native-picker/picker';
+import MultiSelect from 'react-native-multiple-select';
 
 const defaultDeseaseData = {
   diabetes: { duration: { numericValue: 0, unit: 'NA' }, statusOfDisease: 'NA' },
@@ -50,7 +51,7 @@ const [selectedOtherDiseases, setSelectedOtherDiseases] = useState({});
     { value: 'Days', key: 'DY' },
     { value: 'Weeks', key: 'WK' },
     { value: 'Months', key: 'MT' },
-    { value: 'Years', key: 'YR' },
+    { value: 'Year/s', key: 'YR' },
 ];
   const StatusOptions = [
     {value:'Control',key:'CO'}, 
@@ -460,7 +461,6 @@ const renderAdditionalFields = () => {
     </View>
   );
 });
-
 
 const styles = StyleSheet.create({
  problems: {

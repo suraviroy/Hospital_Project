@@ -7,8 +7,8 @@ const SearchPatient = ({ setSearchText }) => {
 
     const handleSearchChange = (text) => {
         setSearchTextLocal(text);
-        setSearchText(text);
-    };
+        setSearchText(new RegExp(`^${text}`, 'i'));
+      };
 
     return (
         <View style={styles.searchBox2451}>

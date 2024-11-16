@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity,Dimensions } from 'react-native';
+import { View,Platform,StatusBar, Text, StyleSheet, FlatList, TouchableOpacity,Dimensions } from 'react-native';
 import SearchList from './SearchList';
 import AppList from './AppList';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -30,6 +30,11 @@ const Reports = () => {
 
     return (
         <SafeAreaView style={styles.appbar2451}>
+             <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF" 
+            translucent={false}
+        />
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     {headerAppoint()}

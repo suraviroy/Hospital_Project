@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView, Linking } from 'react-native';
+import { View, Text,Platform,StatusBar, StyleSheet, TouchableOpacity, Dimensions, ScrollView, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { backendURL } from "../backendapi";
@@ -49,7 +49,7 @@ const PatientDetails = () => {
           <Text style={styles.visitHeaderText}>Visit Date: {visit.visitDate}  Time: {visit.visitTime}</Text>
           <Ionicons 
             name={isExpanded ? "chevron-up" : "chevron-down"}   
-            marginLeft={windowWidth*0.03}
+            marginLeft={-windowWidth*0.01}
             size={24} 
             color="#000" 
           />
@@ -61,6 +61,8 @@ const PatientDetails = () => {
             {renderProblemForConsultation(visit.problemForConsultation)}
             {renderImportantHistory(visit.importantHistory)}
             {renderPastHospitalization(visit.pastHospitalization)}
+            {renderPrescription(visit.prescription)}
+            {renderOtherDocuments(visit.otherdocuments)}
             <View  style={styles.backField2}>
             <Text style={styles.subHead6}>Status of Sickness: {visit.statusOfSickness}</Text>
             <Text style={styles.subHead6}>CAT Score: {visit.catScore}</Text>
@@ -256,13 +258,13 @@ const PatientDetails = () => {
             )}
         </View>
          )}
-        {existingDeseases && (
+          {existingDeseases && (
           <View  style={styles.backField}>
              {existingDeseases.malignancy && existingDeseases.malignancy.duration.numericValue !== 0 && (
               <Text style={styles.subHead4}>Disease:  Malignancy{"\n"}
              Organ:   {existingDeseases.malignancy.organ}
-             {' '}  Duration:  {existingDeseases.malignancy.duration.numericValue} 
-             {' '}  Unit:  {existingDeseases.malignancy.duration.unit}{"\n"}
+             {' '} Duration:  {existingDeseases.malignancy.duration.numericValue}{"\n"} 
+              Unit:  {existingDeseases.malignancy.duration.unit} {' '} 
              Status of Disease:  {existingDeseases.malignancy.statusOfDisease}
              </Text>
             )}
@@ -293,11 +295,11 @@ const PatientDetails = () => {
            {existingDeseases && (
           <View  style={styles.backField}>
              {existingDeseases.ckd && existingDeseases.ckd.duration.numericValue !== 0 && (
-              <Text style={styles.subHead4}>Disease:  CKD{"\n"}
-             Organ:   {existingDeseases.ckd.typeofckd}
-             {' '}  Duration:  {existingDeseases.ckd.duration.numericValue}{"\n"}
-             Unit:  {existingDeseases.ckd.duration.unit}
-             {' '}  Status of Disease:  {existingDeseases.ckd.statusOfDisease}
+              <Text style={styles.subHead5}>Disease:  CKD {"\n"}
+             Type of CKD:   {existingDeseases.ckd.typeofckd} {"\n"}
+            Duration:  {existingDeseases.ckd.duration.numericValue}  {' '}  
+             Unit:  {existingDeseases.ckd.duration.unit} {"\n"}
+            Status of Disease:  {existingDeseases.ckd.statusOfDisease}
              </Text>
             )}
         </View>
@@ -306,7 +308,7 @@ const PatientDetails = () => {
           <View  style={styles.backField}>
              {existingDeseases.others && existingDeseases.others.duration.numericValue !== 0 && (
               <Text style={styles.subHead4}>Disease:  Others{"\n"}
-             Organ:   {existingDeseases.others.disease}
+             Details:   {existingDeseases.others.disease}
              {' '}  Duration:  {existingDeseases.others.duration.numericValue}{"\n"}
              Unit:  {existingDeseases.others.duration.unit}
              {' '}  Status of Disease:  {existingDeseases.others.statusOfDisease}
@@ -487,7 +489,7 @@ const PatientDetails = () => {
         <View  style={styles.backField}>
            {problemForConsultation.others && problemForConsultation.others.duration.numericValue !== 0 && (
             <Text style={styles.subHead4}>Disease:  Others{"\n"}
-           Organ:   {problemForConsultation.others.disease}
+           Details:   {problemForConsultation.others.disease}
            {' '}  Duration:  {problemForConsultation.others.duration.numericValue}{"\n"}
            Unit:  {problemForConsultation.others.duration.unit}
            {' '}  Status of Disease:  {problemForConsultation.others.statusOfDisease}
@@ -635,10 +637,72 @@ const PatientDetails = () => {
    </View>
     );
   };
+  const renderOtherDocuments = (otherdocuments) => {
+    if (!otherdocuments) return null;
+  
+    return (
+      <View style={styles.exiDisContainer}>
+      {  otherdocuments &&   otherdocuments.length > 0 && (
+        <Text style={styles.texthead2}>Other Docmunets</Text>
+      )}
+      {  otherdocuments &&   otherdocuments.length > 0 && (
+        <View style={styles.backField}>
+          {  otherdocuments.map((hospitalization, index) => (
+            <View key={index} style={styles.hospitalizationItem}>
+            <Text style={styles.subHead5}>
+           Document Name: {hospitalization.documentname}{'\n'}
+                {hospitalization.document === 'NA' ? (
+            <Text style={{ borderRadius: 4, padding: 7, fontSize: 13, fontWeight: '700' }}>Not Uploaded</Text>
+          ) : (
+            <TouchableOpacity onPress={() => handleDischargeCertificatePress(hospitalization.document)}>
+              <Text style={{marginTop: windowWidth*0.03, marginLeft: windowWidth*0.05,width:windowWidth*0.2, backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open PDF</Text>
+            </TouchableOpacity>
+          )}
+              </Text>
+            </View>
+          ))}
+        </View>
+      )}
+ </View>
+  );
+};
+  const renderPrescription = (prescription) => {
+    if (!prescription) return null;
+  
+    return (
+      <View style={styles.exiDisContainer}>
+        {  prescription &&   prescription.length > 0 && (
+          <Text style={styles.texthead2}>Prescription</Text>
+        )}
+        {  prescription &&   prescription.length > 0 && (
+          <View style={styles.backField}>
+            {  prescription.map((hospitalization, index) => (
+              <View key={index} style={styles.hospitalizationItem}>
+              
+                  {hospitalization. prescriptiondocument === 'NA' ? (
+              <Text style={{ borderRadius: 4, padding: 7, fontSize: 13, fontWeight: '700' }}>Not Uploaded</Text>
+            ) : (
+              <TouchableOpacity onPress={() => handleDischargeCertificatePress(hospitalization.prescriptiondocument)}>
+                <Text style={{marginLeft: windowWidth*0.05,width:windowWidth*0.2, backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open PDF</Text>
+              </TouchableOpacity>
+            )}
+                
+              </View>
+            ))}
+          </View>
+        )}
+   </View>
+    );
+  };
 
   
   return (
     <SafeAreaView style={styles.container}>
+       <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF"  // Match your app's background color
+            translucent={false}
+        />
       <ScrollView style={styles.scrollContent}>
         <View style={styles.profileContainer}>
           <View style={styles.backField3}>
@@ -661,6 +725,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 10,
     overflow: 'hidden',
+    backgroundColor:'#FFFFFF'
   },
   visitHeader: {
     flexDirection: 'row',
@@ -669,7 +734,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
   },
   visitHeaderText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
   },
   visitDetails: {
@@ -688,7 +753,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     profileContainer: {
-        marginLeft: windowWidth*0.02,
+        marginLeft: windowWidth*0.01,
         marginTop: windowWidth*0.05,
         marginRight: windowWidth*0.01,
     },
@@ -726,12 +791,12 @@ texthead3: {
   marginTop: windowWidth*0.01,
 },
 subHead:{
-    width: "95%",
-    height: windowWidth * 0.10,
+    width: "98%",
+    // height: windowWidth * 0.10,
     marginTop: windowWidth * 0.01,
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
-    backgroundColor: "#D9D9D9",
+    backgroundColor: '#F1F4F3',
     paddingLeft: 15,
     paddingRight: 15,
     fontFamily: 'bold02',
@@ -741,10 +806,10 @@ subHead:{
 subHead2:{
     marginTop: windowWidth*0.01,
     width: "95%",
-    height: windowWidth * 0.10,
+    // height: windowWidth * 0.10,
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
-    backgroundColor: "#D9D9D9",
+    backgroundColor: '#F1F4F3',
     paddingLeft: 15,
     paddingRight: 15,
     fontFamily: 'bold02',
@@ -754,8 +819,8 @@ subHead2:{
 subHead3:{
     marginTop: windowWidth*0.01,
     width: "95%",
-    height: windowWidth * 0.15,
-    backgroundColor: "#e3e3e3",
+    // height: windowWidth * 0.15,
+    backgroundColor: '#F1F4F3',
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
     backgroundColor: "#D9D9D9",
@@ -769,11 +834,11 @@ subHead3:{
 subHead4:{
   marginTop: windowWidth*0.01,
   width: "95%",
-  height: windowWidth * 0.20,
+  // height: windowWidth * 0.20,
   backgroundColor: "#e3e3e3",
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
-  backgroundColor: "#D9D9D9",
+  backgroundColor: '#F1F4F3',
   paddingLeft: 15,
   paddingRight: 15,
   fontFamily: 'bold02',
@@ -784,11 +849,12 @@ subHead4:{
 subHead5:{
   marginTop: windowWidth*0.01,
   width: "95%",
-  height: windowWidth * 0.28,
+  // height: windowWidth * 0.28,
   backgroundColor: "#e3e3e3",
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
-  backgroundColor: "#D9D9D9",
+  // backgroundColor: "#D9D9D9",
+  backgroundColor: '#F1F4F3',
   paddingLeft: 15,
   paddingRight: 15,
   fontFamily: 'bold02',
@@ -799,13 +865,13 @@ subHead5:{
 subHead6:{
   marginTop: windowWidth*0.01,
   width: "95%",
-  height: windowWidth * 0.10,
+  // height: windowWidth * 0.10,
   marginLeft: windowWidth*0.01,
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
   // borderWidth: 1,
   // borderColor: '#000000',
-  backgroundColor: "#D9D9D9",
+  backgroundColor: '#F1F4F3',
   paddingLeft: 15,
   paddingRight: 15,
   fontFamily: 'regular89',

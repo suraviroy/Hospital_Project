@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { View, Platform,StatusBar,Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -33,6 +33,11 @@ const NotificationNavbar = () => {
 
     return (
         <SafeAreaView style={styles.container}>
+             <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF" 
+            translucent={false}
+        />
             <View style={styles.header}>
                 <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                     <Icon name="angle-left" size={30} color="#000" />

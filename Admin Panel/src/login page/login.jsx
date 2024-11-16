@@ -7,6 +7,8 @@ import {
   TouchableOpacity, 
   Dimensions,
   Alert,
+  Platform,
+  StatusBar,
   ActivityIndicator
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -64,6 +66,11 @@ const Login = () => {
 
   return (
     <View style={styles.container01}>
+       <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF" 
+            translucent={false}
+        />
       <View style={styles.backgroundOverlay01} />
       <Text style={[styles.loginText01, { top: height * 0.1 }]}>LOG IN</Text>
 

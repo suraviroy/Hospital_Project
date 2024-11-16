@@ -10,7 +10,7 @@ const SearchAdmin = ({ onSearch }) => {
 
     const handleSearch = (text) => {
         setSearchText(text);
-        onSearch(text);
+        onSearch(new RegExp(`^${text}`, 'i'));
     };
 
     return (

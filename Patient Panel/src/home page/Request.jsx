@@ -1,10 +1,11 @@
 import React, { useState ,useEffect} from "react";
-import { View, StyleSheet, Text, Dimensions, TouchableOpacity, SafeAreaView, ScrollView, ActivityIndicator, TextInput } from "react-native";
+import { View, Platform,StatusBar,StyleSheet,Alert, Text, Dimensions, TouchableOpacity, SafeAreaView, ScrollView, ActivityIndicator, TextInput } from "react-native";
 import { SelectList } from "react-native-dropdown-select-list";
 const windowWidth = Dimensions.get("window").width;
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { Color } from "../../GlobalStyles";
 import axios from "axios";
+import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { backendURL } from "../backendapi";
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -19,6 +20,7 @@ const Request = () => {
     const [isLoading2, setIsLoading2] = useState(false);
     const [isLoading3, setIsLoading3] = useState(false);
     const [isLoading4, setIsLoading4] = useState(false);
+    const [isLoading5, setIsLoading5] = useState(false);
     const [isClicked1, setIsClicked1] = useState(false);
     const [selectedOption1, setSelectedOption1] = useState("Select");
     const [selectedDetails1, setSelectedDetails1] = useState("");
@@ -52,6 +54,8 @@ const Request = () => {
     const [pickedFile1, setPickedFile1] = useState(null);
     const [pickedFile2, setPickedFile2] = useState(null);
     const [pickedFile3, setPickedFile3] = useState(null);
+    const [pickedFile5, setPickedFile5] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const patientRequestURL =`${backendURL}/patientRouter/RegiseterNewPatientRequest`;
 
     const Req_Options = [
@@ -108,159 +112,745 @@ const Request = () => {
         }
     };
 
-    const pickFile1 = async () => {
-        setIsLoading1(true);
-        try {
-            const filePickResponse = await DocumentPicker.getDocumentAsync({
-                type: 'application/pdf',
-            });
-
-            if (!filePickResponse.canceled) {
-                const fileInfo = filePickResponse.assets[0];
-                const formData = new FormData();
-                formData.append('file', {
-                    uri: fileInfo.uri,
-                    name: fileInfo.name,
-                    type: 'application/pdf',
-                });
-                formData.append('upload_preset', 'pulmocareapp');
-                formData.append('cloud_name', 'pulmocare01');
-
-                try {
-                    const response = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
-                        method: 'POST',
-                        body: formData,
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log('Cloudinary response:', data);
-
-                        setPickedFile1({
-                            name: data.original_filename || fileInfo.name,
-                            type: fileInfo.type,
-                            uri: data.secure_url,
-                        });
-                    } else {
-                        console.error('Failed to upload file to Cloudinary');
-                    }
-                } catch (error) {
-                    console.error('Error uploading file:', error);
+    const showOptions1 = () => {
+        if (Platform.OS === 'ios') {
+          Alert.alert(
+            'Select File',
+            'Choose a method',
+            [
+                {
+                    text: 'Take Photo',
+                    onPress: () => pickImage1('camera')
+                  },
+                  {
+                    text: 'Choose from Gallery',
+                    onPress: () => pickImage1('gallery')
+                  },
+                  {
+                    text: 'Upload Document',
+                    onPress: () => pickDocument1()
+                  },
+              {
+                text: 'Cancel',
+                style: 'cancel'
+              }
+            ]
+          );
+        } else {
+          // Android can only show 3 buttons maximum
+          Alert.alert(
+            'Select File',
+            'Choose a method',
+            [
+                {
+                    text: 'Take Photo',
+                    onPress: () => pickImage1('camera')
+                  },
+              {
+                text: 'Cancel',
+                style: 'cancel'
+              },
+              {
+                text: 'More Options',
+                onPress: () => {
+                  // Show a second alert for the remaining options
+                  Alert.alert(
+                    'More Options',
+                    '',
+                    [
+                        {
+                            text: 'Upload Document',
+                            onPress: () => pickDocument1()
+                          },
+                      {
+                        text: 'Choose from Gallery',
+                        onPress: () => pickImage1('gallery')
+                      },
+                      {
+                        text: 'Cancel',
+                        style: 'cancel'
+                      },
+                    ]
+                  );
                 }
+              }
+            ]
+          );
+        }
+      };
+      const pickImage1 = async (source) => {
+        try {
+          let result;
+          
+          if (source === 'camera') {
+            // Request camera permissions
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+              Alert.alert('Sorry, we need camera permissions to make this work!');
+              return;
             }
+            
+            result = await ImagePicker.launchCameraAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              quality: 1,
+            });
+          } else {
+            // Request media library permissions
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+              Alert.alert('Sorry, we need gallery permissions to make this work!');
+              return;
+            }
+            
+            result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              quality: 1,
+            });
+          }
+    
+          if (!result.canceled) {
+            await uploadToCloudinary1(result.assets[0], 'image');
+          }
         } catch (error) {
-            console.error("Error picking file:", error);
+          console.error('Error picking image:', error);
+          Alert.alert('Error selecting image. Please try again.');
         }
-        finally {
-            setIsLoading1(false);
+      };
+    
+      const pickDocument1 = async () => {
+        try {
+          const result = await DocumentPicker.getDocumentAsync({
+            type: ['application/pdf', 'application/msword', 
+                   'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+            copyToCacheDirectory: true
+          });
+    
+          if (!result.canceled) {
+            await uploadToCloudinary1(result.assets[0], 'document');
+          }
+        } catch (error) {
+          console.error('Error picking document:', error);
+          Alert.alert('Error selecting document. Please try again.');
         }
-    };
-
-    const pickFile2 = async () => {
+      };
+    
+      const uploadToCloudinary1= async (file, type) => {
         setIsLoading2(true);
         try {
-            const filePickResponse = await DocumentPicker.getDocumentAsync({
-                type: 'application/pdf',
-            });
-
-            if (!filePickResponse.canceled) {
-                const fileInfo = filePickResponse.assets[0];
-                const formData = new FormData();
-                formData.append('file', {
-                    uri: fileInfo.uri,
-                    name: fileInfo.name,
-                    type: 'application/pdf',
-                });
-                formData.append('upload_preset', 'pulmocareapp');
-                formData.append('cloud_name', 'pulmocare01');
-
-                try {
-                    const response = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
-                        method: 'POST',
-                        body: formData,
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log('Cloudinary response:', data);
-
-                        setPickedFile2({
-                            name: data.original_filename || fileInfo.name,
-                            type: fileInfo.type,
-                            uri: data.secure_url,
-                        });
-                    } else {
-                        console.error('Failed to upload file to Cloudinary');
-                    }
-                } catch (error) {
-                    console.error('Error uploading file:', error);
-                }
+          const formData = new FormData();
+          formData.append('file', {
+            uri: file.uri,
+            name: file.name || `${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`,
+            type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+          });
+          formData.append('upload_preset', 'pulmocareapp');
+          formData.append('cloud_name', 'pulmocare01');
+    
+          const response = await fetch(
+            'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+            {
+              method: 'POST',
+              body: formData,
             }
-        } catch (error) {
-            console.error("Error picking file:", error);
-        }
-        finally {
-            setIsLoading2(false);
-        }
-    };
-
-    const pickFile3 = async () => {
-        setIsLoading4(true);
-        try {
-            const filePickResponse = await DocumentPicker.getDocumentAsync({
-                type: 'application/pdf',
+          );
+    
+          if (response.ok) {
+            const data = await response.json();
+            console.log('Cloudinary response:', data);
+            
+            setPickedFile1({
+              name: data.original_filename || file.name,
+              type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+              uri: data.secure_url,
             });
-
-            if (!filePickResponse.canceled) {
-                const fileInfo = filePickResponse.assets[0];
-                const formData = new FormData();
-                formData.append('file', {
-                    uri: fileInfo.uri,
-                    name: fileInfo.name,
-                    type: 'application/pdf',
-                });
-                formData.append('upload_preset', 'pulmocareapp');
-                formData.append('cloud_name', 'pulmocare01');
-
-                try {
-                    const response = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
-                        method: 'POST',
-                        body: formData,
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log('Cloudinary response:', data);
-
-                        setPickedFile3({
-                            name: data.original_filename || fileInfo.name,
-                            type: fileInfo.type,
-                            uri: data.secure_url,
-                        });
-                    } else {
-                        console.error('Failed to upload file to Cloudinary');
-                    }
-                } catch (error) {
-                    console.error('Error uploading file:', error);
-                }
-            }
+          } else {
+            throw new Error('Failed to upload file to Cloudinary');
+          }
         } catch (error) {
-            console.error("Error picking file:", error);
+          console.error('Error uploading file:', error);
+          Alert.alert('Error uploading file. Please check your internet connection and try again.');
+        } finally {
+          setIsLoading2(false);
         }
-        finally {
-            setIsLoading4(false);
+      };
+        // const pickFile5 = async () => {
+        //     setIsLoading5(true);
+        //     try {
+        //         const filePickResponse = await DocumentPicker.getDocumentAsync({
+        //           type: 'application/pdf',
+        //           copyToCacheDirectory: true
+        //         });
+          
+        //         if (!filePickResponse.canceled) {
+        //           const fileInfo = filePickResponse.assets[0];
+        //           const formData = new FormData();
+        //           formData.append('file', {
+        //             uri: fileInfo.uri,
+        //             name: fileInfo.name,
+        //             type: 'application/pdf',
+        //           });
+        //           formData.append('upload_preset', 'pulmocareapp');
+        //           formData.append('cloud_name', 'pulmocare01');
+          
+        //           try {
+                    
+        //             const response = await fetch(
+        //               'https://api.cloudinary.com/v1_1/pulmocare01/image/upload',
+        //               {
+        //                 method: 'POST',
+        //                 body: formData,
+        //               }
+        //             );
+          
+        //             if (response.ok) {
+        //               const data = await response.json();
+        //               console.log('Cloudinary response:', data);
+          
+        //               setPickedFile5({
+        //                 name: data.original_filename || fileInfo.name,
+        //                 type: fileInfo.mimeType || 'application/pdf',
+        //                 uri: data.secure_url,
+        //               });
+        //             } else {
+        //               console.error('Failed to upload file to Cloudinary');
+        //               alert('Failed to upload file. Please try again.');
+        //             }
+        //           } catch (error) {
+        //             console.error('Error uploading file:', error);
+        //             alert('Error uploading file. Please check your internet connection and try again.');
+        //           } 
+        //         }
+        //       } catch (error) {
+        //         console.error('Error picking file:', error);
+        //         alert('Error selecting file. Please try again.');
+        //       }
+        //       finally {
+        //         setIsLoading5(false);
+        //       }
+        //     };
+        const showOptions5 = () => {
+            if (Platform.OS === 'ios') {
+              Alert.alert(
+                'Select File',
+                'Choose a method',
+                [
+                    {
+                        text: 'Take Photo',
+                        onPress: () => pickImage5('camera')
+                      },
+                      {
+                        text: 'Choose from Gallery',
+                        onPress: () => pickImage5('gallery')
+                      },
+                      {
+                        text: 'Upload Document',
+                        onPress: () => pickDocument5()
+                      },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel'
+                  }
+                ]
+              );
+            } else {
+              // Android can only show 3 buttons maximum
+              Alert.alert(
+                'Select File',
+                'Choose a method',
+                [
+                    {
+                        text: 'Take Photo',
+                        onPress: () => pickImage5('camera')
+                      },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel'
+                  },
+                  {
+                    text: 'More Options',
+                    onPress: () => {
+                      // Show a second alert for the remaining options
+                      Alert.alert(
+                        'More Options',
+                        '',
+                        [
+                            {
+                                text: 'Upload Document',
+                                onPress: () => pickDocument5()
+                              },
+                          {
+                            text: 'Choose from Gallery',
+                            onPress: () => pickImage5('gallery')
+                          },
+                          {
+                            text: 'Cancel',
+                            style: 'cancel'
+                          },
+                        ]
+                      );
+                    }
+                  }
+                ]
+              );
+            }
+          };
+          const pickImage5 = async (source) => {
+            try {
+              let result;
+              
+              if (source === 'camera') {
+                // Request camera permissions
+                const { status } = await ImagePicker.requestCameraPermissionsAsync();
+                if (status !== 'granted') {
+                  Alert.alert('Sorry, we need camera permissions to make this work!');
+                  return;
+                }
+                
+                result = await ImagePicker.launchCameraAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  quality: 1,
+                });
+              } else {
+                // Request media library permissions
+                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (status !== 'granted') {
+                  Alert.alert('Sorry, we need gallery permissions to make this work!');
+                  return;
+                }
+                
+                result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  quality: 1,
+                });
+              }
+        
+              if (!result.canceled) {
+                await uploadToCloudinary5(result.assets[0], 'image');
+              }
+            } catch (error) {
+              console.error('Error picking image:', error);
+              Alert.alert('Error selecting image. Please try again.');
+            }
+          };
+        
+          const pickDocument5 = async () => {
+            try {
+              const result = await DocumentPicker.getDocumentAsync({
+                type: ['application/pdf', 'application/msword', 
+                       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+                copyToCacheDirectory: true
+              });
+        
+              if (!result.canceled) {
+                await uploadToCloudinary5(result.assets[0], 'document');
+              }
+            } catch (error) {
+              console.error('Error picking document:', error);
+              Alert.alert('Error selecting document. Please try again.');
+            }
+          };
+        
+          const uploadToCloudinary5= async (file, type) => {
+            setIsLoading5(true);
+            try {
+              const formData = new FormData();
+              formData.append('file', {
+                uri: file.uri,
+                name: file.name || `${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`,
+                type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+              });
+              formData.append('upload_preset', 'pulmocareapp');
+              formData.append('cloud_name', 'pulmocare01');
+        
+              const response = await fetch(
+                'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+                {
+                  method: 'POST',
+                  body: formData,
+                }
+              );
+        
+              if (response.ok) {
+                const data = await response.json();
+                console.log('Cloudinary response:', data);
+                
+                setPickedFile5({
+                  name: data.original_filename || file.name,
+                  type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+                  uri: data.secure_url,
+                });
+              } else {
+                throw new Error('Failed to upload file to Cloudinary');
+              }
+            } catch (error) {
+              console.error('Error uploading file:', error);
+              Alert.alert('Error uploading file. Please check your internet connection and try again.');
+            } finally {
+              setIsLoading5(false);
+            }
+          };
+          const showOptions2 = () => {
+            if (Platform.OS === 'ios') {
+              Alert.alert(
+                'Select File',
+                'Choose a method',
+                [
+                    {
+                        text: 'Take Photo',
+                        onPress: () => pickImage2('camera')
+                      },
+                      {
+                        text: 'Choose from Gallery',
+                        onPress: () => pickImage2('gallery')
+                      },
+                      {
+                        text: 'Upload Document',
+                        onPress: () => pickDocument2()
+                      },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel'
+                  }
+                ]
+              );
+            } else {
+              // Android can only show 3 buttons maximum
+              Alert.alert(
+                'Select File',
+                'Choose a method',
+                [
+                    {
+                        text: 'Take Photo',
+                        onPress: () => pickImage2('camera')
+                      },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel'
+                  },
+                  {
+                    text: 'More Options',
+                    onPress: () => {
+                      // Show a second alert for the remaining options
+                      Alert.alert(
+                        'More Options',
+                        '',
+                        [
+                            {
+                                text: 'Upload Document',
+                                onPress: () => pickDocument2()
+                              },
+                          {
+                            text: 'Choose from Gallery',
+                            onPress: () => pickImage2('gallery')
+                          },
+                          {
+                            text: 'Cancel',
+                            style: 'cancel'
+                          },
+                        ]
+                      );
+                    }
+                  }
+                ]
+              );
+            }
+          };
+          const pickImage2 = async (source) => {
+            try {
+              let result;
+              
+              if (source === 'camera') {
+                // Request camera permissions
+                const { status } = await ImagePicker.requestCameraPermissionsAsync();
+                if (status !== 'granted') {
+                  Alert.alert('Sorry, we need camera permissions to make this work!');
+                  return;
+                }
+                
+                result = await ImagePicker.launchCameraAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  quality: 1,
+                });
+              } else {
+                // Request media library permissions
+                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (status !== 'granted') {
+                  Alert.alert('Sorry, we need gallery permissions to make this work!');
+                  return;
+                }
+                
+                result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  quality: 1,
+                });
+              }
+        
+              if (!result.canceled) {
+                await uploadToCloudinary2(result.assets[0], 'image');
+              }
+            } catch (error) {
+              console.error('Error picking image:', error);
+              Alert.alert('Error selecting image. Please try again.');
+            }
+          };
+        
+          const pickDocument2 = async () => {
+            try {
+              const result = await DocumentPicker.getDocumentAsync({
+                type: ['application/pdf', 'application/msword', 
+                       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+                copyToCacheDirectory: true
+              });
+        
+              if (!result.canceled) {
+                await uploadToCloudinary2(result.assets[0], 'document');
+              }
+            } catch (error) {
+              console.error('Error picking document:', error);
+              Alert.alert('Error selecting document. Please try again.');
+            }
+          };
+        
+          const uploadToCloudinary2= async (file, type) => {
+            setIsLoading3(true);
+            try {
+              const formData = new FormData();
+              formData.append('file', {
+                uri: file.uri,
+                name: file.name || `${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`,
+                type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+              });
+              formData.append('upload_preset', 'pulmocareapp');
+              formData.append('cloud_name', 'pulmocare01');
+        
+              const response = await fetch(
+                'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+                {
+                  method: 'POST',
+                  body: formData,
+                }
+              );
+        
+              if (response.ok) {
+                const data = await response.json();
+                console.log('Cloudinary response:', data);
+                
+                setPickedFile2({
+                  name: data.original_filename || file.name,
+                  type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+                  uri: data.secure_url,
+                });
+              } else {
+                throw new Error('Failed to upload file to Cloudinary');
+              }
+            } catch (error) {
+              console.error('Error uploading file:', error);
+              Alert.alert('Error uploading file. Please check your internet connection and try again.');
+            } finally {
+              setIsLoading3(false);
+            }
+          };
+
+          const showOptions3 = () => {
+            if (Platform.OS === 'ios') {
+              Alert.alert(
+                'Select File',
+                'Choose a method',
+                [
+                    {
+                        text: 'Take Photo',
+                        onPress: () => pickImage3('camera')
+                      },
+                      {
+                        text: 'Choose from Gallery',
+                        onPress: () => pickImage3('gallery')
+                      },
+                      {
+                        text: 'Upload Document',
+                        onPress: () => pickDocument3()
+                      },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel'
+                  }
+                ]
+              );
+            } else {
+              Alert.alert(
+                'Select File',
+                'Choose a method',
+                [
+                    {
+                        text: 'Take Photo',
+                        onPress: () => pickImage3('camera')
+                      },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel'
+                  },
+                  {
+                    text: 'More Options',
+                    onPress: () => {
+                      Alert.alert(
+                        'More Options',
+                        '',
+                        [
+                            {
+                                text: 'Upload Document',
+                                onPress: () => pickDocument3()
+                              },
+                          {
+                            text: 'Choose from Gallery',
+                            onPress: () => pickImage3('gallery')
+                          },
+                          {
+                            text: 'Cancel',
+                            style: 'cancel'
+                          },
+                        ]
+                      );
+                    }
+                  }
+                ]
+              );
+            }
+          };
+          const pickImage3 = async (source) => {
+            try {
+              let result;
+              
+              if (source === 'camera') {
+                const { status } = await ImagePicker.requestCameraPermissionsAsync();
+                if (status !== 'granted') {
+                  Alert.alert('Sorry, we need camera permissions to make this work!');
+                  return;
+                }
+                
+                result = await ImagePicker.launchCameraAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  quality: 1,
+                });
+              } else {
+                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (status !== 'granted') {
+                  Alert.alert('Sorry, we need gallery permissions to make this work!');
+                  return;
+                }
+                
+                result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  quality: 1,
+                });
+              }
+        
+              if (!result.canceled) {
+                await uploadToCloudinary3(result.assets[0], 'image');
+              }
+            } catch (error) {
+              console.error('Error picking image:', error);
+              Alert.alert('Error selecting image. Please try again.');
+            }
+          };
+        
+          const pickDocument3 = async () => {
+            try {
+              const result = await DocumentPicker.getDocumentAsync({
+                type: ['application/pdf', 'application/msword', 
+                       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+                copyToCacheDirectory: true
+              });
+        
+              if (!result.canceled) {
+                await uploadToCloudinary3(result.assets[0], 'document');
+              }
+            } catch (error) {
+              console.error('Error picking document:', error);
+              Alert.alert('Error selecting document. Please try again.');
+            }
+          };
+        
+          const uploadToCloudinary3= async (file, type) => {
+            setIsLoading4(true);
+            try {
+              const formData = new FormData();
+              formData.append('file', {
+                uri: file.uri,
+                name: file.name || `${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`,
+                type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+              });
+              formData.append('upload_preset', 'pulmocareapp');
+              formData.append('cloud_name', 'pulmocare01');
+        
+              const response = await fetch(
+                'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+                {
+                  method: 'POST',
+                  body: formData,
+                }
+              );
+        
+              if (response.ok) {
+                const data = await response.json();
+                console.log('Cloudinary response:', data);
+                
+                setPickedFile3({
+                  name: data.original_filename || file.name,
+                  type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+                  uri: data.secure_url,
+                });
+              } else {
+                throw new Error('Failed to upload file to Cloudinary');
+              }
+            } catch (error) {
+              console.error('Error uploading file:', error);
+              Alert.alert('Error uploading file. Please check your internet connection and try again.');
+            } finally {
+              setIsLoading4(false);
+            }
+          };
+
+    const validateForm = () => {
+        if (selectedRequest === 'Select') {
+            Alert.alert("Alert", "Please select a request type");
+            return false;
         }
+
+        if (selectedRequest === 'Others' && !otherText.trim()) {
+            Alert.alert("Alert", "Please enter your request details");
+            return false;
+        }
+
+        return true;
     };
 
     const handleSave = async () => {
-        if (!patientId) {
-            console.error('PatientId is not available');
-            // You might want to show an error message to the user
+        if (isSubmitting) {
             return;
         }
-        setIsLoading3(true);
-        const requestText =
-            selectedRequest === "Select" ? "NA" : (selectedRequest === "Others" ? otherText : selectedRequest);
+
+        if (!validateForm()) {
+            return;
+        }
+
+        if (!patientId) {
+            console.error('PatientId is not available');
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            setIsLoading1(true);
+
+            const requestText =
+                selectedRequest === "Select" ? "NA" : (selectedRequest === "Others" ? otherText : selectedRequest);
             const reqData = {
                 patientId: patientId,
                 exacrebation: {
@@ -274,11 +864,12 @@ const Request = () => {
                 newConsultation: {
                     isSelected: selectedOption3 === "Select" ? "NA" : selectedOption3,
                     details: selectedDetails3 || "NA",
-                    dischargeCertificate: pickedFile1? pickedFile1.uri : "NA",
+                    dischargeCertificate: pickedFile1 ? pickedFile1.uri : "NA",
                 },
                 hospitalization: {
                     isSelected: selectedOption4 === "Select" ? "NA" : selectedOption4,
                     records: selectedDetails4 || "NA",
+                    dischargeHCertificate: pickedFile5 ? pickedFile5.uri : "NA",
                 },
                 disabilities: {
                     isSelected: selectedOption5 === "Select" ? "NA" : selectedOption5,
@@ -294,10 +885,9 @@ const Request = () => {
                     certificate: pickedFile3 ? pickedFile3.uri : "NA",
                 },
                 request: requestText,
-                action:"NA"
+                action: "NA"
             };
-        console.log(reqData)
-        try {
+
             const response = await fetch(patientRequestURL, {
                 method: 'POST',
                 headers: {
@@ -305,32 +895,34 @@ const Request = () => {
                 },
                 body: JSON.stringify(reqData),
             });
-    
+
             if (response.ok) {
-                
                 console.log("Request sent successfully");
-               
                 setIsLoading1(false);
                 setIsLoading2(false);
                 setIsLoading3(false);
+                setIsLoading5(false);
                 setIsLoading4(false);
-                alert('Request Sent Successfully');
-                navigation.goBack();
+                Alert.alert("Success", "Request Sent Successfully");
+                navigation.navigate('BottomNavigation');
             } else {
-                
+                Alert.alert("Sorry", "Something went wrong. Please try again.");
                 console.error('Failed to send request:', response.status);
-                
                 setIsLoading1(false);
                 setIsLoading2(false);
                 setIsLoading3(false);
+                setIsLoading5(false);
                 setIsLoading4(false);
             }
         } catch (error) {
             console.error('Error sending request:', error);
+            Alert.alert("Error", "Failed to submit request. Please try again.");
             setIsLoading1(false);
             setIsLoading2(false);
             setIsLoading3(false);
             setIsLoading4(false);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -339,6 +931,11 @@ const Request = () => {
     };
     return (
         <View style={styles.reqcontainer}>
+             <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF"
+            translucent={false}
+        />
             <SafeAreaView style={{ marginTop: 20 }}>
                 <View style={styles.reqheader}>
                     <TouchableOpacity onPress={handleBack} style={styles.backButton14}>
@@ -544,7 +1141,9 @@ const Request = () => {
                                             setIsClicked3(false);
                                             setIsClicked11(false);
                                             setSelectedDetails3("");
+                                            setIsLoading2(false);
                                             setPickedFile1("");
+                            
                                         }}
                                     >
                                         <Text style={{ fontSize: 15, marginTop: windowWidth * 0.02 }}>
@@ -572,18 +1171,19 @@ const Request = () => {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={styles.hosopt1}>
-                                    <Icon name="paperclip" size={22} color={Color.colorGray_100} />
-                                    <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
-                                        {pickedFile1 ? pickedFile1.name : 'Upload Discharge Certificate'}
-                                    </Text>
-                                    <TouchableOpacity style={styles.uploadbutton} onPress={pickFile1}>
-                                        {isLoading1 ? (
-                                            <ActivityIndicator size="small" color={'#357EEA'} />
-                                        ) : (
-                                            <Text style={{ fontWeight: '700', fontSize: 15, color: '#357EEA', alignSelf: 'center' }}>Upload</Text>
-                                        )}
-                                    </TouchableOpacity>
-                                </View>
+      <Icon name="paperclip" size={22} color="#8E7D7D" />
+      <Text style={styles.fileNameText}>
+        {pickedFile1 ? pickedFile1.name : 'Upload Prescription/Image'}
+      </Text>
+      <TouchableOpacity style={styles.uploadbutton} onPress={showOptions1}>
+        {isLoading2 ? (
+          <ActivityIndicator size="small" color="#357EEA" />
+        ) : (
+          <Text style={styles.uploadText}>Upload</Text>
+        )}
+      </TouchableOpacity>
+    </View>
+                               
                             </View>
                         ) : null}
                         <View style={styles.reqdet}>
@@ -644,6 +1244,7 @@ const Request = () => {
                             </View>
                         ) : null}
                         {isClicked12 ? (
+                            <View>
                             <View style={styles.problems}>
                                 <View style={styles.problist}>
                                     <Text style={{ fontWeight: "700", fontSize: 16, width: "50%" }}>
@@ -658,6 +1259,20 @@ const Request = () => {
                                         onChangeText={(text) => setSelectedDetails4(text)}
                                     />
                                 </TouchableOpacity>
+                            </View>
+                            <View style={styles.hosopt1}>
+                                    <Icon name="paperclip" size={22} color={Color.colorGray_100} />
+                                    <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
+                                        {pickedFile5 ? pickedFile5.name : 'Upload Discharge Certificate'}
+                                    </Text>
+                                    <TouchableOpacity style={styles.uploadbutton} onPress={showOptions5}>
+                                        {isLoading5 ? (
+                                            <ActivityIndicator size="small" color={'#357EEA'} />
+                                        ) : (
+                                            <Text style={{ fontWeight: '700', fontSize: 15, color: '#357EEA', alignSelf: 'center' }}>Upload</Text>
+                                        )}
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         ) : null}
                         <View style={styles.reqdet}>
@@ -797,13 +1412,13 @@ const Request = () => {
                                 <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
                                     {pickedFile2 ? pickedFile2.name : 'Upload Death Certificate'}
                                 </Text>
-                                <TouchableOpacity style={styles.uploadbutton} onPress={pickFile2}>
-                                    {isLoading2 ? (
-                                        <ActivityIndicator size="small" color={'#357EEA'} />
-                                    ) : (
-                                        <Text style={{ fontWeight: '700', fontSize: 15, color: '#357EEA', alignSelf: 'center' }}>Upload</Text>
-                                    )}
-                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.uploadbutton} onPress={showOptions2}>
+                                        {isLoading3 ? (
+                                            <ActivityIndicator size="small" color={'#357EEA'} />
+                                        ) : (
+                                            <Text style={{ fontWeight: '700', fontSize: 15, color: '#357EEA', alignSelf: 'center' }}>Upload</Text>
+                                        )}
+                                    </TouchableOpacity>
                             </View>
                         ) : null}
                         <View style={styles.reqdet}>
@@ -885,7 +1500,7 @@ const Request = () => {
                                     <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
                                         {pickedFile3 ? pickedFile3.name : 'Upload Report'}
                                     </Text>
-                                    <TouchableOpacity style={styles.uploadbutton} onPress={pickFile3}>
+                                    <TouchableOpacity style={styles.uploadbutton} onPress={showOptions3}>
                                         {isLoading4 ? (
                                             <ActivityIndicator size="small" color={'#357EEA'} />
                                         ) : (
@@ -899,50 +1514,56 @@ const Request = () => {
                             <Text style={styles.texthead}>Request</Text>
                         </View>
                         <View style={{ paddingHorizontal: 10 }}>
-                            <SelectList
-                                setSelected={handleRequestSelection}
-                                data={Req_Options}
-                                save="value"
-                                placeholder='Select'
-                                searchPlaceholder='Search'
-                                boxStyles={{
-                                    borderRadius: 5,
+                        <SelectList
+                            setSelected={handleRequestSelection}
+                            data={Req_Options}
+                            save="value"
+                            placeholder='Select'
+                            searchPlaceholder='Search'
+                            boxStyles={{
+                                borderRadius: 5,
+                                borderWidth: 0.5,
+                                borderColor: '#A99F9F',
+                                marginTop: windowWidth * 0.03,
+                                backgroundColor: '#e3e3e3',
+                                paddingLeft: 15,
+                                paddingRight: 15,
+                            }}
+                            inputStyles={{ color: '#8E7D7D', fontSize: 15 }}
+                        />
+                        {selectedRequest === 'Others' && (
+                            <TextInput
+                                value={otherText}
+                                onChangeText={setOtherText}
+                                placeholder="Enter request"
+                                placeholderTextColor={"#8E7D7D"}
+                                style={{
+                                    marginTop: 10,
                                     borderWidth: 0.5,
                                     borderColor: '#A99F9F',
-                                    marginTop: windowWidth * 0.03,
-                                    backgroundColor: '#e3e3e3',
-                                    paddingLeft: 15,
-                                    paddingRight: 15,
+                                    borderRadius: 5,
+                                    paddingHorizontal: 10,
+                                    paddingVertical: 8,
                                 }}
-                                inputStyles={{ color: '#8E7D7D', fontSize: 15 }}
                             />
-                            {selectedRequest === 'Others' && (
-                                <TextInput
-                                    value={otherText}
-                                    onChangeText={setOtherText}
-                                    placeholder="Enter request"
-                                    placeholderTextColor={"#8E7D7D"}
-                                    style={{
-                                        marginTop: 10,
-                                        borderWidth: 0.5,
-                                        borderColor: '#A99F9F',
-                                        borderRadius: 5,
-                                        paddingHorizontal: 10,
-                                        paddingVertical: 8,
-                                        // backgroundColor: "#F1F4F3",
-                                    }}
-                                />
-                            )}
-                        </View>
-                        <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
-                            {isLoading3 ? (
-                                <ActivityIndicator size="small" color={Color.colorWhite} />
-                            ) : (
-                                <Text style={{ color: "#fff", fontWeight: "700", fontSize: 15 }}>
-                                    Submit
-                                </Text>
-                            )}
-                        </TouchableOpacity>
+                        )}
+                    </View>
+                    <TouchableOpacity 
+                        style={[
+                            styles.submitButton,
+                            isSubmitting && { opacity: 0.7 }
+                        ]} 
+                        onPress={handleSave}
+                        disabled={isSubmitting}
+                    >
+                        {isLoading1 ? (
+                            <ActivityIndicator size="small" color={Color.colorWhite} />
+                        ) : (
+                            <Text style={{ color: "#fff", fontWeight: "700", fontSize: 15 }}>
+                                Submit
+                            </Text>
+                        )}
+                    </TouchableOpacity>
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -954,6 +1575,7 @@ const styles = StyleSheet.create({
     reqcontainer: {
         flex: 1,
         backgroundColor: '#fff',
+        marginTop:-windowWidth*0.05,
         // marginBottom: windowWidth*0.3
     },
     reqheader: {
@@ -973,6 +1595,25 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
     },
+    fileNameText: {
+        fontWeight: '700',
+        fontSize: 15,
+        width: windowWidth * 0.42,
+        color: '#8E7D7D',
+        marginLeft: windowWidth * 0.05,
+      },
+      uploadbutton: {
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        borderRadius: 5,
+        backgroundColor: '#F5F5F5',
+      },
+      uploadText: {
+        fontWeight: '700',
+        fontSize: 15,
+        color: '#357EEA',
+        alignSelf: 'center',
+      },
     text14: {
         fontWeight: "bold",
         fontSize: 25,
@@ -1012,6 +1653,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         borderRadius: 5,
         elevation: 3,
+        opacity: 1,
     },
     options: {
         width: windowWidth * 0.94,
@@ -1072,15 +1714,30 @@ const styles = StyleSheet.create({
         paddingRight: 15,
         borderRadius: 10
     },
-    uploadbutton: {
-        width: windowWidth * 0.3,
-        height: windowWidth * 0.1,
-        backgroundColor: '#fff',
-        borderWidth: 2,
-        borderColor: '#357EEA',
-        borderRadius: 5,
-        justifyContent: 'center'
-    },
+    // hosopt1: {
+    //     flexDirection: 'row',
+    //     alignItems: 'center',
+    //     padding: 10,
+    //     backgroundColor: '#FFFFFF',
+    //     borderRadius: 8,
+    //     shadowColor: '#000',
+    //     shadowOffset: {
+    //       width: 0,
+    //       height: 2,
+    //     },
+    //     shadowOpacity: 0.25,
+    //     shadowRadius: 3.84,
+    //     elevation: 5,
+    //   },
+    // uploadbutton: {
+    //     width: windowWidth * 0.3,
+    //     height: windowWidth * 0.1,
+    //     backgroundColor: '#fff',
+    //     borderWidth: 2,
+    //     borderColor: '#357EEA',
+    //     borderRadius: 5,
+    //     justifyContent: 'center'
+    // },
     innercont: {
         marginBottom: windowWidth * 0.08
     }

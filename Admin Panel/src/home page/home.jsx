@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert, Platform, PermissionsAndroid ,Linking} from 'react-native';
+import { View, Platform,StatusBar,Text, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert,Linking,ActivityIndicator} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import SearchAdmin from './SearchAdmin';
@@ -11,6 +11,7 @@ import { fromByteArray } from 'base64-js';
 import * as Sharing from 'expo-sharing';
 import { useAuth } from '../AuthContext';
 import { CommonActions } from '@react-navigation/native';
+import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -18,6 +19,7 @@ const Home = () => {
     const { logout } = useAuth();
     const navigation = useNavigation();
     const [searchText, setSearchText] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleAddAdmin = () => {
         navigation.navigate('AddAdmin');
@@ -78,10 +80,15 @@ const Home = () => {
             return null;
         }
     };
-    
+
+     const handleNotification = () => {
+        markNotificationsAsSeen();
+        navigation.navigate('NotiList');
+    };
     const downloadExcel = async () => {
         try {
-            const response = await fetch(`${backendURL}/adminRouter/excelFile`);
+            setIsLoading(true);
+            const response = await fetch(`${backendURL}/adminRouter/excelFileFeedback`);
     
             if (!response.ok) {
                 throw new Error('Failed to download Excel file');
@@ -113,6 +120,8 @@ const Home = () => {
         } catch (error) {
             console.error('Error downloading Excel file:', error);
             Alert.alert('Download Failed', 'Failed to download Excel file.');
+        }finally{
+            setIsLoading(false);
         }
     };
     
@@ -123,7 +132,7 @@ const Home = () => {
                     <MaterialIcons name='local-hospital' size={40} color={'#730404'} />
                     <Text style={styles.text012}>Institute of Pulmocare & {'\n'}Research</Text>
                     <View style={{ alignItems: "flex-end" }}>
-                        <TouchableOpacity style={[styles.button457,{ marginLeft: 30 }]} onPress={handleLogout}>
+                        <TouchableOpacity style={[styles.button457,{ marginLeft:windowWidth*0.03 }]} onPress={handleLogout}>
                             <Text style={styles.text568}>Log Out</Text>
                         </TouchableOpacity>
                     </View>
@@ -136,7 +145,12 @@ const Home = () => {
                 </TouchableOpacity>
                 <View style={{ alignItems: "flex-end" }}>
                     <TouchableOpacity onPress={downloadExcel}>
-                        <MaterialCommunityIcons name='briefcase-download' size={30} color='#096759' marginRight={20} />
+                    {isLoading ? (
+            <ActivityIndicator size={30} color='#096759' marginRight={ windowWidth*0.05}/>
+          ) : (
+            <MaterialCommunityIcons name='format-align-bottom' size={30} color='#096759' marginRight={ windowWidth*0.05} />
+          )}
+                        {/* <MaterialCommunityIcons name='format-align-bottom' size={30} color='#096759' marginRight={20} /> */}
                     </TouchableOpacity>
                 </View>
             </View>
@@ -146,6 +160,11 @@ const Home = () => {
 
     return (
         <SafeAreaView style={styles.appbar033}>
+           <StatusBar 
+            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+            backgroundColor="#FFFFFF"
+            translucent={false}
+        />
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     {renderHeader()}
@@ -207,7 +226,7 @@ const styles = StyleSheet.create({
         marginLeft: 12,
     },
     button456: {
-        marginLeft: 110,
+        marginLeft: windowWidth*0.2,
         borderWidth: 2,
         borderColor: "#096759",
         padding: 5,

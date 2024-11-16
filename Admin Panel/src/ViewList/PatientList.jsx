@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList,Dimensions } from 'react-native';
+import { View, StatusBar, Text, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, Platform, ActivityIndicator } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily } from '../../GlobalStyles';
 import { backendURL } from "../backendapi";
-
 
 const ViewListURL = `${backendURL}/adminRouter/allpatientList`;
 const BasicDetailsURL = `${backendURL}/adminRouter/UpdateProfileNameId`;
@@ -33,28 +32,26 @@ const PatientList = ({ searchText }) => {
     }, [patients]);
 
     useEffect(() => {
-        if (!searchText) {
-            setFilteredPatients(patients);
-            return;
+        let filtered = patients;
+        if (searchText) {
+          filtered = patients.filter(patient =>
+            searchText.test(patient.name.toLowerCase()) ||
+            searchText.test(patient.patientId.toLowerCase())
+          );
         }
-
-        const filtered = patients.filter(patient =>
-            patient.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            patient.patientId.toLowerCase().includes(searchText.toLowerCase())
-        );
         setFilteredPatients(filtered);
-    }, [searchText, patients]);
-
+      }, [searchText, patients]);
     const handleViewDetails = (patientId) => {
         fetch(`${BasicDetailsURL}/${patientId}`)
-        .then(response => response.json())
-        .then(data => {
-            navigation.navigate('PatientNavigation', { details: data[0] });
-        })
-        .catch(error => {
-            console.error('Error fetching patient details:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                navigation.navigate('PatientNavigation', { details: data[0] });
+            })
+            .catch(error => {
+                console.error('Error fetching patient details:', error);
+            });
     };
+
     const handleUpdate = (patientId) => {
         fetch(`${BasicDetailsURL}/${patientId}`)
             .then(response => response.json())
@@ -67,199 +64,210 @@ const PatientList = ({ searchText }) => {
     };
 
     const renderPatientItem = ({ item }) => (
-        <View style={styles.patientView2451}>
-            {/* <Image source={{ uri: item.picture }} style={styles.patientImage2451} /> */}
-            {item.image ? (
-            <Image source={{ uri: item.image }} style={styles.patientImage2451} />
-        ) : (
-            <Image source={require('../../assets/images/user2.png')} style={styles.patientImage2451} />
-        )}
-            <View style={styles.patientDetails13}>
-                <Text style={styles.patientDetails2451}>{item.name}</Text>
-                <Text style={styles.patientDetails2450}>{item.gender}</Text>
-                <Text style={styles.patientDetails2452}>{item.age}</Text>
+        <View style={styles.patientView}>
+            <View style={styles.imageContainer}>
+                {item.image ? (
+                    <Image 
+                        source={{ uri: item.image }} 
+                        style={styles.patientImage}
+                        resizeMode="cover"
+                    />
+                ) : (
+                    <Image 
+                        source={require('../../assets/images/user2.png')} 
+                        style={styles.patientImage}
+                        resizeMode="contain"
+                    />
+                )}
             </View>
-            <View style={styles.patientId2451}>
-                <Text style={styles.patientId13}>{item.patientId}</Text>
-            </View>
-            <TouchableOpacity
-                style={styles.viewButton2451}
-                onPress={() => handleViewDetails(item.patientId)}
-            >
-                <Text style={styles.viewDetails}>View Details</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.viewButton2452}
-                onPress={() => handleUpdate(item.patientId)}
-            >
-                <Text style={styles.viewDetails02}>Update Disease</Text>
-            </TouchableOpacity>
-            <View style={styles.appointmentdet13}>
-                <Text style={styles.appointment2451}>Last Appointment On: <Text style={styles.time2451}>{item.visitDate},  {item.visitTime}</Text></Text>
+            
+            <View style={styles.contentContainer}>
+                <View style={styles.patientDetails}>
+                    <Text style={styles.patientName}>{item.name}</Text>
+                    <Text style={styles.patientInfo}>Gender: {item.gender}</Text>
+                    <Text style={styles.patientInfo}>Age: {item.age}</Text>
+                    <Text style={styles.patientInfo}>Id: {item.patientId}</Text>
+                </View>
+
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        style={styles.viewButton}
+                        onPress={() => handleViewDetails(item.patientId)}
+                    >
+                        <Text style={styles.viewButtonText}>View Details</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.updateButton}
+                        onPress={() => handleUpdate(item.patientId)}
+                    >
+                        <Text style={styles.updateButtonText}>Update Disease</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.appointmentContainer}>
+                    <Text style={styles.appointmentText}>
+                        Last Appointment On: {' '}
+                        <Text style={styles.appointmentTime}>{item.visitDate}, {item.visitTime}</Text>
+                    </Text>
+                </View>
             </View>
         </View>
     );
+
     if (loading) {
-        return <Text style={styles.text45}>Loading...</Text>;
+        return (
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#096759" />
+                <Text style={styles.loadingText}>Loading ...</Text>
+            </View>
+        );
     }
-    
+
     if (filteredPatients.length === 0) {
-        return <Text style={styles.text45}>No patients registered today!</Text>;
+        return <Text style={styles.noDataText}>No patients Details Found!</Text>;
     }
+
     return (
-        <SafeAreaView style={styles.patientContainer2451}>
+        <SafeAreaView style={styles.container}>
+            <StatusBar
+                barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+                backgroundColor="#FFFFFF"
+                translucent={false}
+            />
             <FlatList
                 nestedScrollEnabled
                 data={filteredPatients}
                 renderItem={renderPatientItem}
                 keyExtractor={item => item.patientId}
+                contentContainerStyle={styles.listContainer}
             />
         </SafeAreaView>
     );
 };
 
-export default PatientList;
-
-
 const styles = StyleSheet.create({
-    patientContainer2451:{
-        flex: 1, 
+    container: {
+        flex: 1,
         marginBottom: 85,
-        paddingTop: -windowWidth*0.14,
     },
-    text45:{
-        marginTop: windowWidth*0.10,
-        fontSize:18,
+    listContainer: {
+        paddingHorizontal: 10,
+        paddingTop: 10,
+    },
+    patientView: {
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#077547',
+        margin: 10,
+        padding: 10,
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        minHeight: windowWidth * 0.43, // Set minimum height
+        // maxHeight: windowWidth * 0.5, // Set maximum height
+    },
+    imageContainer: {
+        width: windowWidth * 0.18, // Reduced width
+        height: windowWidth * 0.18, // Fixed height same as width
+        marginRight: 10,
+        borderRadius: 8,
+        overflow: 'hidden',
+        backgroundColor: '#f5f5f5', // Light background for image container
+    },
+    patientImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 8,
+    },
+    contentContainer: {
+        flex: 1,
+        justifyContent: 'space-between',
+    },
+    patientDetails: {
+        flex: 1,
+    },
+    patientName: {
+        fontSize: 15,
+        fontFamily: FontFamily.font_bold,
+        marginBottom: 4,
+        flexWrap: 'wrap',
+    },
+    patientInfo: {
+        fontSize: 12,
+        color: '#666',
+        marginBottom: 2,
+        fontFamily: 'bold01',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginTop: 4,
+        gap: 8,
+    },
+    viewButton: {
+        // paddingVertical: 4,
+        // paddingHorizontal: 10,
+        padding: windowWidth*0.02,
+        borderRadius: 5,
+        borderWidth: 1.5,
+        borderColor: '#077547',
+        minWidth: windowWidth * 0.22,
+        marginLeft:-windowWidth*0.09,
+        // minHeight:windowWidth*0.01,
+        alignItems: 'center',
+    },
+    updateButton: {
+     
+        padding: windowWidth*0.02,
+        borderRadius: 5,
+        borderWidth: 1.5,
+        borderColor: '#E14526',
+        minWidth: windowWidth * 0.22,
+        alignItems: 'center',
+    },
+    viewButtonText: {
+        color: '#077547',
+        fontSize: windowWidth*0.03,
+        fontFamily: 'bold01',
+    },
+    updateButtonText: {
+        color: '#E14526',
+        fontSize: windowWidth*0.03,
+        fontFamily: 'bold01',
+    },
+    appointmentContainer: {
+        marginTop: 4,
+        marginLeft:-windowWidth*0.08
+    },
+    appointmentText: {
+        fontSize: 11,
+        color: '#666',
+    },
+    appointmentTime: {
+        color: '#011411',
+        fontFamily: 'bold01',
+    },
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 16,
+        fontSize: Platform.OS === 'ios' ? 16 : 14,
+        color: '#666666',
+    },
+    noDataText: {
+        marginTop: windowWidth * 0.1,
+        fontSize: 18,
         fontFamily: 'bold01',
         marginLeft: 20,
     },
-    patientView2451: {
-        width: windowWidth*0.95,
-        height: windowWidth * 0.4,
-        backgroundColor: '#fff',
-        alignSelf: 'center',
-        marginTop: 10,
-        flexDirection: 'row',
-        borderRadius: 10,
-        borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: '#077547',
-        elevation: 5,
-    },
-    patientId2451: {
-        width: windowWidth*0.28,
-        height: 30,
-        backgroundColor: '#85DBCD',
-        borderTopLeftRadius: 12,
-        borderBottomLeftRadius: 12,
-        marginLeft: windowWidth*0.027,
-        marginTop: 7,
-        alignContent: 'center',
-        textAlignVertical: 'center',
-        position:'relative'
-    },
-    viewButton2451: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: "absolute",
-        width: windowWidth*0.28,
-        height: 34,
-        borderColor: '#077547',
-        borderWidth: 2,
-        borderStyle: 'solid',
-        borderRadius: 5,
-        marginTop: 70,
-        marginLeft: windowWidth*0.65,
-    },
-    viewButton2452: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: "absolute",
-        width: windowWidth*0.28,
-        height: 34,
-        color: "#F56B62",
-        borderColor: "#F56B62",
-        borderWidth: 2,
-        borderStyle: 'solid',
-        borderRadius: 5,
-        marginTop: 70,
-        marginLeft: windowWidth*0.35,
-    },
-    viewDetails: {
-        color: '#077547',
-        fontSize: 12,
-        alignContent: 'center',
-    },
-    viewDetails02: {
-        color: "#F56B62",
-        fontSize: 12,
-        alignContent: 'center',
-    },
-    appointment2451: {
-        color: '#666',
-        fontSize: 12,
-        alignSelf: 'center',
-    },
-    patientImage2451: {
-        marginTop: 5,
-        marginLeft: 5,
-        marginRight: 10,
-        width: windowWidth * 0.2, 
-        height: windowWidth * 0.25,
-        borderRadius: 8,
-    },
-    patientDetails2451: {
-        fontWeight: 'bold',
-        alignItems: 'center',
-        marginLeft: 10,
-        marginTop: 25,
-        fontSize: 14,
-        fontFamily: FontFamily.font_bold,
-    },
-    patientDetails2450: {
-        // marginTop: 55,
-        marginLeft: 10,
-        alignItems: 'center',
-        color: 'grey',
-        fontSize: 12,
-        fontFamily: FontFamily.font_bold,
-    },
-    patientDetails2452: {
-        // marginTop: 55,
-        marginLeft: 10,
-        alignItems: 'center',
-        color: 'black',
-        fontSize: 12,
-        fontFamily: 'bold01'
-    },
-    // patientDetails2452: {
-    //     marginTop: 15,
-    //     marginLeft: 15,
-    //     alignItems: 'center',
-    //     color: 'grey',
-    //     fontSize: 14,
-    // },
-    patientDetails13: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: windowWidth*0.4,
-    },
-    appointmentdet13: {
-        position: 'absolute',
-        bottom: 10,
-        left: 10,
-    },
-    patientId13: {
-        alignSelf: 'center',
-        fontWeight: 'bold',
-        marginTop: 4,
-        marginLeft: 3,
-    },
-    time2451: {
-        color: '#011411',
-        alignSelf: 'center',
-        fontFamily: 'bold01'
-    },
 });
+
+export default PatientList;
