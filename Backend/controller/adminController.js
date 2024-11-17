@@ -96,10 +96,10 @@ export const sectionAtodaysPatient = async (req, res) => {
     const desiredTimezone = "Asia/Kolkata"; // Replace with your desired time zone
     // Get the current date and time in the desired time zone
     const currentDate = moment().tz(desiredTimezone).format("MMMM D, YYYY");
-
+   // console.log(currentDate)
     const registeredPatients = await PatientSchema.find(
       {
-        status: "Registered",
+        //status: "Registered",
         date: currentDate,
       },
       {
@@ -111,7 +111,7 @@ export const sectionAtodaysPatient = async (req, res) => {
         _id: 0,
       }
     );
-
+    //console.log(registeredPatients)
     //reverse the array so that the latest registerations come at the top
     registeredPatients.reverse();
     res.status(200).json(registeredPatients);
