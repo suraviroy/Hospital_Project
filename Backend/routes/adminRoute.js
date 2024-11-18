@@ -19,7 +19,8 @@ import {
   countAdminNotification,
   seenAdminNotification,
   oneAdminNotification,
-  sendMail
+  sendMail,
+  PatientBasicDetailsNewWP
 } from "../controller/adminController.js";
 const adminRouter = express.Router();
 
@@ -45,5 +46,7 @@ adminRouter.post("/seenAdminNotification/:cid", seenAdminNotification);
 adminRouter.get("/oneAdminNotification/:cid", oneAdminNotification);
 
 adminRouter.post("/sendMail", sendMail);
+
+adminRouter.get("/PatientBasicDetailsNewWP/:id", PatientBasicDetailsNewWP);
 
 export default adminRouter;

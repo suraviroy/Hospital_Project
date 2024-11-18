@@ -96,10 +96,10 @@ export const sectionAtodaysPatient = async (req, res) => {
     const desiredTimezone = "Asia/Kolkata"; // Replace with your desired time zone
     // Get the current date and time in the desired time zone
     const currentDate = moment().tz(desiredTimezone).format("MMMM D, YYYY");
-
+   // console.log(currentDate)
     const registeredPatients = await PatientSchema.find(
       {
-        status: "Registered",
+        //status: "Registered",
         date: currentDate,
       },
       {
@@ -111,7 +111,7 @@ export const sectionAtodaysPatient = async (req, res) => {
         _id: 0,
       }
     );
-
+    //console.log(registeredPatients)
     //reverse the array so that the latest registerations come at the top
     registeredPatients.reverse();
     res.status(200).json(registeredPatients);
@@ -659,6 +659,46 @@ Visit our website for more details - https://www.pulmocareindia.org
     return res.status(500).json({ message: "Error sending email." });
   }
 };
+
+export const PatientBasicDetailsNewWP = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const patientExists = await PatientSchema.exists({ patientId: id });
+    if (!patientExists) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const registeredPatientsName = await PatientSchema.find(
+      {
+        patientId: id,
+      },
+      {
+        name: 1,
+        gender: 1,
+        patientId: 1,
+        contactNumber: 1,
+        email: 1,
+        bloodGroup: 1,
+        password: 1,
+        age: 1,
+        address: 1,
+        state: 1,
+        country: 1,
+        image: 1,
+        consultingDoctor: 1,
+        localContactName: 1,
+        localContactRelation: 1,
+        localContactNumber: 1,
+        _id: 0,
+      }
+    );
+    res.status(200).json(registeredPatientsName);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 
 
 export const excelFile = async (req, res) => {
