@@ -229,22 +229,24 @@ const PastHosForm = ({ onDataChange }) => {
           Year of hospitalization :
         </Text>
         <View style={styles.dropdown21}>
-          <Picker
-            selectedValue={selectedYear}
-            style={{ height: 50, width: '100%' }}
-            onValueChange={(itemValue) => setSelectedYear(itemValue)}>
-            <Picker.Item label="Select" value="" style={{ color: '#8E7D7D' }} />
-            {Array.from({ length: new Date().getFullYear() - 1980 + 1 }, (_, i) => 1980 + i).map(
-              (year) => (
-                <Picker.Item
-                  key={year}
-                  label={year.toString()}
-                  value={year}
-                  style={{ color: '#000' }}
-                />
-              )
-            )}
-          </Picker>
+        <Picker
+  selectedValue={selectedYear}
+  style={{ height: 50, width: '100%' }}
+  onValueChange={(itemValue) => setSelectedYear(itemValue)}
+>
+  <Picker.Item label="Select" value="" style={{ color: '#8E7D7D' }} />
+  {Array.from({ length: new Date().getFullYear() - 1980 + 1 }, (_, i) => new Date().getFullYear() - i).map(
+    (year) => (
+      <Picker.Item
+        key={year}
+        label={year.toString()}
+        value={year}
+        style={{ color: '#000' }}
+      />
+    )
+  )}
+</Picker>
+
         </View>
       </View>
       <View style={styles.hosopt}>

@@ -14,6 +14,7 @@ const PatientList = ({ searchText }) => {
     const [patients, setPatients] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingStates, setLoadingStates] = useState({}); // Track loading state for each patient
 
     useEffect(() => {
         const fetchData = async () => {
@@ -40,27 +41,42 @@ const PatientList = ({ searchText }) => {
           );
         }
         setFilteredPatients(filtered);
-      }, [searchText, patients]);
-    const handleViewDetails = (patientId) => {
-        fetch(`${BasicDetailsURL}/${patientId}`)
-            .then(response => response.json())
-            .then(data => {
-                navigation.navigate('PatientNavigation', { details: data[0] });
-            })
-            .catch(error => {
-                console.error('Error fetching patient details:', error);
-            });
+    }, [searchText, patients]);
+
+    const setPatientLoading = (patientId, action, isLoading) => {
+        setLoadingStates(prev => ({
+            ...prev,
+            [patientId]: {
+                ...prev[patientId],
+                [action]: isLoading
+            }
+        }));
     };
 
-    const handleUpdate = (patientId) => {
-        fetch(`${BasicDetailsURL}/${patientId}`)
-            .then(response => response.json())
-            .then(data => {
-                navigation.navigate('RegisterFirst', { details: data[0] });
-            })
-            .catch(error => {
-                console.error('Error fetching patient details:', error);
-            });
+    const handleViewDetails = async (patientId) => {
+        setPatientLoading(patientId, 'view', true);
+        try {
+            const response = await fetch(`${BasicDetailsURL}/${patientId}`);
+            const data = await response.json();
+            navigation.navigate('PatientNavigation', { details: data[0] });
+        } catch (error) {
+            console.error('Error fetching patient details:', error);
+        } finally {
+            setPatientLoading(patientId, 'view', false);
+        }
+    };
+
+    const handleUpdate = async (patientId) => {
+        setPatientLoading(patientId, 'update', true);
+        try {
+            const response = await fetch(`${BasicDetailsURL}/${patientId}`);
+            const data = await response.json();
+            navigation.navigate('RegisterFirst', { details: data[0] });
+        } catch (error) {
+            console.error('Error fetching patient details:', error);
+        } finally {
+            setPatientLoading(patientId, 'update', false);
+        }
     };
 
     const renderPatientItem = ({ item }) => (
@@ -93,15 +109,25 @@ const PatientList = ({ searchText }) => {
                     <TouchableOpacity
                         style={styles.viewButton}
                         onPress={() => handleViewDetails(item.patientId)}
+                        disabled={loadingStates[item.patientId]?.view}
                     >
-                        <Text style={styles.viewButtonText}>View Details</Text>
+                        {loadingStates[item.patientId]?.view ? (
+                            <ActivityIndicator size="small" color="#077547" />
+                        ) : (
+                            <Text style={styles.viewButtonText}>View Details</Text>
+                        )}
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         style={styles.updateButton}
                         onPress={() => handleUpdate(item.patientId)}
+                        disabled={loadingStates[item.patientId]?.update}
                     >
-                        <Text style={styles.updateButtonText}>Update Disease</Text>
+                        {loadingStates[item.patientId]?.update ? (
+                            <ActivityIndicator size="small" color="#E14526" />
+                        ) : (
+                            <Text style={styles.updateButtonText}>Update Disease</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
 
@@ -210,25 +236,25 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     viewButton: {
-        // paddingVertical: 4,
-        // paddingHorizontal: 10,
         padding: windowWidth*0.02,
         borderRadius: 5,
         borderWidth: 1.5,
         borderColor: '#077547',
         minWidth: windowWidth * 0.22,
         marginLeft:-windowWidth*0.09,
-        // minHeight:windowWidth*0.01,
         alignItems: 'center',
+        justifyContent: 'center', // Added for centering ActivityIndicator
+        minHeight: 35, // Added to maintain consistent height with/without loader
     },
     updateButton: {
-     
         padding: windowWidth*0.02,
         borderRadius: 5,
         borderWidth: 1.5,
         borderColor: '#E14526',
         minWidth: windowWidth * 0.22,
         alignItems: 'center',
+        justifyContent: 'center', // Added for centering ActivityIndicator
+        minHeight: 35, // Added to maintain consistent height with/without loader
     },
     viewButtonText: {
         color: '#077547',

@@ -1,35 +1,41 @@
 import React from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, Linking, Dimensions } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, Image, Alert,ActivityIndicator, Linking, Dimensions } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from 'react-native-vector-icons';
 const windowWidth = Dimensions.get('window').width;
+import { backendURL } from "../backendapi";
 
-const openEmail = (email, patientName, patientId, password) => {
+const openEmail = async (email, patientName, patientId, password) => {
     if (!email) {
         alert("Sorry!! You have not provided any email.");
         return;
     }
-    const subject = "Patient Registration Details";
-    const body =
-        `Congratulations!! ${patientName}
-You are Successfully Registered!!
 
-Your Patient ID: ${patientId}
+    try {
+       
+        const response = await fetch(`${backendURL}/adminRouter/sendMail`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                patientId: patientId,
+            }),
+        });
 
-Your Login Credentials
-    Username: ${patientId}
-    Password: ${password}
+        const data = await response.json();
 
-Please use this username and password 
-to login into our system
-
-Please tap on the below link to download our patient care app.
-
-https://www.dropbox.com/scl/fi/81wxouppgsrxterhxzk8d/IpcrConnect_1.0.0.apk?rlkey=bmnwr51qu5w0xurvgudxd9l3i&st=f56jgf30&dl=0
-
-Thank You,
-Best Wishes From IPCR `;
-    Linking.openURL(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+        if (response.ok) {
+            
+            Alert.alert('Success', 'Email sent sucessfully!');
+        } else {
+            alert('Sorry' || 'Failed to send email.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while sending the email.');
+    }
 };
+
 const RegisterPopup = ({ visible, setVisible, loading, patientName, handleCancel, patientId, email, contactNumber, password }) => {
     return (
         <Modal transparent visible={visible}>
@@ -66,6 +72,7 @@ const RegisterPopup = ({ visible, setVisible, loading, patientName, handleCancel
                                             <MaterialCommunityIcons name="gmail" size={20} color={'#000000'} />
                                             <Text style={styles.BelowText}>Send To mail</Text>
                                         </TouchableOpacity>
+                                       
                                         {/* <TouchableOpacity style={styles.callButton}>
                                             <MaterialCommunityIcons name="phone-message" size={20} color={'#000000'} />
                                             <Text style={styles.BelowText}>Send To Mobile</Text>

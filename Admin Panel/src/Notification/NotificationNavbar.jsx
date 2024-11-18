@@ -21,7 +21,7 @@ const NotificationNavbar = () => {
     };
     
     useEffect(() => {
-        fetch(`${backendURL}/adminRouter/PatientBasicDetails/${patientId}`)
+        fetch(`${backendURL}/adminRouter/PatientBasicDetailsNewWP/${patientId}`)
             .then(response => response.json())
             .then(data => {
                 setBasicDetails(data[0]);

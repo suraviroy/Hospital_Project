@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -24,10 +24,46 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [captchaAnswer, setCaptchaAnswer] = useState('');
+  const [captchaProblem, setCaptchaProblem] = useState({ question: '', answer: 0 });
+  const generateCaptcha = useCallback(() => {
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    const isAddition = Math.random() < 0.5;
+
+    if (isAddition) {
+      setCaptchaProblem({
+        question: `${num1} + ${num2} = ?`,
+        answer: num1 + num2
+      });
+    } else {
+      const larger = Math.max(num1, num2);
+      const smaller = Math.min(num1, num2);
+      setCaptchaProblem({
+        question: `${larger} - ${smaller} = ?`,
+        answer: larger - smaller
+      });
+    }
+  }, []);
+  useEffect(() => {
+    generateCaptcha();
+  }, [generateCaptcha]);
 
   const handleLogin = useCallback(async () => {
     if (!username.trim() || !password.trim()) {
       Alert.alert('Error', 'Please enter both username and password');
+      return;
+    }
+
+    if (!captchaAnswer.trim()) {
+      Alert.alert('Error', 'Please solve the captcha');
+      return;
+    }
+
+    if (Number(captchaAnswer) !== captchaProblem.answer) {
+      Alert.alert('Error', 'Incorrect captcha answer');
+      setCaptchaAnswer('');
+      generateCaptcha();
       return;
     }
 
@@ -48,7 +84,7 @@ const Login = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [username, password, login, navigation]);
+  }, [username, password, login, navigation, captchaAnswer, captchaProblem.answer, generateCaptcha]);
 
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword(!showPassword);
@@ -66,11 +102,11 @@ const Login = () => {
 
   return (
     <View style={styles.container01}>
-       <StatusBar 
-            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
-            backgroundColor="#FFFFFF" 
-            translucent={false}
-        />
+      <StatusBar 
+        barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+        backgroundColor="#FFFFFF" 
+        translucent={false}
+      />
       <View style={styles.backgroundOverlay01} />
       <Text style={[styles.loginText01, { top: height * 0.1 }]}>LOG IN</Text>
 
@@ -95,6 +131,22 @@ const Login = () => {
         />
         <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIcon}>
           <Icon name={showPassword ? "eye-slash" : "eye"} size={20} color="black" />
+        </TouchableOpacity>
+      </View>
+      <View style={[inputContainerStyle, styles.captchaContainer]}>
+        <Icon name="shield" size={24} color="black" style={styles.inputIcon02} />
+        <View style={styles.captchaContent}>
+          <Text style={styles.captchaQuestion}>{captchaProblem.question}</Text>
+          <TextInput
+            style={[styles.input01, styles.captchaInput]}
+            placeholder='Enter answer'
+            value={captchaAnswer}
+            onChangeText={setCaptchaAnswer}
+            keyboardType="numeric"
+          />
+        </View>
+        <TouchableOpacity onPress={generateCaptcha} style={styles.refreshIcon}>
+          <Icon name="refresh" size={20} color="black" />
         </TouchableOpacity>
       </View>
       
@@ -134,7 +186,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#096759',
         top: -height / 2,
         position: 'absolute',
-        height: height * 0.88,
+        height: height * 0.82,
         width: width * 1.23,
         borderRadius: width * 8,
         borderTopLeftRadius: 0,
@@ -163,6 +215,9 @@ const styles = StyleSheet.create({
     inputIcon01: {
         marginRight: 20,
     },
+    inputIcon02: {
+      marginLeft: width*0.05,
+  },
     input01: {
         position: 'relative',
         borderRadius: 5,
@@ -190,6 +245,32 @@ const styles = StyleSheet.create({
     eyeIcon: {
         position: 'absolute',
         right: 10,
+    },
+    captchaContainer: {
+        height: height * 0.078,
+    },
+    captchaContent: {
+        flex: 1,
+        flexDirection: 'column',
+        marginLeft:width*0.06,
+        justifyContent: 'center',
+    },
+    captchaQuestion: {
+        fontSize: width*0.045,
+        fontWeight: 'bold',
+        color: '#096759',
+        // marginBottom: width*0.01,
+    },
+    captchaInput: {
+        width: '100%',
+        height: width*0.08,
+        fontSize: width*0.045,
+        fontWeight: '200',
+    },
+    refreshIcon: {
+        position: 'absolute',
+        right: 10,
+        padding: 5,
     },
 });
 

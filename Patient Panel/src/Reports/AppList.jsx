@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Platform,StatusBar,StyleSheet, Text, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
+import { View, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily, Color } from '../../GlobalStyles';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { backendURL } from "../backendapi";
 import Icon from 'react-native-vector-icons/Ionicons';
-const windowWidth = Dimensions.get('window').width;
 
+const windowWidth = Dimensions.get('window').width;
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 const scale = screenWidth / 375;
 const normalize = (size) => Math.round(scale * size);
@@ -16,8 +16,8 @@ const AppList = ({ searchText }) => {
     const navigation = useNavigation();
     const [patientInfo, setPatientInfo] = useState(null);
     const [appointments, setAppointments] = useState([]);
-    const [degree,setdegree] = useState(null);
-    const [medicine,setmedicine] = useState(null);
+    const [degree, setdegree] = useState(null);
+    const [medicine, setmedicine] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -38,14 +38,14 @@ const AppList = ({ searchText }) => {
         };
         fetchData();
     }, []);
-    
+
     const fetchPatientData = async (patientId) => {
         try {
-            console.log('Fetching data for patient ID:', patientId); 
+            console.log('Fetching data for patient ID:', patientId);
             const response = await fetch(`${backendURL}/patientRouter/PatientsAllAppointments/${patientId}`);
             const data = await response.json();
-            console.log('Received appointments data:', data); 
-            
+            console.log('Received appointments data:', data);
+
             if (data.patientInfo && data.appointments) {
                 setPatientInfo(data.patientInfo);
                 setAppointments(data.appointments);
@@ -64,46 +64,51 @@ const AppList = ({ searchText }) => {
         return (
             <View style={styles.appointView}>
                 <Image
-  source={
-    patientInfo.consultingDoctor === "Dr. Parthasarathi Bhattacharyya"
-      ? { uri: 'https://res.cloudinary.com/tiasha/image/upload/doc_kb8oan.jpg' }
-      : {uri: 'https://res.cloudinary.com/tiasha/image/upload/user_hx7cgx.png'}
-  }
-  style={styles.docImage}
-/>
+                    source={
+                        patientInfo.consultingDoctor === "Dr. Parthasarathi Bhattacharyya"
+                            ? { uri: 'https://res.cloudinary.com/tiasha/image/upload/doc_kb8oan.jpg' }
+                            : { uri: 'https://res.cloudinary.com/tiasha/image/upload/user_hx7cgx.png' }
+                    }
+                    style={styles.docImage}
+                />
                 <View style={styles.docInfoWrapper}>
-      <Text style={styles.docname}>{patientInfo.consultingDoctor}</Text>
-      <View style={styles.docInfoContainer}>
-        <Text style={styles.docdesg}>{degree}</Text>
-      </View>
-      <Text style={styles.docexp}>{medicine}</Text>
-    </View>
-    <TouchableOpacity
+                    <Text style={styles.docname}>{patientInfo.consultingDoctor}</Text>
+                    <View style={styles.docInfoContainer}>
+                        <Text style={styles.docdesg}>{degree}</Text>
+                    </View>
+                    <Text style={styles.docexp}>{medicine}</Text>
+                </View>
+                <TouchableOpacity
                     style={styles.viewButton2451}
                     onPress={() => {
-                        console.log('Navigating to UpdatedDetails with visitId:', item.id); 
+                        console.log('Navigating to UpdatedDetails with visitId:', item.id);
                         navigation.navigate('UpdatedDetails', { visitId: item.id });
                     }}
                 >
                     <Text style={styles.viewDetails}>View Details</Text>
-                    <Icon name="arrow-forward-circle" marginLeft= {2} size={20} color= '#357EEA' />
-                    
+                    <Icon name="arrow-forward-circle" marginLeft={2} size={20} color='#357EEA' />
                 </TouchableOpacity>
-    <View style={styles.appdate}>
-    <Text style={styles.apptext}>
-    Appointment On: {' '}
+                <View style={styles.appdate}>
+                    <Text style={styles.apptext}>
+                        Appointment On: {' '}
                         <Text style={styles.datime}>
                             {item.visitDate || 'Date N/A'} , {item.visitTime || 'Time N/A'}
                         </Text>
-    </Text>
-  </View>
+                    </Text>
+                </View>
             </View>
         );
     };
+
+    // New filtering logic for date and time search
     const filteredAppointments = searchText
-        ? appointments.filter(appointment => 
-            patientInfo?.consultingDoctor?.toLowerCase().includes(searchText.toLowerCase())
-          )
+        ? appointments.filter(appointment => {
+            const searchLower = searchText.toLowerCase();
+            const dateTimeString = `${appointment.visitDate} ${appointment.visitTime}`.toLowerCase();
+            
+            // Search in both date and time
+            return dateTimeString.includes(searchLower);
+        })
         : appointments;
 
     if (loading) {
@@ -116,11 +121,11 @@ const AppList = ({ searchText }) => {
 
     return (
         <SafeAreaView style={styles.appointcon}>
-             <StatusBar 
-            barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
-            backgroundColor="#FFFFFF" 
-            translucent={false}
-        />
+            <StatusBar
+                barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
+                backgroundColor="#FFFFFF"
+                translucent={false}
+            />
             <FlatList
                 nestedScrollEnabled
                 data={filteredAppointments}

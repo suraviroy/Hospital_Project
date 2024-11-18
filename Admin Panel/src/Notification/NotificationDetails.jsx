@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { View, Text,Platform,StatusBar, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions,Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native'; 
@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const NotificationDetails = ({ patientId }) => { 
     const navigation = useNavigation();
-    const [basicDetails, setBasicDetails] = useState(null);
+    const [basicDetails, setBasicDetails] = useState({});
     const [visitData, setVisitData] = useState([]);
   const [coordinator, setCoordinator] = useState(null);
   const [expandedVisits, setExpandedVisits] = useState({});
@@ -20,6 +20,47 @@ const NotificationDetails = ({ patientId }) => {
   const handleDischargeCertificatePress = (url) => {
     Linking.openURL(url);
   };
+  const openDial = useCallback((phNumber) => {
+    try {
+        console.log('Raw phone number:', phNumber);
+        if (!phNumber) {
+            console.error('Phone number is undefined or null');
+            return;
+        }
+
+        const cleanNumber = phNumber.toString().replace(/\D/g, '');
+        
+        console.log('Cleaned phone number:', cleanNumber);
+
+        if (cleanNumber.length < 10) {
+            console.error('Invalid phone number length:', cleanNumber);
+            return;
+        }
+        const formattedNumber = cleanNumber.startsWith('+91') 
+            ? `+${cleanNumber}` 
+            : cleanNumber.length === 10 
+                ? `+91${cleanNumber}` 
+                : `+${cleanNumber}`;
+
+        const dialURL = Platform.OS === "android" 
+            ? `tel:${formattedNumber}` 
+            : `telprompt:${formattedNumber}`;
+        
+        Linking.canOpenURL(dialURL).then(supported => {
+            if (supported) {
+                Linking.openURL(dialURL).catch(err => {
+                    console.error('Error opening dial URL:', err);
+                });
+            } else {
+                console.log(`Cannot open dial for number: ${formattedNumber}`);
+            }
+        }).catch(err => {
+            console.error('Error checking URL support:', err);
+        });
+    } catch (error) {
+        console.error('Error in openDial function:', error);
+    }
+}, []);
 
   const fetchData = async () => {
     try {
@@ -40,17 +81,20 @@ const NotificationDetails = ({ patientId }) => {
     }));
   };
 
+  useEffect(() => {
+    fetch(`${backendURL}/adminRouter/PatientBasicDetailsNewWP/${patientId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Fetched data:", data);
+            setBasicDetails(data[0]);
+        })
+        .catch(error => {
+            console.error('Error fetching patient basic details:', error);
+        });
+}, [basicDetails]);
 
-    useEffect(() => {
-        fetch(`${backendURL}/adminRouter/PatientBasicDetails/${patientId}`)
-            .then(response => response.json())
-            .then(data => {
-                setBasicDetails(data[0]);
-            })
-            .catch(error => {
-                console.error('Error fetching patient basic details:', error);
-            });
-    }, [patientId]);
+    console.log("Basic Details")
+    console.log(basicDetails.name)
 
     const handleClose = () => {
         navigation.goBack();
@@ -732,6 +776,9 @@ const NotificationDetails = ({ patientId }) => {
                 {/* <View style={styles.registerTextContainer}>
                     <Text style={styles.registerText}>Patient Basic Details</Text>
                 </View> */}
+                  <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => openDial(basicDetails.contactNumber)}>
+                  <Text style={[styles.buttonText, styles.cancelText]}>Call Patient</Text>
+              </TouchableOpacity>
                 <View style={styles.profileContainer1}>
                     {basicDetails.image ? (
                         <Image source={{ uri: basicDetails.image }} style={styles.profileImage} />
@@ -869,7 +916,7 @@ subHead:{
     marginTop: windowWidth * 0.01,
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
-    backgroundColor: "#D9D9D9",
+    backgroundColor: '#F1F4F3',
     paddingLeft: 15,
     paddingRight: 15,
     fontFamily: 'bold02',
@@ -882,7 +929,7 @@ subHead2:{
     // height: windowWidth * 0.10,
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
-    backgroundColor: "#D9D9D9",
+    backgroundColor: '#F1F4F3',
     paddingLeft: 15,
     paddingRight: 15,
     fontFamily: 'bold02',
@@ -896,7 +943,7 @@ subHead3:{
     backgroundColor: "#e3e3e3",
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
-    backgroundColor: "#D9D9D9",
+    backgroundColor: '#F1F4F3',
     paddingLeft: 15,
     paddingRight: 15,
     fontFamily: 'bold02',
@@ -911,7 +958,7 @@ subHead4:{
   backgroundColor: "#e3e3e3",
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
-  backgroundColor: "#D9D9D9",
+  backgroundColor: '#F1F4F3',
   paddingLeft: 15,
   paddingRight: 15,
   fontFamily: 'bold02',
@@ -926,7 +973,7 @@ subHead5:{
   backgroundColor: "#e3e3e3",
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
-  backgroundColor: "#D9D9D9",
+  backgroundColor: '#F1F4F3',
   paddingLeft: 15,
   paddingRight: 15,
   fontFamily: 'bold02',
@@ -941,7 +988,7 @@ subHead6:{
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
   marginRight: windowWidth*0.04,
-  backgroundColor: "#D9D9D9",
+  backgroundColor: '#F1F4F3',
   paddingLeft: 15,
   paddingRight: 15,
   fontFamily: 'regular89',
@@ -956,7 +1003,7 @@ subHead7:{
   paddingTop: windowWidth * 0.02,
   borderRadius: windowWidth*0.01,
   marginRight: windowWidth*0.04,
-  backgroundColor: "#D9D9D9",
+  backgroundColor: '#F1F4F3',
   paddingLeft: 15,
   paddingRight: 15,
   fontFamily: 'regular89',
@@ -992,7 +1039,7 @@ visitHeader: {
       marginLeft: 20,
   },
     textContainer:{
-    backgroundColor: '#D9D9D9',
+      backgroundColor: '#F1F4F3',
     padding: 5,
     borderRadius: windowWidth*0.01,
     },
@@ -1084,6 +1131,26 @@ visitHeader: {
         marginLeft: windowWidth*0.01,
         marginTop: windowWidth*0.05,
     },
+    callButton:{
+      marginLeft:windowWidth*0.25,
+      backgroundColor: '#9F0606',
+      alignItems:'center',
+      justifyContent:'center',
+  },
+  submitText: {
+      color: '#FFFFFF',
+  },
+  cancelButton: {
+    marginLeft:windowWidth*0.27,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: 'red',
+    marginTop:windowWidth*0.05,
+    marginBottom:windowWidth*0.02,
+},
+cancelText: {
+    color: 'red',
+},
 
 
 });

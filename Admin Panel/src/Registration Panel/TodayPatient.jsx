@@ -18,9 +18,9 @@ const TodayPatient =() => {
         <View style = {styles.regPatients2451}>
              <View style={styles.adminRow012}>
                 <Text style={styles.text013}>Today's Patients</Text>
-                <View styles={{ alignItems: "flex-end" }}>
+                <View styles={{ }}>
                     <TouchableOpacity onPress={() => handleAdd()}>
-                        <Ionicons name='add-outline' size={30} color='#5B5151' marginRight={20} />
+                        <Ionicons name='add-outline' size={windowWidth*0.08} color='#5B5151'  paddingRight={windowWidth*0.05} />
                     </TouchableOpacity>
                 </View>
                 </View>
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
         fontFamily: "bold01",
         fontSize: 20,
         marginLeft: 12,
-        marginRight: windowWidth*0.43,
+        marginRight: windowWidth*0.4,
     },
     container: {
         marginTop: 0,

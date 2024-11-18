@@ -561,6 +561,13 @@ const DiseaseForm = ({ patientId }) => {
   };
 
   const handleSave = async () => {
+    if (selectedCoordinator === "Select") {
+      Alert.alert(
+        "Required Field",
+        "Please select a coordinator or choose 'Not applicable'"
+      );
+      return;
+    }
     setIsLoading(true);
     const prescriptionData = prescriptionFields
       .filter(field => field.file && field.file.uri)
@@ -587,11 +594,10 @@ const DiseaseForm = ({ patientId }) => {
         document: "NA"
       });
     }
-
+   
     const statusOfSickness =
       selectedOption8 === "Select" ? "NA" : selectedOption8;
-    const coordinator =
-      selectedCoordinator === "Select" ? "NA" : selectedCoordinator;
+    const coordinator = selectedCoordinator;
       const desiredTimezone = "Asia/Kolkata";
 
       const formattedVisitDate = moment(visitDate).tz(desiredTimezone).format("MMMM D, YYYY");
@@ -1527,26 +1533,31 @@ const handleVisitTimeChange = (event, selectedTime) => {
           <Text style={styles.texthead}>Choose Coordinator</Text>
         </View>
         <View style={styles.dropdown19}>
-          <Picker
-            selectedValue={selectedCoordinator}
-            style={{ height: 50, width: "100%", paddingHorizontal: 10 }}
-            onValueChange={(itemValue) => setSelectedCoordinator(itemValue)}
-          >
-            <Picker.Item
-              label="Select"
-              value=""
-              style={{ color: Color.colorGray_200 }}
-            />
-            {coordinators.map((coordinator, index) => (
-              <Picker.Item
-                key={index}
-                label={coordinator}
-                value={coordinator}
-                style={{ color: Color.colorBlack }}
-              />
-            ))}
-          </Picker>
-        </View>
+  <Picker
+    selectedValue={selectedCoordinator}
+    style={{ height: 50, width: "100%", paddingHorizontal: 10 }}
+    onValueChange={(itemValue) => setSelectedCoordinator(itemValue)}
+  >
+    <Picker.Item
+      label="Select"
+      value="Select"
+      style={{ color: Color.colorGray_200 }}
+    />
+    <Picker.Item
+      label="Not applicable"
+      value="NA"
+      style={{ color: Color.colorBlack }}
+    />
+    {coordinators.map((coordinator, index) => (
+      <Picker.Item
+        key={index}
+        label={coordinator}
+        value={coordinator}
+        style={{ color: Color.colorBlack }}
+      />
+    ))}
+  </Picker>
+</View>
         <View style={styles.disheader}>
         <Text style={styles.texthead}>Upload Prescription</Text>
       </View>

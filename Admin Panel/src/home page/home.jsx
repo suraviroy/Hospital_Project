@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Platform,StatusBar,Text, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert,Linking,ActivityIndicator} from 'react-native';
+import { View, Platform,StatusBar,Text,Image, StyleSheet, TouchableOpacity, FlatList, Dimensions, Alert,Linking,ActivityIndicator} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import SearchAdmin from './SearchAdmin';
@@ -20,6 +20,7 @@ const Home = () => {
     const navigation = useNavigation();
     const [searchText, setSearchText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const staticImageUrl = "https://res.cloudinary.com/tiasha/image/upload/logo2-1_dusm95.jpg";
 
     const handleAddAdmin = () => {
         navigation.navigate('AddAdmin');
@@ -113,9 +114,9 @@ const Home = () => {
             const cloudinaryUrl = await uploadToCloudinary(fileUri, fileName);
             if (cloudinaryUrl) {
                 Linking.openURL(cloudinaryUrl);
-                Alert.alert('Download Successful', 'Excel file has been uploaded to Cloudinary.');
+                Alert.alert('Download Successful', 'Excel file has been uploaded');
             } else {
-                Alert.alert('Upload Failed', 'Failed to upload Excel file to Cloudinary.');
+                Alert.alert('Upload Failed', 'Failed to upload Excel file.');
             }
         } catch (error) {
             console.error('Error downloading Excel file:', error);
@@ -129,7 +130,8 @@ const Home = () => {
         <View>
             <View style={styles.appBarWrapper012}>
                 <View style={styles.appBar012}>
-                    <MaterialIcons name='local-hospital' size={40} color={'#730404'} />
+                <Image source={{ uri: staticImageUrl }} style={styles.profileImage} />
+                    {/* <MaterialIcons name='local-hospital' size={40} color={'#730404'} /> */}
                     <Text style={styles.text012}>Institute of Pulmocare & {'\n'}Research</Text>
                     <View style={{ alignItems: "flex-end" }}>
                         <TouchableOpacity style={[styles.button457,{ marginLeft:windowWidth*0.03 }]} onPress={handleLogout}>
@@ -270,6 +272,12 @@ const styles = StyleSheet.create({
     appbar033: {
         flex: 1,
         backgroundColor: '#fff'
+    },
+    profileImage: {
+        width: windowWidth*0.1,
+        height: windowWidth*0.1,
+        resizeMode: 'cover',
+        borderRadius: windowWidth*0.05,
     },
 });
 

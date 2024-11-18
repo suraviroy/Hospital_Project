@@ -4,10 +4,10 @@
     "slug": "AdminPanel",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "https://res.cloudinary.com/tiasha/image/upload/logo2-1_dusm95.jpg",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "https://asset.cloudinary.com/tiasha/f41386275f6e73a9b3dbaca44975f642",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

@@ -7,7 +7,7 @@ import { FontFamily } from '../../GlobalStyles';
 import { backendURL } from "../backendapi";
 
 const AllListURL = `${backendURL}/adminRouter/sectionAallPatient`;
-const BasicDetailsURL = `${backendURL}/adminRouter/PatientBasicDetails`;
+const BasicDetailsURL = `${backendURL}/adminRouter/PatientBasicDetailsNewWP`;
 
 const AllList = ({ searchText, refreshTrigger }) => {
     const navigation = useNavigation();

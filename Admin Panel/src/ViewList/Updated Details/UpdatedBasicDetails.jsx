@@ -1,16 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Platform, StatusBar, Image, ScrollView, TouchableOpacity, Dimensions, TextInput } from 'react-native';
+import React, { useState, useEffect ,useCallback} from 'react';
+import { View, Text, StyleSheet, Platform, StatusBar, Image,Alert,Linking,ScrollView, TouchableOpacity, ActivityIndicator,Dimensions, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native'; 
 import RNPickerSelect from 'react-native-picker-select';
 const windowWidth = Dimensions.get('window').width;
 import { backendURL } from "../../backendapi";
+import { Picker } from '@react-native-picker/picker';
+import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
+import RegisterPopup from '../../Registration Panel/RegisterPopup';
+
 
 const UpdatedBasicDetails = ({ patientId }) => { 
+  
     const navigation = useNavigation();
-    const [PatientbasicDetails, setPatientBasicDetails] = useState(null);
+    const [PatientbasicDetails, setPatientBasicDetails] = useState({});
     const [isEditing, setIsEditing] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
     const [updatedDetails, setUpdatedDetails] = useState({});
+    const [image, setImage] = useState(null);
+    const [loadingEmail, setLoadingEmail] = useState(false);
+    const [loading, setLoading] = useState(false); 
+    const [uploading, setUploading] = useState(false);
+    const [selectedImage, setselectedImage] = useState(null);
     const [state, setState] = useState('West Bengal');
     const [country, setCountry] = useState('India');
     const [selectedGender, setSelectedGender] = useState('');
@@ -26,17 +38,25 @@ const UpdatedBasicDetails = ({ patientId }) => {
     const [selectedBloodGroup, setSelectedBloodGroup] = useState(bloodGroup);
     const [selectedState, setSelectedState] = useState(state);
     const [selectedCountry, setSelectedCountry] = useState(country);
+    const [generatedPassword, setGeneratedPassword] = useState(''); 
     useEffect(() => {
         fetchPatientDetails();
     }, [patientId]);
 
     const fetchPatientDetails = () => {
-        fetch(`${backendURL}/adminRouter/PatientBasicDetails/${patientId}`)
+        fetch(`${backendURL}/adminRouter/PatientBasicDetailsNewWP/${patientId}`)
             .then(response => response.json())
             .then(data => {
+                console.log("hi")
                 setPatientBasicDetails(data[0]);
+               
                 setUpdatedDetails(data[0]);
+                if (data[0].image) {
+                    setselectedImage(data[0].image);
+                }
                 setSelectedGender(data[0].gender);
+                console.log(data[0].name);
+                setAddress(data[0].address);
                 setConsultingDoctor(data[0].consultingDoctor);
                 setSelectedDoctor(data[0].consultingDoctor);
                 setBloodGroup(data[0].bloodGroup);
@@ -45,20 +65,225 @@ const UpdatedBasicDetails = ({ patientId }) => {
                 setSelectedCountry(data[0].country);
                 setState(data[0].state);
                 setSelectedState(data[0].state);
-                
             })
             .catch(error => {
                 console.error('Error fetching patient basic details:', error);
             });
     };
-
+    
     const handleEdit = () => {
         setIsEditing(true);
+    };
+    // const handlePopup = ()=>{
+    //         setLoading(true);
+        
+    //         const generatePassword = () => {
+    //             const password = Math.floor(1000 + Math.random() * 9000).toString();
+    //             const firstName = PatientbasicDetails?.name.split(' ')[0] || "User";
+    //             const newPassword = firstName.toLowerCase() + '@' + password;
+    //             setGeneratedPassword(newPassword); 
+    //             return newPassword; 
+    //         };
+    //         setTimeout(() => {
+    //             const password = generatePassword();
+    //             console.log('Generated Password:', password);
+    //             setShowPopup(true);
+    //             setLoading(false);
+    //         }, 1000);
+    //     };
+    const openEmail = async (email, patientId) => {
+        if (!email) {
+          alert("Sorry!! You have not provided any email.");
+          return;
+        }
+    
+        setLoadingEmail(true); // Start loading
+    
+        try {
+          const response = await fetch(`${backendURL}/adminRouter/sendMail`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              patientId: patientId,
+            }),
+          });
+    
+          const data = await response.json();
+    
+          if (response.ok) {
+            Alert.alert('Success', 'Email sent successfully!');
+          } else {
+            alert(data.message || 'Failed to send email.');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('An error occurred while sending the email.');
+        } finally {
+          setLoadingEmail(false); // End loading
+        }
+      };
+    
+
+    const openDial = useCallback((phNumber) => {
+        try {
+            console.log('Raw phone number:', phNumber);
+            if (!phNumber) {
+                console.error('Phone number is undefined or null');
+                return;
+            }
+    
+            const cleanNumber = phNumber.toString().replace(/\D/g, '');
+            
+            console.log('Cleaned phone number:', cleanNumber);
+    
+            if (cleanNumber.length < 10) {
+                console.error('Invalid phone number length:', cleanNumber);
+                return;
+            }
+            const formattedNumber = cleanNumber.startsWith('+91') 
+                ? `+${cleanNumber}` 
+                : cleanNumber.length === 10 
+                    ? `+91${cleanNumber}` 
+                    : `+${cleanNumber}`;
+    
+            const dialURL = Platform.OS === "android" 
+                ? `tel:${formattedNumber}` 
+                : `telprompt:${formattedNumber}`;
+            
+            Linking.canOpenURL(dialURL).then(supported => {
+                if (supported) {
+                    Linking.openURL(dialURL).catch(err => {
+                        console.error('Error opening dial URL:', err);
+                    });
+                } else {
+                    console.log(`Cannot open dial for number: ${formattedNumber}`);
+                }
+            }).catch(err => {
+                console.error('Error checking URL support:', err);
+            });
+        } catch (error) {
+            console.error('Error in openDial function:', error);
+        }
+    }, []);
+    const uploadToCloudinary = async (fileInfo) => {
+        const formData = new FormData();
+        formData.append('file', fileInfo);
+        formData.append('upload_preset', 'pulmocareapp');
+        formData.append('cloud_name', 'pulmocare01');
+    
+        try {
+            setUploading(true);
+            const response = await fetch(
+                'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+                {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            );
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            return {
+                name: data.original_filename,
+                type: fileInfo.type,
+                uri: data.secure_url,
+            };
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            throw error;
+        } finally {
+            setUploading(false);
+        }
+    };
+    const pickImage = async () => {
+        const options = [
+            { text: 'Choose from Library', onPress: pickFromLibrary },
+            { text: 'Take Photo', onPress: takePhoto },
+            { text: 'Cancel', style: 'cancel' }
+        ];
+    
+        Alert.alert('Select Image', 'Choose an option', options);
+    };
+    
+    const pickFromLibrary = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+    
+        if (!result.canceled && result.assets.length > 0) {
+            const asset = result.assets[0];
+            const fileInfo = {
+                uri: asset.uri,
+                type: `image/${asset.uri.split('.').pop()}`,
+                name: `upload_${Date.now()}.${asset.uri.split('.').pop()}`,
+            };
+            
+            try {
+                const uploadedFile = await uploadToCloudinary(fileInfo);
+                if (uploadedFile) {
+                    setImage(uploadedFile);
+                    setselectedImage(uploadedFile.uri);
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                Alert.alert('Error', 'Failed to upload image. Please try again.');
+            }
+        }
+    };
+    
+    const takePhoto = async () => {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        
+        if (status !== 'granted') {
+            Alert.alert('Camera permission needed', 'Please enable camera permissions in your settings.');
+            return;
+        }
+    
+        let result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+    
+        if (!result.canceled && result.assets.length > 0) {
+            const asset = result.assets[0];
+            const fileInfo = {
+                uri: asset.uri,
+                type: 'image/jpeg',
+                name: `upload_${Date.now()}.jpg`,
+            };
+            
+            try {
+                const uploadedFile = await uploadToCloudinary(fileInfo);
+                if (uploadedFile) {
+                    setImage(uploadedFile);
+                    setselectedImage(uploadedFile.uri);
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                Alert.alert('Error', 'Failed to upload image. Please try again.');
+            }
+        }
     };
 
     const handleCancel = () => {
         setIsEditing(false);
+        setLoading(false);
         setUpdatedDetails(PatientbasicDetails);
+        setImage(PatientbasicDetails.image);
+        setAddress(PatientbasicDetails.address);
         setSelectedGender(PatientbasicDetails.gender);
         setConsultingDoctor(PatientbasicDetails.consultingDoctor);
         setSelectedDoctor(PatientbasicDetails.consultingDoctor);
@@ -104,6 +329,7 @@ const UpdatedBasicDetails = ({ patientId }) => {
 
         const updatedData = {
             ...updatedDetails,
+            image: selectedImage,
             gender: selectedGender,
             consultingDoctor: selectedDoctor,
             bloodGroup:selectedBloodGroup,
@@ -192,17 +418,28 @@ const UpdatedBasicDetails = ({ patientId }) => {
             translucent={false}
         />
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={styles.profileContainer}>
+                {/* <View style={styles.profileContainer}>
                     {PatientbasicDetails.image ? (
                         <Image source={{ uri: PatientbasicDetails.image }} style={styles.profileImage} />
                     ) : (
                         <Image source={require('../../../assets/images/user.png')} style={styles.profileImage} />
                     )}
                     <Text style={styles.profileText}>Profile Picture</Text>
-                </View>
+                </View> */}
                 <View style={styles.detailsContainer}>
                     {isEditing ? (
                         <>
+                     <TouchableOpacity onPress={pickImage} style={styles.imagePickerContainer}>
+                            <Image 
+                                source={
+                                    selectedImage 
+                                        ? { uri: selectedImage } 
+                                        : require("../../../assets/images/user.png")
+                                }
+                                style={styles.profileImage} 
+                            />
+                            <Text style={styles.profileText}>Upload Profile Picture</Text>
+                        </TouchableOpacity>
                          <Text style={styles.label}>Patient Name:</Text>
                             <TextInput
                                 style={styles.input}
@@ -665,8 +902,9 @@ const UpdatedBasicDetails = ({ patientId }) => {
                              <Text style={styles.label}>Local Contact Number:</Text>
                         <TextInput
                                 style={styles.input}
-                                value={updatedDetails.localContactNumber}
-                                onChangeText={(text) => handleInputChange('localContactNumber', text)}
+                                value={updatedDetails.localContactNumber?.toString()}
+                                onChangeText={(text) => handleInputChange('localContactNumber', parseInt(text))}
+                                keyboardType="numeric"
                             />
 
                     </View>
@@ -676,6 +914,46 @@ const UpdatedBasicDetails = ({ patientId }) => {
                         </>
                     ) : (
                         <>
+                        <View style={styles.buttonContainer}>
+              <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={() => openDial(PatientbasicDetails.contactNumber)}>
+                  <Text style={[styles.buttonText, styles.cancelText]}>Call Patient</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+      style={[styles.button, styles.submitButton]}
+      onPress={() => openEmail(PatientbasicDetails.email, PatientbasicDetails.patientId)}
+      disabled={loadingEmail} 
+    >
+      {loadingEmail ? (
+        <ActivityIndicator size="small" color="#fff" />
+      ) : (
+        <Text style={[styles.buttonText, styles.submitText]}>Send Email</Text>
+      )}
+    </TouchableOpacity>
+                  {/* <RegisterPopup
+                visible={showPopup}
+                setVisible={setShowPopup}
+                loading={loading}
+                patientName={PatientbasicDetails.name}
+                patientId={PatientbasicDetails.patientId}
+                email={PatientbasicDetails.email}
+                contactNumber={PatientbasicDetails.contactNumber}
+                 password={PatientbasicDetails.contactNumber}
+                handleCancel={handleCancel}
+            /> */}
+             
+          </View>
+                        {/* <TouchableOpacity style={[styles.button, styles.callButton]} onPress={() => openDial(PatientbasicDetails.contactNumber)}>
+                  <Text style={[styles.buttonText, styles.submitText]}>Call Patient</Text>
+              </TouchableOpacity> */}
+                        <View style={styles.profileContainer}>
+                    {PatientbasicDetails.image ? (
+                        <Image source={{ uri: PatientbasicDetails.image }} style={styles.profileImage} />
+                    ) : (
+                        <Image source={require('../../../assets/images/user.png')} style={styles.profileImage} />
+                    )}
+                    <Text style={styles.profileText}>Profile Picture</Text>
+                </View>
+                
                             <Text style={styles.label}>Patient Name:</Text>
                             <View style={styles.textContainer}>
                                 <Text style={styles.value}>{PatientbasicDetails.name}</Text>
@@ -831,6 +1109,10 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
         borderRadius: 75,
     },
+    imagePickerContainer: {
+        alignItems: 'center',
+        marginTop: 10,
+    },
     profileText: {
         marginTop: 10,
         fontSize: 16,
@@ -876,6 +1158,12 @@ const styles = StyleSheet.create({
     },
     submitButton: {
         backgroundColor: '#008080',
+    },
+    callButton:{
+        marginLeft:windowWidth*0.25,
+        backgroundColor: '#9F0606',
+        alignItems:'center',
+        justifyContent:'center',
     },
     submitText: {
         color: '#FFFFFF',

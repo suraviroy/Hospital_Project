@@ -77,9 +77,9 @@ const ViewList = () => {
             const cloudinaryUrl = await uploadToCloudinary(fileUri, fileName);
             if (cloudinaryUrl) {
                 Linking.openURL(cloudinaryUrl);
-                Alert.alert('Download Successful', 'Excel file has been uploaded to Cloudinary.');
+                Alert.alert('Download Successful', 'Excel file has been uploaded');
             } else {
-                Alert.alert('Upload Failed', 'Failed to upload Excel file to Cloudinary.');
+                Alert.alert('Upload Failed', 'Failed to upload Excel file');
             }
         } catch (error) {
             console.error('Error downloading Excel file:', error);
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     },
     text2451: {
         fontSize: 25,
-        marginLeft: 30,
+        marginLeft: windowWidth*0.1,
         fontFamily: "bold01",
     },
     appbar2451: {
@@ -180,7 +180,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     },
     backButton13: {
-        marginRight: 10,
+        marginLeft:windowWidth*0.03,
+        //  marginRight: windowWidth*0.03,
         position: 'absolute',
         left: 0,
     },
