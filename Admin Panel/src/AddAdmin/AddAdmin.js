@@ -49,26 +49,6 @@ const AddAdmin = () => {
         {label: 'Other', value: 'other'}
     ]);
 
-    // const pickImage = async () => {
-
-    //     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        
-    //     if (status !== 'granted') {
-    //         alert('Sorry, we need camera roll permissions to make this work!');
-    //         return;
-    //     }
-    //     let result = await ImagePicker.launchImageLibraryAsync({
-    //         mediaTypes: ImagePicker.MediaTypeOptions.All,
-    //         allowsEditing: true,
-    //         aspect: [4, 3],
-    //         quality: 1,
-    //         base64: true,
-    //     });
-    
-    //     if (!result.cancelled && result.assets.length > 0) {
-    //         setImage(result.assets[0].uri);
-    //     }
-    // };
     const pickImage = async () => {
         const options = [
             { text: 'Choose from Library', onPress: pickFromLibrary },
@@ -120,26 +100,31 @@ const AddAdmin = () => {
         } else {
             setNameError(false);
         }
-
+    
         if (phoneNumber === '') {
             setPhoneError(true);
         } else {
             setPhoneError(false);
         }
-
+    
         if (education === '') {
             setEducationError(true);
         } else {
             setEducationError(false);
         }
-
+    
         if (gender === '') {
             setGenderError(true);
         } else {
             setGenderError(false);
         }
-
-        if (name === '' || phoneNumber === '' || education === '' || gender === '') {
+    
+        if (idNumber === '') {
+            alert('ID Number is required');
+            return;
+        }
+    
+        if (name === '' || phoneNumber === '' || education === '' || gender === '' || idNumber === '') {
             alert('Please fill in all required fields');
             return;
         }
@@ -148,9 +133,9 @@ const AddAdmin = () => {
             alert('Phone number must be 10 digits long');
             return;
         }
-
+    
         setIsLoading(true);
-
+    
         if (image) {
             const formData = new FormData();
             formData.append('file', {
@@ -171,7 +156,7 @@ const AddAdmin = () => {
                     const data = await response.json();
                     console.log('Cloudinary response:', data);
                     data && data.secure_url && setImage(data.secure_url);
-                    saveDataToBackend(data.secure_url); 
+                    saveDataToBackend(data.secure_url);
                 } else {
                     console.error('Failed to upload image to Cloudinary');
                 }
@@ -190,11 +175,11 @@ const AddAdmin = () => {
             educationQualification: education,
             gender: gender,
             idNumber: idNumber,
-            picture: imageUrl, 
+            picture: imageUrl,
         };
     
         try {
-            const res = await axios.post(adminRegistrationURL, data, {
+            const res = await axios.post(`${backendURL}/adminListRouter/adminregistration`, data, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -203,12 +188,14 @@ const AddAdmin = () => {
             if (res.status === 200) {
                 alert('Registration Successful');
                 navigation.navigate('BottomNavigation');
-            } else {
-                alert('Registration Failed');
             }
         } catch (error) {
-            console.error('Error registering admin:', error);
-            alert('Registration Failed');
+            if (error.response && error.response.data.message === 'ID number already exists') {
+                alert('ID number already exists');
+            } else {
+                console.error('Error registering admin:', error);
+                alert('Registration Failed');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -307,7 +294,7 @@ const AddAdmin = () => {
                     </View>
                     {genderError && <Text style={styles.errorText}>*Required field</Text>}
 
-                    <Text style={styles.label}>ID Number</Text>
+                    <Text style={styles.label}>ID Number*</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Enter here"

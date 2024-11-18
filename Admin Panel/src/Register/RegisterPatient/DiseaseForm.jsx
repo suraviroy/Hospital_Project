@@ -719,7 +719,6 @@ const DiseaseForm = ({ patientId }) => {
     setShowVisitDatePicker(false);
     setVisitDate(currentDate);
 };
-
 const handleVisitTimeChange = (event, selectedTime) => {
     const currentTime = selectedTime || visitTime;
     setShowVisitTimePicker(false);
@@ -744,13 +743,14 @@ const handleVisitTimeChange = (event, selectedTime) => {
                     <Text>{visitDate.toLocaleDateString()}</Text>
                     </TouchableOpacity>
                     {showVisitDatePicker && (
-                    <DateTimePicker
-                    value={visitDate}
-                    style={styles.input01}
-                    mode="date"
-                    display="default"
-                    onChange={handleVisitDateChange}
-                    />
+    <DateTimePicker
+        value={visitDate}
+        style={styles.input01}
+        mode="date"
+        display="default"
+        onChange={handleVisitDateChange}
+        maximumDate={new Date()}
+    />
                     )}
              <View style={styles.disheader}>
           <Text style={styles.texthead}>Visit Time</Text>
@@ -1530,7 +1530,7 @@ const handleVisitTimeChange = (event, selectedTime) => {
           />
         </TouchableOpacity>
         <View style={styles.disheader}>
-          <Text style={styles.texthead}>Choose Coordinator</Text>
+          <Text style={styles.texthead}>Choose Coordinator*</Text>
         </View>
         <View style={styles.dropdown19}>
   <Picker

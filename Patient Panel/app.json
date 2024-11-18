@@ -4,10 +4,10 @@
     "slug": "IpcrConnect",
     "version": "1.0.0",
     "orientation": "portrait",
-   "icon": "https://res.cloudinary.com/tiasha/image/upload/logo2-1_dusm95.jpg",
+    "icon": "./assets/pictures/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "https://asset.cloudinary.com/tiasha/f41386275f6e73a9b3dbaca44975f642",
+      "image": "./assets/pictures/sp.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

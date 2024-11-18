@@ -626,7 +626,7 @@ const PatientDetails = () => {
               <Text style={{ borderRadius: 4, padding: 7, fontSize: 13, fontWeight: '700' }}>Not Uploaded</Text>
             ) : (
               <TouchableOpacity onPress={() => handleDischargeCertificatePress(hospitalization.dischargeCertificate)}>
-                <Text style={{ backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open PDF</Text>
+                <Text style={{ backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open File</Text>
               </TouchableOpacity>
             )}
                 </Text>
@@ -655,7 +655,7 @@ const PatientDetails = () => {
             <Text style={{ borderRadius: 4, padding: 7, fontSize: 13, fontWeight: '700' }}>Not Uploaded</Text>
           ) : (
             <TouchableOpacity onPress={() => handleDischargeCertificatePress(hospitalization.document)}>
-              <Text style={{marginTop: windowWidth*0.03, marginLeft: windowWidth*0.05,width:windowWidth*0.2, backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open PDF</Text>
+              <Text style={{marginTop: windowWidth*0.03, marginLeft: windowWidth*0.05,width:windowWidth*0.2, backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open File</Text>
             </TouchableOpacity>
           )}
               </Text>
@@ -683,7 +683,7 @@ const PatientDetails = () => {
               <Text style={{ borderRadius: 4, padding: 7, fontSize: 13, fontWeight: '700' }}>Not Uploaded</Text>
             ) : (
               <TouchableOpacity onPress={() => handleDischargeCertificatePress(hospitalization.prescriptiondocument)}>
-                <Text style={{marginLeft: windowWidth*0.05,width:windowWidth*0.2, backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open PDF</Text>
+                <Text style={{marginLeft: windowWidth*0.05,width:windowWidth*0.2, backgroundColor: '#B21515', borderRadius: 4, padding: 7, color: 'white', fontSize: 12, fontWeight: '700' }}>Open File</Text>
               </TouchableOpacity>
             )}
                 
@@ -823,7 +823,7 @@ subHead3:{
     backgroundColor: '#F1F4F3',
     paddingTop: windowWidth * 0.02,
     borderRadius: windowWidth*0.01,
-    backgroundColor: "#D9D9D9",
+   
     paddingLeft: 15,
     paddingRight: 15,
     fontFamily: 'bold02',

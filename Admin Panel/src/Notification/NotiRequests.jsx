@@ -48,7 +48,7 @@ const NotiRequests = () => {
             <Text style={styles.subHead4}>New Report: {requestDetails.report.isSelected} {" "}Type:{"   "}{requestDetails.report.details}
             {requestDetails.report.certificate !== "NA" && (
                     <TouchableOpacity onPress={() => handleDischargeCertificatePress(requestDetails.report.certificate)}>
-                        <Text style={{top: windowWidth*0.015,width: windowWidth*0.2,marginLeft: windowWidth*0.05,backgroundColor: '#B21515', borderRadius: 4,padding: 5, color: 'white', fontSize: 12, fontWeight: '700'}}>  Open PDF</Text>
+                        <Text style={{top: windowWidth*0.015,width: windowWidth*0.2,marginLeft: windowWidth*0.05,backgroundColor: '#B21515', borderRadius: 4,padding: 5, color: 'white', fontSize: 12, fontWeight: '700'}}>  Open File</Text>
                     </TouchableOpacity>
                 )}
             </Text>
@@ -64,7 +64,7 @@ const NotiRequests = () => {
                 <Text style={styles.subHead5}>New Consultation: {requestDetails.newConsultation.isSelected} {"\n"}Reason   {requestDetails.newConsultation.details}
                 {requestDetails.newConsultation.dischargeCertificate !== "NA" && (
                     <TouchableOpacity onPress={() => handleDischargeCertificatePress(requestDetails.newConsultation.dischargeCertificate)}>
-                        <Text style={{top: windowWidth*0.02,width: windowWidth*0.2,marginLeft: windowWidth*0.05,backgroundColor: '#B21515', borderRadius: 4,padding: 5, color: 'white', fontSize: 12, fontWeight: '700'}}>  Open PDF</Text>
+                        <Text style={{top: windowWidth*0.02,width: windowWidth*0.2,marginLeft: windowWidth*0.05,backgroundColor: '#B21515', borderRadius: 4,padding: 5, color: 'white', fontSize: 12, fontWeight: '700'}}>  Open File</Text>
                     </TouchableOpacity>
                 )}
                 </Text>
@@ -74,7 +74,7 @@ const NotiRequests = () => {
             <Text style={styles.subHead5}>Hospitalization: {requestDetails.hospitalization.isSelected}    Reason: {" "}{requestDetails.hospitalization.records}
               {requestDetails.hospitalization.dischargeHCertificate !== "NA" && (
                     <TouchableOpacity onPress={() => handleDischargeCertificatePress(requestDetails.hospitalization .dischargeHCertificate)}>
-                        <Text style={{top: windowWidth*0.02,width: windowWidth*0.2,marginLeft: windowWidth*0.05,backgroundColor: '#B21515', borderRadius: 4,padding: 5, color: 'white', fontSize: 12, fontWeight: '700'}}>  Open PDF</Text>
+                        <Text style={{top: windowWidth*0.02,width: windowWidth*0.2,marginLeft: windowWidth*0.05,backgroundColor: '#B21515', borderRadius: 4,padding: 5, color: 'white', fontSize: 12, fontWeight: '700'}}>  Open File</Text>
                     </TouchableOpacity>
                 )}</Text>
         )}
@@ -87,7 +87,7 @@ const NotiRequests = () => {
                  <Text style={{ borderRadius: 4, padding: 7, fontSize: 13, fontWeight: '700' }}>Not Uploaded</Text>
              ): (
                 <TouchableOpacity onPress={() => handleDischargeCertificatePress(requestDetails.demise.deathCertificate)}>
-                        <Text style={{top: windowWidth*-0.05,width: windowWidth*0.2,marginLeft: windowWidth*0.6,backgroundColor: '#B21515', borderRadius: 4,padding: 5, color: 'white', fontSize: 12, fontWeight: '700'}}>  Open PDF</Text>
+                        <Text style={{top: windowWidth*-0.05,width: windowWidth*0.2,marginLeft: windowWidth*0.6,backgroundColor: '#B21515', borderRadius: 4,padding: 5, color: 'white', fontSize: 12, fontWeight: '700'}}>  Open File</Text>
                     </TouchableOpacity>
              ) }
             </Text>
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
         width: "95%",
         paddingTop: windowWidth * 0.02,
         borderRadius: windowWidth * 0.01,
-        backgroundColor: "#D9D9D9",
+        backgroundColor: "#F1F4F3",
         paddingLeft: 15,
         paddingRight: 15,
         fontFamily: 'bold02',
