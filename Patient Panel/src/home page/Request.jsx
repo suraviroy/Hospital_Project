@@ -1511,7 +1511,7 @@ const Request = () => {
                             </View>
                         ) : null}
                         <View style={styles.reqdet}>
-                            <Text style={styles.texthead}>Request</Text>
+                            <Text style={styles.texthead}>Request*</Text>
                         </View>
                         <View style={{ paddingHorizontal: 10 }}>
                         <SelectList

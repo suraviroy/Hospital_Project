@@ -47,7 +47,7 @@ const BasicDetails = ({ patientId }) => {
         fetch(`${backendURL}/adminRouter/PatientBasicDetailsNewWP/${patientId}`)
             .then(response => response.json())
             .then(data => {
-                console.log("hi")
+                // console.log("hi")
                 setPatientBasicDetails(data[0]);
                
                 setUpdatedDetails(data[0]);
@@ -55,7 +55,7 @@ const BasicDetails = ({ patientId }) => {
                     setselectedImage(data[0].image);
                 }
                 setSelectedGender(data[0].gender);
-                console.log(data[0].name);
+                // console.log(data[0].name);
                 setAddress(data[0].address);
                 setConsultingDoctor(data[0].consultingDoctor);
                 setSelectedDoctor(data[0].consultingDoctor);
@@ -97,7 +97,7 @@ const BasicDetails = ({ patientId }) => {
           return;
         }
     
-        setLoadingEmail(true); // Start loading
+        setLoadingEmail(true);
     
         try {
           const response = await fetch(`${backendURL}/adminRouter/sendMail`, {

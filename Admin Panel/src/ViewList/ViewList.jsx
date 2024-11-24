@@ -96,7 +96,7 @@ const ViewList = () => {
                 </TouchableOpacity>
                 <Text style={styles.text2451}>All Patients</Text>
                 <View style={{ alignItems: "flex-end" }}>
-                        <TouchableOpacity style={[styles.button457,{ marginLeft: windowWidth*0.15 }]} onPress={downloadExcel}>
+                        <TouchableOpacity style={[styles.button457,{ marginLeft: windowWidth*0.10 }]} onPress={downloadExcel}>
                         {isLoading ? (
               <ActivityIndicator   style={styles.but568}/>
           ) : (

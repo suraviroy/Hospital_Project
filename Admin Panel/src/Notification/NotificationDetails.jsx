@@ -85,7 +85,7 @@ const NotificationDetails = ({ patientId }) => {
     fetch(`${backendURL}/adminRouter/PatientBasicDetailsNewWP/${patientId}`)
         .then(response => response.json())
         .then(data => {
-            console.log("Fetched data:", data);
+            // console.log("Fetched data:", data);
             setBasicDetails(data[0]);
         })
         .catch(error => {
@@ -93,8 +93,8 @@ const NotificationDetails = ({ patientId }) => {
         });
 }, [basicDetails]);
 
-    console.log("Basic Details")
-    console.log(basicDetails.name)
+    // console.log("Basic Details")
+    // console.log(basicDetails.name)
 
     const handleClose = () => {
         navigation.goBack();
