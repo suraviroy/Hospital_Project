@@ -469,7 +469,7 @@ export const coordinatorPatients = async (req, res) => {
         _id: 0,
       }
     );
-    res.status(200).json(coordinatorPatientsName);
+    res.status(200).json(coordinatorPatientsName.reverse());
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
