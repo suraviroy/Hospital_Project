@@ -4,6 +4,7 @@ import FeedbackSchema from "../model/feedbackSchema.js";
 import moment from "moment-timezone";
 import AdminSchema from "../model/adminSchema.js";
 import { decryptPassword } from "../middleware/auth.js";
+import ReportsSchema from "../model/reportSchema.js";
 
 // export const login = async (req, res) => {
 //   const { patientId, password } = req.body;
@@ -512,3 +513,60 @@ export const sendFeedback = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+/////Reports section...
+
+
+export const uploadReports = async (req, res) => {
+  try {
+    const desiredTimezone = 'Asia/Kolkata';
+    const currentDate = moment().tz(desiredTimezone).format('MMMM D, YYYY');
+    const currentTime = moment().tz(desiredTimezone).format('hh:mm A');
+
+    const { patientId, multipledocument } = req.body;
+    
+
+    const patientDetails = await PatientSchema.findOne({ patientId });
+    if (!patientDetails) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+
+    const coordinator = await AdminSchema.findOne({ name: patientDetails.coordinator });
+    const coordinatorId = coordinator?.idNumber; // assuming `_id` is the unique identifier in AdminSchema
+
+    // const documentCount = await RequestSchema.countDocuments();
+    // const nextRequestId = documentCount + 1;
+
+    const largestRequest = await ReportsSchema.findOne().sort({ reportId: -1 });
+    const nextRequestId = largestRequest ? largestRequest.reportId + 1 : 1;
+
+    const newRequest = {
+      viewed: false,
+      coordinatorName: patientDetails.coordinator,
+      coordinatorId: coordinatorId,
+      date: currentDate,
+      time: currentTime,
+      name: patientDetails.name,
+      reportId: nextRequestId,
+      patientId,
+      multipledocument,
+    };
+
+    //this console.log prints the new request object perfectly with all the fields
+    //console.log(newRequest)
+
+    // Create a new document with the new request
+    const requestDocument = await ReportsSchema.create(newRequest);
+    // const savedRequest = await requestDocument.save();
+
+    res.status(200).json(requestDocument);
+    //console.log(requestDocument);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+

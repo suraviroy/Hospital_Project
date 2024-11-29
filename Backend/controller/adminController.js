@@ -7,6 +7,7 @@ import FeedbackSchema from "../model/feedbackSchema.js";
 import nodemailer from "nodemailer";
 import { decryptPassword, encryptPassword } from "../middleware/auth.js";
 import dotenv from 'dotenv';
+import ReportsSchema from "../model/reportSchema.js";
 dotenv.config()
 
 export const patientregistration = async (req, res) => {
@@ -699,7 +700,116 @@ export const PatientBasicDetailsNewWP = async (req, res) => {
   }
 };
 
+///Reports ...
 
+export const countReportNotification = async (req, res) => {
+  try {
+    // const id = req.params.id;
+
+    const count = await ReportsSchema.countDocuments({viewed: false });
+
+    res.status(200).json({ count });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const seenReportNotification = async (req, res) => {
+  try {
+    //const id = req.params.id;
+
+    const result = await ReportsSchema.updateMany(
+      {viewed: false },
+      { viewed: true }
+    );
+
+    res.status(200).json({ message: "All notifications marked as seen" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+export const Reportsnotification = async (req, res) => {
+  try {
+    const reportsPatients = await ReportsSchema.find({},
+      {
+        reportId: 1,
+        patientId: 1,
+        status: 1,
+        date: 1,
+        time: 1,
+        name: 1,
+        coordinatorName: 1,
+        _id: 0
+      });
+
+    // Array to hold details for all patients
+    const patientDetailsArray = [];
+
+    // Iterate through each requested patient
+    for (const patient of reportsPatients) {
+      const patientId = patient.patientId;
+
+      // Fetch details for the current patient ID from another schema (assuming PatientSchema)
+      const patientDetails = await PatientSchema.findOne({ patientId });
+
+      if (patientDetails) {
+
+        const patientObject = {
+          reportId: patient.reportId,
+          patientId: patient.patientId,
+          date: patient.date,
+          time: patient.time,
+          name: patient.name,
+          image: patientDetails.image,
+          coordinatorName: patient.coordinatorName,
+          contactNumber: patientDetails.contactNumber
+        };
+
+        // Push the patient object to the array
+        patientDetailsArray.push(patientObject);
+      }
+    }
+
+    // Send the array of patient details as the response
+    patientDetailsArray.reverse();
+    //console.log(patientDetailsArray)
+    res.status(200).json(patientDetailsArray);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const reports = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const requestExists = await ReportsSchema.exists({ reportId: id });
+    if (!requestExists) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    const patientReport = await ReportsSchema.find(
+      {
+        reportId: id,
+      },
+      {
+        date: 1,
+        time: 1,
+        name: 1,
+        patientId: 1,
+        coordinatorName: 1,
+        multipledocument: 1,
+        reportId: 1,
+        _id: 0,
+      }
+    );
+    res.status(200).json(patientReport);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 export const excelFile = async (req, res) => {
   //

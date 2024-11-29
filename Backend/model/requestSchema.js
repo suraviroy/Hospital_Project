@@ -55,8 +55,22 @@ const requestSchema = new mongoose.Schema({
       type: String,
       default: "NA",
     },
-    details: { type: String, default: "NA" },
-    certificate :{type: String, default: "NA"},
+    // details: { type: String, default: "NA" },
+    // certificate :{type: String, default: "NA"},
+    multiplereport: {
+      type: [
+        {
+          details: {
+            type: String,
+            default: "NA",
+          },
+          certificate: {
+            type: String,
+            default: "NA",
+          },
+        },
+      ],
+    },
   },
   request: { type: String, default: "NA" },
   action: { type: String, default: "NA" },
@@ -68,3 +82,6 @@ const requestSchema = new mongoose.Schema({
 
 const RequestSchema = mongoose.model("RequestList", requestSchema);
 export default RequestSchema;
+
+
+
