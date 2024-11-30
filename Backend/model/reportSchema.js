@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const reportsSchema = new mongoose.Schema({
   date: { type: String },
   time: { type: String },
-  reportId: { type: Number },
+  reportId: { type: String },
   patientId: { type: String },
   name: { type: String },
   coordinatorName: { type: String },

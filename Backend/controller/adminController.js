@@ -53,7 +53,7 @@ export const patientregistration = async (req, res) => {
         contactNumber,
         email,
         bloodGroup,
-        password : encryptedPassword,
+        password: encryptedPassword,
         age,
         address,
         state,
@@ -97,7 +97,7 @@ export const sectionAtodaysPatient = async (req, res) => {
     const desiredTimezone = "Asia/Kolkata"; // Replace with your desired time zone
     // Get the current date and time in the desired time zone
     const currentDate = moment().tz(desiredTimezone).format("MMMM D, YYYY");
-   // console.log(currentDate)
+    // console.log(currentDate)
     const registeredPatients = await PatientSchema.find(
       {
         //status: "Registered",
@@ -706,7 +706,7 @@ export const countReportNotification = async (req, res) => {
   try {
     // const id = req.params.id;
 
-    const count = await ReportsSchema.countDocuments({viewed: false });
+    const count = await ReportsSchema.countDocuments({ viewed: false });
 
     res.status(200).json({ count });
   } catch (err) {
@@ -719,7 +719,7 @@ export const seenReportNotification = async (req, res) => {
     //const id = req.params.id;
 
     const result = await ReportsSchema.updateMany(
-      {viewed: false },
+      { viewed: false },
       { viewed: true }
     );
 
@@ -810,6 +810,69 @@ export const reports = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+export const allReports = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const patientExists = await PatientSchema.exists({ patientId: id });
+    const reportExists = await ReportsSchema.exists({ patientId: id });
+    const requestExists = await RequestSchema.exists({ patientId: id });
+
+    if (!patientExists && !reportExists && !requestExists) {
+      return res.status(404).json({ message: "No records found for the given ID" });
+    }
+
+    const patient = patientExists
+      ? await PatientSchema.findOne(
+        { patientId: id },
+        {
+          "visitCount.visitDate": 1,
+          "visitCount.visitTime": 1,
+          "visitCount.pastHospitalization": 1,
+          "visitCount.otherdocuments": 1,
+          "visitCount.prescription": 1,
+        }
+      )
+      : null;
+
+    if (patient && patient.visitCount) {
+      patient.visitCount.reverse(); 
+    }
+
+    const reports = reportExists
+      ? (await ReportsSchema.find(
+        { patientId: id },
+        {
+          date: 1,
+          time: 1,
+          multipledocument: 1,
+        }
+      )).reverse()
+      : null;
+
+    const request = requestExists
+      ? (await RequestSchema.find(
+        { patientId: id },
+        {
+          date: 1,
+          time: 1,
+          newConsultation: 1,
+          hospitalization: 1,
+          demise: 1,
+          report: 1,
+        }
+      )).reverse()
+      : null;
+
+    console.log(patient, reports, request)
+    res.status(200).json({ patient, reports, request });
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ message: err.message });
+  }
+};
+
 
 export const excelFile = async (req, res) => {
   //
