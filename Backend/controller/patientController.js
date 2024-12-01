@@ -545,6 +545,7 @@ export const uploadReports = async (req, res) => {
 
     const newRequest = {
       viewed: false,
+      coordinatorviewed: false,
       coordinatorName: patientDetails.coordinator,
       coordinatorId: coordinatorId,
       date: currentDate,

@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const requestSchema = new mongoose.Schema({
   date: { type: String },
   time: { type: String },
-  requestId: { type: String },
+  requestId: { type: Number },
   patientId: { type: String },
   status: { type: String },
   exacrebation: {

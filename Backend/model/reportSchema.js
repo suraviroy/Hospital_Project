@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const reportsSchema = new mongoose.Schema({
   date: { type: String },
   time: { type: String },
-  reportId: { type: String },
+  reportId: { type: Number },
   patientId: { type: String },
   name: { type: String },
   coordinatorName: { type: String },
@@ -22,6 +22,8 @@ const reportsSchema = new mongoose.Schema({
     ],
   },
   viewed: { type: String, default: "false" },
+  coordinatorviewed: { type: String, default: "false" },
+  coordinatorId: { type: String }
 });
 
 const ReportsSchema = mongoose.model("ReportsList", reportsSchema);

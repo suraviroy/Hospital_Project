@@ -865,7 +865,7 @@ export const allReports = async (req, res) => {
       )).reverse()
       : null;
 
-    console.log(patient, reports, request)
+    //console.log(patient, reports, request)
     res.status(200).json({ patient, reports, request });
   } catch (err) {
     console.log(err)
@@ -873,6 +873,32 @@ export const allReports = async (req, res) => {
   }
 };
 
+export const ReportcountAdminNotification = async (req, res) => {
+  try {
+    const id = req.params.cid;
+
+    const count = await ReportsSchema.countDocuments({ coordinatorId: id, coordinatorviewed: false });
+
+    res.status(200).json({ count });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const ReportseenAdminNotification = async (req, res) => {
+  try {
+    const id = req.params.cid;
+
+    const result = await ReportsSchema.updateMany(
+      { coordinatorId: id, coordinatorviewed: false },
+      { coordinatorviewed: true }
+    );
+
+    res.status(200).json({ message: "All notifications marked as seen" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 export const excelFile = async (req, res) => {
   //
