@@ -900,6 +900,65 @@ export const ReportseenAdminNotification = async (req, res) => {
   }
 };
 
+
+export const ReportoneAdminNotification = async (req, res) => {
+
+  const id = req.params.cid;
+
+  try {
+    const requestedPatients = await ReportsSchema.find({
+      coordinatorId: id
+    },
+      {
+        reportId: 1,
+        patientId: 1,
+        date: 1,
+        time: 1,
+        coordinatorName: 1,
+        name: 1,
+        coordinatorId: 1,
+        _id: 0
+      });
+
+    // Array to hold details for all patients
+    const patientDetailsArray = [];
+
+    // Iterate through each requested patient
+    for (const patient of requestedPatients) {
+      const patientId = patient.patientId;
+
+      // Fetch details for the current patient ID from another schema (assuming PatientSchema)
+      const patientDetails = await PatientSchema.findOne({ patientId });
+
+      if (patientDetails) {
+
+        const patientObject = {
+          reportId: patient.reportId,
+          patientId: patient.patientId,
+          coordinatorName: patient.coordinatorName,
+          date: patient.date,
+          time: patient.time,
+          name: patient.name,
+          image: patientDetails.image,
+          contactNumber: patientDetails.contactNumber,
+          coordinatorId: patient.coordinatorId
+        };
+
+        // Push the patient object to the array
+        patientDetailsArray.push(patientObject);
+      }
+    }
+
+    // Send the array of patient details as the response
+    patientDetailsArray.reverse();
+    //console.log(patientDetailsArray)
+    res.status(200).json(patientDetailsArray);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
 export const excelFile = async (req, res) => {
   //
   try {

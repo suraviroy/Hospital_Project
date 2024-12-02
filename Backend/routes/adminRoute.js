@@ -27,7 +27,8 @@ import {
   reports,
   allReports,
   ReportcountAdminNotification,
-  ReportseenAdminNotification
+  ReportseenAdminNotification,
+  ReportoneAdminNotification
 } from "../controller/adminController.js";
 const adminRouter = express.Router();
 
@@ -65,5 +66,6 @@ adminRouter.get("/reports/:id", reports);
 adminRouter.get("/allReports/:id", allReports);
 adminRouter.get("/ReportcountAdminNotification/:cid", ReportcountAdminNotification);
 adminRouter.post("/ReportseenAdminNotification/:cid", ReportseenAdminNotification);
+adminRouter.get("/ReportoneAdminNotification/:cid", ReportoneAdminNotification);
 
 export default adminRouter;
