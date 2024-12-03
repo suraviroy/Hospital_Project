@@ -128,25 +128,19 @@ export const sectionAtodaysPatient = async (req, res) => {
 
 export const sectionAallPatient = async (req, res) => {
   try {
-    function parseTime(timeStr) {
-      const [time, period] = timeStr.split(" ");
-      const [hours, minutes] = time.split(":").map(Number);
-      let hourIn24Format = hours;
-      // Check if period exists and convert it to lowercase
-      const periodLowerCase = period ? period.toLowerCase() : null;
-      if (periodLowerCase === "pm" && hours !== 12) {
-        hourIn24Format += 12;
-      } else if (periodLowerCase === "am" && hours === 12) {
-        hourIn24Format = 0;
-      }
-      return hourIn24Format * 60 + minutes;
-    }
+    // Get pagination parameters from query string
+    const { page = 1, limit = 10 } = req.query;
 
+    // Ensure valid numbers
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    // Fetch total count of patients
+    const totalPatients = await PatientSchema.countDocuments();
+
+    // Fetch patients with sorting and pagination
     const registeredPatients = await PatientSchema.find(
-      {
-        // status: "Registered",
-
-      },
+      {},
       {
         name: 1,
         date: 1,
@@ -157,29 +151,25 @@ export const sectionAallPatient = async (req, res) => {
         time: 1,
         _id: 0,
         status: 1,
+        count: 1, // Ensure this field exists
       }
-    );
+    )
+      .sort({ count: -1 }) // Sort by count in descending order
+      .skip((pageNum - 1) * limitNum) // Skip records for previous pages
+      .limit(limitNum); // Limit records for the current page
 
-    registeredPatients.sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      if (dateA.getTime() !== dateB.getTime()) {
-        return dateA - dateB;
-      } else {
-        // If dates are same, sort by time
-        const timeA = parseTime(a.time);
-        const timeB = parseTime(b.time);
-        return timeA - timeB;
-      }
+    // Send paginated response
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalPatients / limitNum),
+      totalPatients,
+      patients: registeredPatients,
     });
-
-    //reverse the array so that the latest registerations come at the top
-    registeredPatients.reverse();
-    res.status(200).json(registeredPatients);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 export const UpdateProfileNameId = async (req, res) => {
   try {
