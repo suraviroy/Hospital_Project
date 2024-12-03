@@ -424,16 +424,20 @@ export const request = async (req, res) => {
 export const requestNotification = async (req, res) => {
   try {
     const id = req.params.id;
-
     const requestExists = await RequestSchema.exists({ patientId: id });
     if (!requestExists) {
       return res.status(404).json({ message: "Patient not found" });
     }
 
+    const { page = 1, limit = 10 } = req.query;
+
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
     const patientRequest = await RequestSchema.find(
       {
         patientId: id,
-        action: { $ne: "NA" }
+        action: { $ne: "NA" },
       },
       {
         requestId: 1,
@@ -441,12 +445,26 @@ export const requestNotification = async (req, res) => {
         request: 1,
         _id: 0,
       }
-    );
-    res.status(200).json(patientRequest.reverse());
+    )
+      .skip((pageNum - 1) * limitNum) 
+      .limit(limitNum); 
+
+    const totalRequests = await RequestSchema.countDocuments({
+      patientId: id,
+      action: { $ne: "NA" },
+    });
+
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalRequests / limitNum),
+      totalRequests,
+      requests: patientRequest,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 export const countNotification = async (req, res) => {
   try {

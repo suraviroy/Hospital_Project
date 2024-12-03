@@ -40,6 +40,10 @@ export const patientregistration = async (req, res) => {
 
     const encryptedPassword = encryptPassword(password);
     //console.log("encryptedPassword",encryptedPassword)
+    const largestRequest = await PatientSchema.findOne().sort({ count: -1 });
+    const nextRequestId = largestRequest && !isNaN(largestRequest.count)
+      ? largestRequest.count + 1
+      : 1;
 
     const finduser = await PatientSchema.findOne({ patientId: patientId });
     if (finduser) {
@@ -49,6 +53,7 @@ export const patientregistration = async (req, res) => {
       const newUser = await PatientSchema.create({
         name,
         gender,
+        count: nextRequestId,
         patientId,
         contactNumber,
         email,
@@ -314,11 +319,21 @@ export const patientEachVistDetails = async (req, res) => {
 
 export const allpatientList = async (req, res) => {
   try {
+    // Get pagination parameters from query string
+    const { page = 1, limit = 10 } = req.query;
+
+    // Ensure valid numbers
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    // Fetch total count of registered patients
+    const totalPatients = await PatientSchema.countDocuments({ status: "Updated" });
+
+    // Fetch patients with pagination
     const registeredPatients = await PatientSchema.find(
+      { status: "Updated" },
       {
-        status: "Updated",
-      },
-      {
+        count:1,
         name: 1,
         patientId: 1,
         image: 1,
@@ -328,15 +343,22 @@ export const allpatientList = async (req, res) => {
         visitTime: { $arrayElemAt: ["$visitCount.visitTime", -1] },
         _id: 0,
       }
-    );
+    )
+      .sort({ count: -1 })
+      .skip((pageNum - 1) * limitNum) // Skip items for previous pages
+      .limit(limitNum); // Limit items for the current page
 
-    //reverse the array so that the latest registerations come at the top
-    registeredPatients.reverse();
-    res.status(200).json(registeredPatients);
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalPatients / limitNum),
+      totalPatients,
+      patients: registeredPatients,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 
 export const patientDisease = async (req, res) => {
@@ -372,11 +394,15 @@ export const patientDisease = async (req, res) => {
   }
 };
 
-
-
 export const notification = async (req, res) => {
   try {
-    const requestedPatients = await RequestSchema.find({},
+    const { page = 1, limit = 10 } = req.query;
+
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    const requestedPatients = await RequestSchema.find(
+      {},
       {
         requestId: 1,
         patientId: 1,
@@ -385,21 +411,21 @@ export const notification = async (req, res) => {
         time: 1,
         request: 1,
         action: 1,
-        _id: 0
-      });
+        _id: 0,
+      }
+    )
+      .sort({ requestId: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
 
-    // Array to hold details for all patients
     const patientDetailsArray = [];
 
-    // Iterate through each requested patient
     for (const patient of requestedPatients) {
       const patientId = patient.patientId;
 
-      // Fetch details for the current patient ID from another schema (assuming PatientSchema)
       const patientDetails = await PatientSchema.findOne({ patientId });
 
       if (patientDetails) {
-
         const patientObject = {
           requestId: patient.requestId,
           patientId: patient.patientId,
@@ -411,18 +437,24 @@ export const notification = async (req, res) => {
           image: patientDetails.image,
           action: patient.action,
           coordinator: patientDetails.coordinator,
-          contactNumber: patientDetails.contactNumber
+          contactNumber: patientDetails.contactNumber,
         };
 
-        // Push the patient object to the array
+
         patientDetailsArray.push(patientObject);
       }
     }
 
-    // Send the array of patient details as the response
-    patientDetailsArray.reverse();
-    //console.log(patientDetailsArray)
-    res.status(200).json(patientDetailsArray);
+    //patientDetailsArray.reverse();
+
+    const totalRequests = await RequestSchema.countDocuments();
+
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalRequests / limitNum),
+      totalRequests,
+      notifications: patientDetailsArray,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -527,13 +559,19 @@ export const seenAdminNotification = async (req, res) => {
 };
 
 export const oneAdminNotification = async (req, res) => {
-
   const id = req.params.cid;
 
   try {
-    const requestedPatients = await RequestSchema.find({
-      coordinatorId: id
-    },
+    // Get pagination parameters from query string
+    const { page = 1, limit = 10 } = req.query;
+
+    // Ensure valid numbers
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    // Fetch requested patients for the specific coordinator, sorted by requestId (descending for recent first)
+    const requestedPatients = await RequestSchema.find(
+      { coordinatorId: id },
       {
         requestId: 1,
         patientId: 1,
@@ -543,21 +581,22 @@ export const oneAdminNotification = async (req, res) => {
         request: 1,
         action: 1,
         coordinatorId: 1,
-        _id: 0
-      });
+        _id: 0,
+      }
+    )
+      .sort({ requestId: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
 
-    // Array to hold details for all patients
     const patientDetailsArray = [];
 
-    // Iterate through each requested patient
+
     for (const patient of requestedPatients) {
       const patientId = patient.patientId;
 
-      // Fetch details for the current patient ID from another schema (assuming PatientSchema)
       const patientDetails = await PatientSchema.findOne({ patientId });
 
       if (patientDetails) {
-
         const patientObject = {
           requestId: patient.requestId,
           patientId: patient.patientId,
@@ -570,22 +609,26 @@ export const oneAdminNotification = async (req, res) => {
           action: patient.action,
           coordinator: patientDetails.coordinator,
           contactNumber: patientDetails.contactNumber,
-          coordinatorId: patient.coordinatorId
+          coordinatorId: patient.coordinatorId,
         };
 
-        // Push the patient object to the array
         patientDetailsArray.push(patientObject);
       }
     }
 
-    // Send the array of patient details as the response
-    patientDetailsArray.reverse();
-    //console.log(patientDetailsArray)
-    res.status(200).json(patientDetailsArray);
+    const totalRequests = await RequestSchema.countDocuments({ coordinatorId: id });
+
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalRequests / limitNum),
+      totalRequests,
+      notifications: patientDetailsArray,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 
 export const sendMail = async (req, res) => {
@@ -732,7 +775,13 @@ export const seenReportNotification = async (req, res) => {
 
 export const Reportsnotification = async (req, res) => {
   try {
-    const reportsPatients = await ReportsSchema.find({},
+    const { page = 1, limit = 10 } = req.query;
+
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    const reportsPatients = await ReportsSchema.find(
+      {},
       {
         reportId: 1,
         patientId: 1,
@@ -741,21 +790,22 @@ export const Reportsnotification = async (req, res) => {
         time: 1,
         name: 1,
         coordinatorName: 1,
-        _id: 0
-      });
+        _id: 0,
+      }
+    )
+      .sort({ reportId: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
 
-    // Array to hold details for all patients
+
     const patientDetailsArray = [];
 
-    // Iterate through each requested patient
     for (const patient of reportsPatients) {
       const patientId = patient.patientId;
 
-      // Fetch details for the current patient ID from another schema (assuming PatientSchema)
       const patientDetails = await PatientSchema.findOne({ patientId });
 
       if (patientDetails) {
-
         const patientObject = {
           reportId: patient.reportId,
           patientId: patient.patientId,
@@ -764,22 +814,26 @@ export const Reportsnotification = async (req, res) => {
           name: patient.name,
           image: patientDetails.image,
           coordinatorName: patient.coordinatorName,
-          contactNumber: patientDetails.contactNumber
+          contactNumber: patientDetails.contactNumber,
         };
 
-        // Push the patient object to the array
         patientDetailsArray.push(patientObject);
       }
     }
 
-    // Send the array of patient details as the response
-    patientDetailsArray.reverse();
-    //console.log(patientDetailsArray)
-    res.status(200).json(patientDetailsArray);
+    const totalReports = await ReportsSchema.countDocuments();
+
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalReports / limitNum),
+      totalReports,
+      reports: patientDetailsArray,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 export const reports = async (req, res) => {
   try {
@@ -837,7 +891,7 @@ export const allReports = async (req, res) => {
       : null;
 
     if (patient && patient.visitCount) {
-      patient.visitCount.reverse(); 
+      patient.visitCount.reverse();
     }
 
     const reports = reportExists
@@ -902,13 +956,16 @@ export const ReportseenAdminNotification = async (req, res) => {
 
 
 export const ReportoneAdminNotification = async (req, res) => {
-
   const id = req.params.cid;
 
   try {
-    const requestedPatients = await ReportsSchema.find({
-      coordinatorId: id
-    },
+    const { page = 1, limit = 10 } = req.query;
+
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    const requestedPatients = await ReportsSchema.find(
+      { coordinatorId: id },
       {
         reportId: 1,
         patientId: 1,
@@ -917,21 +974,23 @@ export const ReportoneAdminNotification = async (req, res) => {
         coordinatorName: 1,
         name: 1,
         coordinatorId: 1,
-        _id: 0
-      });
+        _id: 0,
+      }
+    )
+      .sort({ reportId: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
 
-    // Array to hold details for all patients
+
     const patientDetailsArray = [];
 
-    // Iterate through each requested patient
     for (const patient of requestedPatients) {
       const patientId = patient.patientId;
 
-      // Fetch details for the current patient ID from another schema (assuming PatientSchema)
+
       const patientDetails = await PatientSchema.findOne({ patientId });
 
       if (patientDetails) {
-
         const patientObject = {
           reportId: patient.reportId,
           patientId: patient.patientId,
@@ -941,22 +1000,25 @@ export const ReportoneAdminNotification = async (req, res) => {
           name: patient.name,
           image: patientDetails.image,
           contactNumber: patientDetails.contactNumber,
-          coordinatorId: patient.coordinatorId
+          coordinatorId: patient.coordinatorId,
         };
 
-        // Push the patient object to the array
         patientDetailsArray.push(patientObject);
       }
     }
 
-    // Send the array of patient details as the response
-    patientDetailsArray.reverse();
-    //console.log(patientDetailsArray)
-    res.status(200).json(patientDetailsArray);
+    const totalReports = await ReportsSchema.countDocuments({ coordinatorId: id });
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalReports / limitNum),
+      totalReports,
+      reports: patientDetailsArray,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 
 export const excelFile = async (req, res) => {

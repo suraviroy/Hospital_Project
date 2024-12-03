@@ -4,6 +4,9 @@ const patientSchema = new mongoose.Schema({
   name: {
     type: String,
   },
+  count: {
+    type: Number,
+  },
   gender: {
     type: String,
   },
