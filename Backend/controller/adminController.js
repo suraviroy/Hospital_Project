@@ -323,7 +323,7 @@ export const allpatientList = async (req, res) => {
     const registeredPatients = await PatientSchema.find(
       { status: "Updated" },
       {
-        count:1,
+        count: 1,
         name: 1,
         patientId: 1,
         image: 1,
@@ -468,6 +468,7 @@ export const action = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 export const coordinatorPatients = async (req, res) => {
   try {
     const coname = req.params.coname;
@@ -476,6 +477,14 @@ export const coordinatorPatients = async (req, res) => {
     if (!adminExists) {
       return res.status(404).json({ message: "Admin not found" });
     }
+
+    const { page = 1, limit = 10 } = req.query;
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    const totalPatients = await PatientSchema.countDocuments({
+      coordinator: coname,
+    });
 
     const coordinatorPatientsName = await PatientSchema.find(
       {
@@ -487,16 +496,27 @@ export const coordinatorPatients = async (req, res) => {
         image: 1,
         gender: 1,
         age: 1,
+        count: 1,
         visitDate: { $arrayElemAt: ["$visitCount.visitDate", -1] },
         visitTime: { $arrayElemAt: ["$visitCount.visitTime", -1] },
         _id: 0,
       }
-    );
-    res.status(200).json(coordinatorPatientsName.reverse());
+    )
+      .sort({ count: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
+
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalPatients / limitNum),
+      totalPatients,
+      patients: coordinatorPatientsName,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 export const updateBasicDetails = async (req, res) => {
   try {
