@@ -690,7 +690,7 @@ Please use this username and password to login into our system.
 
 Please tap on the below link to download our patient care app.
 
-https://www.dropbox.com/scl/fi/kr5vy0cms8kylj6x2qf42/IpcrConnect_1.0.0.apk?rlkey=c684apu21osfjis46azo9afgn&st=2u1lbhjj&dl=0
+https://www.dropbox.com/scl/fi/17yfwavamf8fsfaqgqfhk/IpcrConnect_1.0.0.apk?rlkey=430ixaligmnxsnpajrfcrs61z&st=izc9kriw&dl=0
 
 Thank You,
 Best Wishes From IPCR
