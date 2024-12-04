@@ -1030,6 +1030,101 @@ export const ReportoneAdminNotification = async (req, res) => {
 };
 
 
+///search ...
+
+export const searchFunction = async (req, res) => {
+  try {
+    const { value } = req.query; 
+
+    if (!value) {
+      return res.status(400).json({
+        message: 'Please provide a search value (either patientId or name).',
+      });
+    }
+
+    const query = { status: "Updated" };
+    if (!isNaN(value)) {
+      query.patientId = { $regex: `^${value}`, $options: 'i' }; 
+    } else {
+      query.name = { $regex: `^${value}`, $options: 'i' }; 
+    }
+
+    const patients = await PatientSchema.find(query, {
+      name: 1,
+      patientId: 1,
+      image: 1,
+      gender: 1,
+      age: 1,
+      count: 1,
+      visitDate: { $arrayElemAt: ["$visitCount.visitDate", -1] }, // Last visit date
+      visitTime: { $arrayElemAt: ["$visitCount.visitTime", -1] }, // Last visit time
+      _id: 0,
+    });
+
+    // Check if no patients found
+    if (patients.length === 0) {
+      return res.status(404).json({
+        message: 'No patient found matching the provided criteria.',
+      });
+    }
+
+    res.status(200).json(patients);
+
+  } catch (err) {
+    res.status(500).json({
+      message: 'An error occurred while searching for patients.',
+      error: err.message,
+    });
+  }
+};
+
+export const coordinatorSearch = async (req, res) => {
+  try {
+    const coname = req.params.coname;
+    const { value } = req.query; 
+    
+    if (!value) {
+      return res.status(400).json({
+        message: 'Please provide a search value (either patientId or name).',
+      });
+    }
+
+    const query = { coordinator: coname };
+    if (!isNaN(value)) {
+      query.patientId = { $regex: `^${value}`, $options: 'i' }; 
+    } else {
+      query.name = { $regex: `^${value}`, $options: 'i' }; 
+    }
+
+    const patients = await PatientSchema.find(query, {
+      name: 1,
+      patientId: 1,
+      image: 1,
+      gender: 1,
+      age: 1,
+      count: 1,
+      visitDate: { $arrayElemAt: ["$visitCount.visitDate", -1] }, // Last visit date
+      visitTime: { $arrayElemAt: ["$visitCount.visitTime", -1] }, // Last visit time
+      _id: 0,
+    });
+
+    // Check if no patients found
+    if (patients.length === 0) {
+      return res.status(404).json({
+        message: 'No patient found matching the provided criteria.',
+      });
+    }
+
+    res.status(200).json(patients);
+
+  } catch (err) {
+    res.status(500).json({
+      message: 'An error occurred while searching for patients.',
+      error: err.message,
+    });
+  }
+};
+
 
 export const excelFile = async (req, res) => {
   //

@@ -28,7 +28,9 @@ import {
   allReports,
   ReportcountAdminNotification,
   ReportseenAdminNotification,
-  ReportoneAdminNotification
+  ReportoneAdminNotification,
+  searchFunction,
+  coordinatorSearch
 } from "../controller/adminController.js";
 const adminRouter = express.Router();
 
@@ -67,5 +69,10 @@ adminRouter.get("/allReports/:id", allReports);
 adminRouter.get("/ReportcountAdminNotification/:cid", ReportcountAdminNotification);
 adminRouter.post("/ReportseenAdminNotification/:cid", ReportseenAdminNotification);
 adminRouter.get("/ReportoneAdminNotification/:cid", ReportoneAdminNotification);
+
+//search ..
+
+adminRouter.get("/search", searchFunction);
+adminRouter.get("/coordinatorSearch/:coname", coordinatorSearch);
 
 export default adminRouter;
