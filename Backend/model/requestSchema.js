@@ -72,7 +72,21 @@ const requestSchema = new mongoose.Schema({
       ],
     },
   },
-  request: { type: String, default: "NA" },
+  request: {
+    type: [
+      {
+        requestFor: {
+          type: String,
+          required: true 
+        },
+        details: {
+          type: String,
+          default: "NA",
+        },
+      },
+    ],
+  },
+ // request: { type: String, default: "NA" },
   action: { type: String, default: "NA" },
   viewed: { type: String, default: "true" },
   coordinatorviewed: { type: String, default: "false" },
