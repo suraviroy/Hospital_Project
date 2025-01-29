@@ -40,6 +40,10 @@ export const patientregistration = async (req, res) => {
 
     const encryptedPassword = encryptPassword(password);
     //console.log("encryptedPassword",encryptedPassword)
+    const largestRequest = await PatientSchema.findOne().sort({ count: -1 });
+    const nextRequestId = largestRequest && !isNaN(largestRequest.count)
+      ? largestRequest.count + 1
+      : 1;
 
     const finduser = await PatientSchema.findOne({ patientId: patientId });
     if (finduser) {
@@ -49,11 +53,12 @@ export const patientregistration = async (req, res) => {
       const newUser = await PatientSchema.create({
         name,
         gender,
+        count: nextRequestId,
         patientId,
         contactNumber,
         email,
         bloodGroup,
-        password : encryptedPassword,
+        password: encryptedPassword,
         age,
         address,
         state,
@@ -97,7 +102,7 @@ export const sectionAtodaysPatient = async (req, res) => {
     const desiredTimezone = "Asia/Kolkata"; // Replace with your desired time zone
     // Get the current date and time in the desired time zone
     const currentDate = moment().tz(desiredTimezone).format("MMMM D, YYYY");
-   // console.log(currentDate)
+    // console.log(currentDate)
     const registeredPatients = await PatientSchema.find(
       {
         //status: "Registered",
@@ -123,25 +128,19 @@ export const sectionAtodaysPatient = async (req, res) => {
 
 export const sectionAallPatient = async (req, res) => {
   try {
-    function parseTime(timeStr) {
-      const [time, period] = timeStr.split(" ");
-      const [hours, minutes] = time.split(":").map(Number);
-      let hourIn24Format = hours;
-      // Check if period exists and convert it to lowercase
-      const periodLowerCase = period ? period.toLowerCase() : null;
-      if (periodLowerCase === "pm" && hours !== 12) {
-        hourIn24Format += 12;
-      } else if (periodLowerCase === "am" && hours === 12) {
-        hourIn24Format = 0;
-      }
-      return hourIn24Format * 60 + minutes;
-    }
+    // Get pagination parameters from query string
+    const { page = 1, limit = 10 } = req.query;
 
+    // Ensure valid numbers
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    // Fetch total count of patients
+    const totalPatients = await PatientSchema.countDocuments();
+
+    // Fetch patients with sorting and pagination
     const registeredPatients = await PatientSchema.find(
-      {
-        // status: "Registered",
-
-      },
+      {},
       {
         name: 1,
         date: 1,
@@ -152,29 +151,25 @@ export const sectionAallPatient = async (req, res) => {
         time: 1,
         _id: 0,
         status: 1,
+        count: 1, // Ensure this field exists
       }
-    );
+    )
+      .sort({ count: -1 }) // Sort by count in descending order
+      .skip((pageNum - 1) * limitNum) // Skip records for previous pages
+      .limit(limitNum); // Limit records for the current page
 
-    registeredPatients.sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      if (dateA.getTime() !== dateB.getTime()) {
-        return dateA - dateB;
-      } else {
-        // If dates are same, sort by time
-        const timeA = parseTime(a.time);
-        const timeB = parseTime(b.time);
-        return timeA - timeB;
-      }
+    // Send paginated response
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalPatients / limitNum),
+      totalPatients,
+      patients: registeredPatients,
     });
-
-    //reverse the array so that the latest registerations come at the top
-    registeredPatients.reverse();
-    res.status(200).json(registeredPatients);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 export const UpdateProfileNameId = async (req, res) => {
   try {
@@ -314,11 +309,21 @@ export const patientEachVistDetails = async (req, res) => {
 
 export const allpatientList = async (req, res) => {
   try {
+    // Get pagination parameters from query string
+    const { page = 1, limit = 10 } = req.query;
+
+    // Ensure valid numbers
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    // Fetch total count of registered patients
+    const totalPatients = await PatientSchema.countDocuments({ status: "Updated" });
+
+    // Fetch patients with pagination
     const registeredPatients = await PatientSchema.find(
+      { status: "Updated" },
       {
-        status: "Updated",
-      },
-      {
+        count: 1,
         name: 1,
         patientId: 1,
         image: 1,
@@ -328,15 +333,22 @@ export const allpatientList = async (req, res) => {
         visitTime: { $arrayElemAt: ["$visitCount.visitTime", -1] },
         _id: 0,
       }
-    );
+    )
+      .sort({ count: -1 })
+      .skip((pageNum - 1) * limitNum) // Skip items for previous pages
+      .limit(limitNum); // Limit items for the current page
 
-    //reverse the array so that the latest registerations come at the top
-    registeredPatients.reverse();
-    res.status(200).json(registeredPatients);
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalPatients / limitNum),
+      totalPatients,
+      patients: registeredPatients,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 
 export const patientDisease = async (req, res) => {
@@ -372,11 +384,15 @@ export const patientDisease = async (req, res) => {
   }
 };
 
-
-
 export const notification = async (req, res) => {
   try {
-    const requestedPatients = await RequestSchema.find({},
+    const { page = 1, limit = 10 } = req.query;
+
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    const requestedPatients = await RequestSchema.find(
+      {},
       {
         requestId: 1,
         patientId: 1,
@@ -385,21 +401,21 @@ export const notification = async (req, res) => {
         time: 1,
         request: 1,
         action: 1,
-        _id: 0
-      });
+        _id: 0,
+      }
+    )
+      .sort({ requestId: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
 
-    // Array to hold details for all patients
     const patientDetailsArray = [];
 
-    // Iterate through each requested patient
     for (const patient of requestedPatients) {
       const patientId = patient.patientId;
 
-      // Fetch details for the current patient ID from another schema (assuming PatientSchema)
       const patientDetails = await PatientSchema.findOne({ patientId });
 
       if (patientDetails) {
-
         const patientObject = {
           requestId: patient.requestId,
           patientId: patient.patientId,
@@ -411,18 +427,24 @@ export const notification = async (req, res) => {
           image: patientDetails.image,
           action: patient.action,
           coordinator: patientDetails.coordinator,
-          contactNumber: patientDetails.contactNumber
+          contactNumber: patientDetails.contactNumber,
         };
 
-        // Push the patient object to the array
+
         patientDetailsArray.push(patientObject);
       }
     }
 
-    // Send the array of patient details as the response
-    patientDetailsArray.reverse();
-    //console.log(patientDetailsArray)
-    res.status(200).json(patientDetailsArray);
+    //patientDetailsArray.reverse();
+
+    const totalRequests = await RequestSchema.countDocuments();
+
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalRequests / limitNum),
+      totalRequests,
+      notifications: patientDetailsArray,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -446,6 +468,7 @@ export const action = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 export const coordinatorPatients = async (req, res) => {
   try {
     const coname = req.params.coname;
@@ -454,6 +477,14 @@ export const coordinatorPatients = async (req, res) => {
     if (!adminExists) {
       return res.status(404).json({ message: "Admin not found" });
     }
+
+    const { page = 1, limit = 10 } = req.query;
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    const totalPatients = await PatientSchema.countDocuments({
+      coordinator: coname,
+    });
 
     const coordinatorPatientsName = await PatientSchema.find(
       {
@@ -465,16 +496,27 @@ export const coordinatorPatients = async (req, res) => {
         image: 1,
         gender: 1,
         age: 1,
+        count: 1,
         visitDate: { $arrayElemAt: ["$visitCount.visitDate", -1] },
         visitTime: { $arrayElemAt: ["$visitCount.visitTime", -1] },
         _id: 0,
       }
-    );
-    res.status(200).json(coordinatorPatientsName.reverse());
+    )
+      .sort({ count: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
+
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalPatients / limitNum),
+      totalPatients,
+      patients: coordinatorPatientsName,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 export const updateBasicDetails = async (req, res) => {
   try {
@@ -527,13 +569,19 @@ export const seenAdminNotification = async (req, res) => {
 };
 
 export const oneAdminNotification = async (req, res) => {
-
   const id = req.params.cid;
 
   try {
-    const requestedPatients = await RequestSchema.find({
-      coordinatorId: id
-    },
+    // Get pagination parameters from query string
+    const { page = 1, limit = 10 } = req.query;
+
+    // Ensure valid numbers
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    // Fetch requested patients for the specific coordinator, sorted by requestId (descending for recent first)
+    const requestedPatients = await RequestSchema.find(
+      { coordinatorId: id },
       {
         requestId: 1,
         patientId: 1,
@@ -543,21 +591,22 @@ export const oneAdminNotification = async (req, res) => {
         request: 1,
         action: 1,
         coordinatorId: 1,
-        _id: 0
-      });
+        _id: 0,
+      }
+    )
+      .sort({ requestId: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
 
-    // Array to hold details for all patients
     const patientDetailsArray = [];
 
-    // Iterate through each requested patient
+
     for (const patient of requestedPatients) {
       const patientId = patient.patientId;
 
-      // Fetch details for the current patient ID from another schema (assuming PatientSchema)
       const patientDetails = await PatientSchema.findOne({ patientId });
 
       if (patientDetails) {
-
         const patientObject = {
           requestId: patient.requestId,
           patientId: patient.patientId,
@@ -570,22 +619,26 @@ export const oneAdminNotification = async (req, res) => {
           action: patient.action,
           coordinator: patientDetails.coordinator,
           contactNumber: patientDetails.contactNumber,
-          coordinatorId: patient.coordinatorId
+          coordinatorId: patient.coordinatorId,
         };
 
-        // Push the patient object to the array
         patientDetailsArray.push(patientObject);
       }
     }
 
-    // Send the array of patient details as the response
-    patientDetailsArray.reverse();
-    //console.log(patientDetailsArray)
-    res.status(200).json(patientDetailsArray);
+    const totalRequests = await RequestSchema.countDocuments({ coordinatorId: id });
+
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalRequests / limitNum),
+      totalRequests,
+      notifications: patientDetailsArray,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 
 export const sendMail = async (req, res) => {
@@ -637,7 +690,7 @@ Please use this username and password to login into our system.
 
 Please tap on the below link to download our patient care app.
 
-https://www.dropbox.com/scl/fi/kr5vy0cms8kylj6x2qf42/IpcrConnect_1.0.0.apk?rlkey=c684apu21osfjis46azo9afgn&st=2u1lbhjj&dl=0
+https://www.dropbox.com/scl/fi/17yfwavamf8fsfaqgqfhk/IpcrConnect_1.0.0.apk?rlkey=430ixaligmnxsnpajrfcrs61z&st=izc9kriw&dl=0
 
 Thank You,
 Best Wishes From IPCR
@@ -706,7 +759,7 @@ export const countReportNotification = async (req, res) => {
   try {
     // const id = req.params.id;
 
-    const count = await ReportsSchema.countDocuments({viewed: false });
+    const count = await ReportsSchema.countDocuments({ viewed: false });
 
     res.status(200).json({ count });
   } catch (err) {
@@ -719,7 +772,7 @@ export const seenReportNotification = async (req, res) => {
     //const id = req.params.id;
 
     const result = await ReportsSchema.updateMany(
-      {viewed: false },
+      { viewed: false },
       { viewed: true }
     );
 
@@ -732,7 +785,13 @@ export const seenReportNotification = async (req, res) => {
 
 export const Reportsnotification = async (req, res) => {
   try {
-    const reportsPatients = await ReportsSchema.find({},
+    const { page = 1, limit = 10 } = req.query;
+
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    const reportsPatients = await ReportsSchema.find(
+      {},
       {
         reportId: 1,
         patientId: 1,
@@ -741,21 +800,22 @@ export const Reportsnotification = async (req, res) => {
         time: 1,
         name: 1,
         coordinatorName: 1,
-        _id: 0
-      });
+        _id: 0,
+      }
+    )
+      .sort({ reportId: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
 
-    // Array to hold details for all patients
+
     const patientDetailsArray = [];
 
-    // Iterate through each requested patient
     for (const patient of reportsPatients) {
       const patientId = patient.patientId;
 
-      // Fetch details for the current patient ID from another schema (assuming PatientSchema)
       const patientDetails = await PatientSchema.findOne({ patientId });
 
       if (patientDetails) {
-
         const patientObject = {
           reportId: patient.reportId,
           patientId: patient.patientId,
@@ -764,22 +824,26 @@ export const Reportsnotification = async (req, res) => {
           name: patient.name,
           image: patientDetails.image,
           coordinatorName: patient.coordinatorName,
-          contactNumber: patientDetails.contactNumber
+          contactNumber: patientDetails.contactNumber,
         };
 
-        // Push the patient object to the array
         patientDetailsArray.push(patientObject);
       }
     }
 
-    // Send the array of patient details as the response
-    patientDetailsArray.reverse();
-    //console.log(patientDetailsArray)
-    res.status(200).json(patientDetailsArray);
+    const totalReports = await ReportsSchema.countDocuments();
+
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalReports / limitNum),
+      totalReports,
+      reports: patientDetailsArray,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 export const reports = async (req, res) => {
   try {
@@ -810,6 +874,257 @@ export const reports = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+export const allReports = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const patientExists = await PatientSchema.exists({ patientId: id });
+    const reportExists = await ReportsSchema.exists({ patientId: id });
+    const requestExists = await RequestSchema.exists({ patientId: id });
+
+    if (!patientExists && !reportExists && !requestExists) {
+      return res.status(404).json({ message: "No records found for the given ID" });
+    }
+
+    const patient = patientExists
+      ? await PatientSchema.findOne(
+        { patientId: id },
+        {
+          "visitCount.visitDate": 1,
+          "visitCount.visitTime": 1,
+          "visitCount.pastHospitalization": 1,
+          "visitCount.otherdocuments": 1,
+          "visitCount.prescription": 1,
+        }
+      )
+      : null;
+
+    if (patient && patient.visitCount) {
+      patient.visitCount.reverse();
+    }
+
+    const reports = reportExists
+      ? (await ReportsSchema.find(
+        { patientId: id },
+        {
+          date: 1,
+          time: 1,
+          multipledocument: 1,
+        }
+      )).reverse()
+      : null;
+
+    const request = requestExists
+      ? (await RequestSchema.find(
+        { patientId: id },
+        {
+          date: 1,
+          time: 1,
+          newConsultation: 1,
+          hospitalization: 1,
+          demise: 1,
+          report: 1,
+        }
+      )).reverse()
+      : null;
+
+    //console.log(patient, reports, request)
+    res.status(200).json({ patient, reports, request });
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const ReportcountAdminNotification = async (req, res) => {
+  try {
+    const id = req.params.cid;
+
+    const count = await ReportsSchema.countDocuments({ coordinatorId: id, coordinatorviewed: false });
+
+    res.status(200).json({ count });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const ReportseenAdminNotification = async (req, res) => {
+  try {
+    const id = req.params.cid;
+
+    const result = await ReportsSchema.updateMany(
+      { coordinatorId: id, coordinatorviewed: false },
+      { coordinatorviewed: true }
+    );
+
+    res.status(200).json({ message: "All notifications marked as seen" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+export const ReportoneAdminNotification = async (req, res) => {
+  const id = req.params.cid;
+
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+
+    const requestedPatients = await ReportsSchema.find(
+      { coordinatorId: id },
+      {
+        reportId: 1,
+        patientId: 1,
+        date: 1,
+        time: 1,
+        coordinatorName: 1,
+        name: 1,
+        coordinatorId: 1,
+        _id: 0,
+      }
+    )
+      .sort({ reportId: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum);
+
+
+    const patientDetailsArray = [];
+
+    for (const patient of requestedPatients) {
+      const patientId = patient.patientId;
+
+
+      const patientDetails = await PatientSchema.findOne({ patientId });
+
+      if (patientDetails) {
+        const patientObject = {
+          reportId: patient.reportId,
+          patientId: patient.patientId,
+          coordinatorName: patient.coordinatorName,
+          date: patient.date,
+          time: patient.time,
+          name: patient.name,
+          image: patientDetails.image,
+          contactNumber: patientDetails.contactNumber,
+          coordinatorId: patient.coordinatorId,
+        };
+
+        patientDetailsArray.push(patientObject);
+      }
+    }
+
+    const totalReports = await ReportsSchema.countDocuments({ coordinatorId: id });
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalReports / limitNum),
+      totalReports,
+      reports: patientDetailsArray,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+///search ...
+
+export const searchFunction = async (req, res) => {
+  try {
+    const { value } = req.query; 
+
+    if (!value) {
+      return res.status(400).json({
+        message: 'Please provide a search value (either patientId or name).',
+      });
+    }
+
+    const query = { status: "Updated" };
+    if (!isNaN(value)) {
+      query.patientId = { $regex: `^${value}`, $options: 'i' }; 
+    } else {
+      query.name = { $regex: `^${value}`, $options: 'i' }; 
+    }
+
+    const patients = await PatientSchema.find(query, {
+      name: 1,
+      patientId: 1,
+      image: 1,
+      gender: 1,
+      age: 1,
+      count: 1,
+      visitDate: { $arrayElemAt: ["$visitCount.visitDate", -1] }, // Last visit date
+      visitTime: { $arrayElemAt: ["$visitCount.visitTime", -1] }, // Last visit time
+      _id: 0,
+    });
+
+    // Check if no patients found
+    if (patients.length === 0) {
+      return res.status(404).json({
+        message: 'No patient found matching the provided criteria.',
+      });
+    }
+
+    res.status(200).json(patients);
+
+  } catch (err) {
+    res.status(500).json({
+      message: 'An error occurred while searching for patients.',
+      error: err.message,
+    });
+  }
+};
+
+export const coordinatorSearch = async (req, res) => {
+  try {
+    const coname = req.params.coname;
+    const { value } = req.query; 
+    
+    if (!value) {
+      return res.status(400).json({
+        message: 'Please provide a search value (either patientId or name).',
+      });
+    }
+
+    const query = { coordinator: coname };
+    if (!isNaN(value)) {
+      query.patientId = { $regex: `^${value}`, $options: 'i' }; 
+    } else {
+      query.name = { $regex: `^${value}`, $options: 'i' }; 
+    }
+
+    const patients = await PatientSchema.find(query, {
+      name: 1,
+      patientId: 1,
+      image: 1,
+      gender: 1,
+      age: 1,
+      count: 1,
+      visitDate: { $arrayElemAt: ["$visitCount.visitDate", -1] }, // Last visit date
+      visitTime: { $arrayElemAt: ["$visitCount.visitTime", -1] }, // Last visit time
+      _id: 0,
+    });
+
+    // Check if no patients found
+    if (patients.length === 0) {
+      return res.status(404).json({
+        message: 'No patient found matching the provided criteria.',
+      });
+    }
+
+    res.status(200).json(patients);
+
+  } catch (err) {
+    res.status(500).json({
+      message: 'An error occurred while searching for patients.',
+      error: err.message,
+    });
+  }
+};
+
 
 export const excelFile = async (req, res) => {
   //

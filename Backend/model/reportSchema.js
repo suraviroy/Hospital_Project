@@ -22,6 +22,8 @@ const reportsSchema = new mongoose.Schema({
     ],
   },
   viewed: { type: String, default: "false" },
+  coordinatorviewed: { type: String, default: "false" },
+  coordinatorId: { type: String }
 });
 
 const ReportsSchema = mongoose.model("ReportsList", reportsSchema);

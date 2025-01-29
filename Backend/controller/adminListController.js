@@ -48,14 +48,28 @@ export const adminregistration = async (req, res) => {
 //admin list fetch controller
 export const adminList = async (req, res) => {
   try {
-    const adminsArray = await AdminSchema.find();
+    const { page = 1, limit = 10 } = req.query;
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
 
-    res.status(200).json(adminsArray);
+    const totalAdmins = await AdminSchema.countDocuments();
+
+    const adminsArray = await AdminSchema.find()
+      .skip((pageNum - 1) * limitNum) 
+      .limit(limitNum);
+
+    res.status(200).json({
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalAdmins / limitNum),
+      totalAdmins,
+      admins: adminsArray,
+    });
   } catch (err) {
     console.log(err);
-    res.status(500).json(err);
+    res.status(500).json({ message: err.message });
   }
 };
+
 
 export const adminNames = async (req, res) => {
   try {
