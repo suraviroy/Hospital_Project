@@ -1,36 +1,30 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, TextInput, Dimensions } from 'react-native';
-import { Octicons } from 'react-native-vector-icons';
-const windowWidth = Dimensions.get('window').width;
+import React from 'react'; 
+import { View, StyleSheet, TouchableOpacity, TextInput, Dimensions } from 'react-native'; 
+import { Octicons } from 'react-native-vector-icons'; 
 
-const SearchList = ({ setSearchText }) => {
-    const [searchTextLocal, setSearchTextLocal] = useState('');
-    const handleSearchChange = (text) => {
-        setSearchTextLocal(text);
-        setSearchText(text);
-    };
+const windowWidth = Dimensions.get('window').width;  
 
+const SearchAdmin = ({ onSearchChange, placeholder }) => {
     return (
         <View style={styles.searchBox2451}>
             <TouchableOpacity>
                 <Octicons name="search" size={24} style={{ marginLeft: 15, paddingTop: 11, color: "#706767" }} />
             </TouchableOpacity>
             <View style={styles.searchWrapper012}>
-                <TextInput  
+                <TextInput
                     style={{
                         fontFamily: "regular02",
                         width: "100%",
                         height: "100%",
                         paddingHorizontal: 12
                     }}
-                    value={searchTextLocal}
-                    onChangeText={handleSearchChange}
-                    placeholder="Search by Name or Patient ID"
+                    onChangeText={onSearchChange}
+                    placeholder={placeholder || "Search by Name or Patient ID"}
                     clearButtonMode='always'
                 />
             </View>
         </View>
-    );
+    ); 
 }
 
 const styles = StyleSheet.create({
@@ -52,7 +46,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFFFFF",
         marginRight: 12,
         borderRadius: 12,
-    }
+    } 
 });
 
-export default SearchList;
+export default SearchAdmin;

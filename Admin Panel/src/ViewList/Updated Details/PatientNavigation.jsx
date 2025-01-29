@@ -7,6 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontFamily, Color, Border, FontSize } from "../../../GlobalStyles";
 import UpdatedBasicDetails from './UpdatedBasicDetails';
 import UpdatedDetails from './UpdatedDetails';
+import PatientAllReport from './PatientAllReport';
 
 
 const PatientNavigation = () => {
@@ -27,49 +28,6 @@ const PatientNavigation = () => {
         }
     }, [details]);
 
-    // return (
-    //     <SafeAreaView style={styles.update2451}>
-    //         <View style={styles.upheader2451}>
-    //             <TouchableOpacity onPress={handleBack} style={styles.backButton14}>
-    //                 <Text><Icon name="angle-left" size={30} color={Color.colorBlack} /></Text>
-    //             </TouchableOpacity>
-    //             <Text style={styles.text14}>Patient Profile</Text>
-    //         </View>
-    //         <ScrollView contentContainerStyle={styles.scroll}>
-    //             <View style={styles.det14}>
-    //                 <Text style={styles.text15}>Name: {details.name}</Text>
-    //                 <View style={styles.patientId2451}><Text style={styles.patientId13}>Patient ID: {details.patientId}</Text></View>
-    //             </View>
-    //             <View style={styles.switchButton}>
-    //                 <TouchableOpacity style={{
-    //                     width: '50%',
-    //                     height: 50,
-    //                     backgroundColor: selectedTab == 0 ? '#096759' : '#DBF4F1',
-    //                     borderRadius: 10,
-    //                     justifyContent: 'center',
-    //                     alignItems: 'center',
-    //                 }} onPress={() => { setSelectedTab(0); }}>
-    //                     <Text style={{
-    //                         color: selectedTab == 0 ? '#fff' : '#000',
-    //                         fontSize: 18,
-    //                         fontWeight: '500',
-    //                     }}>Basic Details</Text>
-    //                 </TouchableOpacity>
-    //                 <TouchableOpacity style={{
-    //                     width: '50%',
-    //                     height: 50,
-    //                     backgroundColor: selectedTab == 1 ? '#096759' : '#DBF4F1',
-    //                     borderRadius: 10,
-    //                     justifyContent: 'center',
-    //                     alignItems: 'center',
-    //                 }} onPress={() => { setSelectedTab(1); }}>
-    //                     <Text style={{
-    //                         color: selectedTab == 1 ? '#fff' : '#000',
-    //                         fontSize: 18,
-    //                         fontWeight: '500',
-    //                     }}>Updated Diseases</Text>
-    //                 </TouchableOpacity>
-    //             </View>
     const TabButton = ({ isSelected, onPress, title }) => (
         <TouchableOpacity 
             style={[
@@ -131,8 +89,16 @@ const PatientNavigation = () => {
                         onPress={() => setSelectedTab(1)}
                         title="Updated Diseases"
                     />
+                      <TabButton 
+                        isSelected={selectedTab === 2}
+                        onPress={() => setSelectedTab(2)}
+                        title="All Reports"
+                    />
                 </View>
-                {selectedTab == 0 ? patientId && <UpdatedBasicDetails patientId={patientId} /> : <UpdatedDetails patientId={patientId} />}
+                {selectedTab === 0 && <UpdatedBasicDetails patientId={patientId} />}
+                {selectedTab === 1 && <UpdatedDetails patientId={patientId} />}
+                {selectedTab === 2 && <PatientAllReport patientId={patientId} />}
+             
             </ScrollView>
         </SafeAreaView>
     );
@@ -198,20 +164,20 @@ const styles = StyleSheet.create({
     },
     tabContainer: {
         flexDirection: 'row',
-        marginHorizontal: 16,
-        marginTop: 16,
-        borderRadius: 10,
-        backgroundColor: '#DBF4F1',
-        overflow: 'hidden',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+        gap: 8,
     },
     tabButton: {
         flex: 1,
         height: 50,
         justifyContent: 'center',
         alignItems: 'center',
+        borderRadius:8,
     },
     tabButtonText: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '500',
         textAlign: 'center',
         paddingHorizontal: 4,

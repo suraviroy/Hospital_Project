@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useCallback } from 'react';
-import { View, Text,Platform,StatusBar, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions,Linking } from 'react-native';
+import { View,ActivityIndicator, Text,Platform,StatusBar, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions,Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native'; 
 const windowWidth = Dimensions.get('window').width;
@@ -12,7 +12,7 @@ const NotificationDetails = ({ patientId }) => {
     const [visitData, setVisitData] = useState([]);
   const [coordinator, setCoordinator] = useState(null);
   const [expandedVisits, setExpandedVisits] = useState({});
-
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     fetchData();
   }, []);
@@ -87,12 +87,22 @@ const NotificationDetails = ({ patientId }) => {
         .then(data => {
             // console.log("Fetched data:", data);
             setBasicDetails(data[0]);
+            setIsLoading(false);
         })
         .catch(error => {
             console.error('Error fetching patient basic details:', error);
-        });
+            setIsLoading(false);
+        }
+      );
 }, [basicDetails]);
 
+if (isLoading) {
+  return (
+      <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#096759" />
+      </View>
+  );
+}
     // console.log("Basic Details")
     // console.log(basicDetails.name)
 

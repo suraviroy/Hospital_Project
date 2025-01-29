@@ -279,16 +279,6 @@ const AddPatient = () => {
 
 const savePatientData = async (imageUrl, password, stateToSend) => {
     try {
-        const allPatientsResponse = await fetch(`${backendURL}/adminRouter/sectionAallPatient`);
-        const allPatientsData = await allPatientsResponse.json();
-        const patientExists = allPatientsData.some(patient => patient.patientId === patientId);
-        if (patientExists) {
-            alert('Patient ID already exists');
-            setLoading(false);
-            setSavingData(false);
-            return;
-        }
-
         const desiredTimezone = "Asia/Kolkata";
         const formattedVisitDate = moment(visitDate).tz(desiredTimezone).format("MMMM D, YYYY");
         const formattedVisitTime = moment(visitTime).tz(desiredTimezone).format("hh:mm A");
@@ -322,14 +312,19 @@ const savePatientData = async (imageUrl, password, stateToSend) => {
             body: JSON.stringify(requestBody)
         });
 
+        const responseData = await response.json();
+
         if (response.ok) {
             setLoading(false);
             setShowPopup(true);
             setSavingData(false);
         } else {
-            const errorData = await response.json();
-            console.error('Error response from backend:', errorData);
-            alert('Failed to register patient. Please try again.');
+            if (responseData.message === "ID already exists") {
+                alert('Patient ID already exists');
+            } else {
+                console.error('Error response from backend:', responseData);
+                alert('Failed to register patient. Please try again.');
+            }
             setLoading(false);
             setSavingData(false);
             return;
@@ -342,7 +337,6 @@ const savePatientData = async (imageUrl, password, stateToSend) => {
         setIsLoading(false);
     }
 };
-
 
     const handleDateOfBirthChange = (event, selectedDate) => {
         const currentDate = selectedDate || dateOfBirth;

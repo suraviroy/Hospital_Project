@@ -19,6 +19,8 @@ import AlertNoti from './src/alert/alert';
 import AppList from './src/Reports/AppList';
 import UpdatedDetails from './src/Reports/UpdatedDetails';
 import NotiList from './src/Notification/NotiList';
+import UploadReport from './src/home page/UploadReport';
+import PatientReport from './src/MyProfile/PatientReport';
 
 const Stack = createNativeStackNavigator();
 
@@ -76,7 +78,9 @@ function AppNavigator() {
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Notification" component={Notification} />
           <Stack.Screen name="MyProfile" component={MyProfile} />
+          <Stack.Screen name="PatientReport" component={PatientReport} />
           <Stack.Screen name="Reports" component={Reports} />
+          <Stack.Screen name="UploadReport" component={UploadReport} />
           <Stack.Screen name="AppList" component={AppList} />
           <Stack.Screen name="UpdatedDetails" component={UpdatedDetails} />
           <Stack.Screen name="Request" component={Request} />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StatusBar, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, Platform, ActivityIndicator } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 import { useNavigation } from '@react-navigation/native';
@@ -7,44 +7,83 @@ import { FontFamily } from '../../GlobalStyles';
 import { backendURL } from "../backendapi";
 
 const AllListURL = `${backendURL}/adminRouter/sectionAallPatient`;
+const SearchURL = `${backendURL}/adminRouter/search`;
 const BasicDetailsURL = `${backendURL}/adminRouter/PatientBasicDetailsNewWP`;
 
 const AllList = ({ searchText, refreshTrigger }) => {
     const navigation = useNavigation();
     const [patients, setPatients] = useState([]);
-    const [filteredPatients, setFilteredPatients] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [currentSearchText, setCurrentSearchText] = useState('');
 
-    const fetchData = async () => {
+    const fetchData = async (currentPage, searchValue = '') => {
         try {
-            const response = await fetch(AllListURL);
+            setLoading(true);
+            setIsLoadingMore(true);
+            
+            let url = searchValue 
+                ? `${SearchURL}?value=${searchValue}&page=${currentPage}&limit=10`
+                : `${AllListURL}?page=${currentPage}&limit=10`;
+
+            const response = await fetch(url);
             const data = await response.json();
-            setPatients(data);
-            setFilteredPatients(data);
+
+           
+            const newPatients = Array.isArray(data) ? data : (data.patients || []);
+            
+          
+            const updatedPatients = currentPage === 1 
+                ? newPatients 
+                : [...patients, ...newPatients];
+
+            setPatients(updatedPatients);
+
+            setTotalPages(Math.ceil(newPatients.length / 10));
+            
             setLoading(false);
+            setIsLoadingMore(false);
         } catch (error) {
             console.error('Error fetching patient data:', error);
             setLoading(false);
+            setIsLoadingMore(false);
         }
     };
 
     useEffect(() => {
-        fetchData();
-        const intervalId = setInterval(fetchData, 20000);
-        return () => clearInterval(intervalId);
+        
+        setPatients([]);
+        setPage(1);
+        fetchData(1);
     }, [refreshTrigger]);
 
     useEffect(() => {
-        let filtered = patients;
+        
         if (searchText) {
-          filtered = patients.filter(patient =>
-            searchText.test(patient.name.toLowerCase()) ||
-            searchText.test(patient.patientId.toLowerCase())
-          );
+            const searchValue = searchText.replace(/^\^/, '').replace(/\/i$/, '');
+            setCurrentSearchText(searchValue);
+            setPatients([]);
+            setPage(1);
+            fetchData(1, searchValue);
+        } else {
+
+            setCurrentSearchText('');
+            setPatients([]);
+            setPage(1);
+            fetchData(1);
         }
-        setFilteredPatients(filtered);
-      }, [searchText, patients]);
-    
+    }, [searchText]);
+
+    const loadMorePatients = () => {
+        if (page < totalPages && !isLoadingMore) {
+            const nextPage = page + 1;
+            setPage(nextPage);
+            fetchData(nextPage, currentSearchText);
+        }
+    };
+
     const handleViewDetails = async (patientId) => {
         try {
             const response = await fetch(`${BasicDetailsURL}/${patientId}`);
@@ -75,8 +114,8 @@ const AllList = ({ searchText, refreshTrigger }) => {
 
                 <View style={styles.infoContainer}>
                     <View style={styles.patientDetails}>
-                        <Text style={styles.patientName}  ellipsizeMode="tail">
-                         {item.name}
+                        <Text style={styles.patientName} ellipsizeMode="tail">
+                            {item.name}
                         </Text>
                         <Text style={styles.patientInfo}>Gender: {item.gender}</Text>
                         <Text style={styles.patientInfo}>Age: {item.age}</Text>
@@ -93,15 +132,40 @@ const AllList = ({ searchText, refreshTrigger }) => {
             </View>
             
             <View style={styles.appointmentContainer}>
-                <Text style={styles.appointmentText}>
-                    Last Appointment On: {' '}
-                    <Text style={styles.appointmentTime}>
-                        {item.date}, {item.time}
-                    </Text>
+            <Text style={styles.appointmentText}>
+                Last Appointment On: {' '}
+                <Text style={styles.appointmentTime}>
+                    {item.visitDate || item.date || 'N/A'}, {' '}
                 </Text>
-            </View>
+            </Text>
+            <Text style={styles.appointmentText}>
+            Time: {' '}
+                    <Text style={styles.appointmentTime}>
+                   
+                    {item.visitTime || item.time || 'N/A'}
+               </Text>
+                
+            </Text>
+           
+        </View>
         </View>
     );
+
+    const renderFooter = () => {
+        if (page >= totalPages) return null;
+        
+        return (
+            <TouchableOpacity 
+                style={styles.nextButton} 
+                onPress={loadMorePatients}
+                disabled={isLoadingMore}
+            >
+                <Text style={styles.nextButtonText}>
+                    {isLoadingMore ? 'Loading...' : 'Load More'}
+                </Text>
+            </TouchableOpacity>
+        );
+    };
 
     if (loading) {
         return (
@@ -112,29 +176,58 @@ const AllList = ({ searchText, refreshTrigger }) => {
         );
     }
 
-    if (filteredPatients.length === 0) {
+    if (patients.length === 0) {
         return <Text style={styles.emptyText}>No patients found!</Text>;
     }
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar 
-                barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
-                backgroundColor="#FFFFFF"
-                translucent={false}
-            />
             <FlatList
                 nestedScrollEnabled
-                data={filteredPatients}
+                data={patients}
                 renderItem={renderPatientItem}
-                keyExtractor={item => item.patientId}
+                keyExtractor={(item, index) => item.patientId + index}
                 contentContainerStyle={styles.listContainer}
+                ListFooterComponent={renderFooter}
             />
         </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
+    nextButton: {
+        backgroundColor: '#077547',
+        padding: 15,
+        alignItems: 'center',
+        marginVertical: 10,
+        marginHorizontal: 20,
+        borderRadius: 8,
+    },
+    nextButtonText: {
+        color: 'white',
+        fontFamily: FontFamily.font_bold,
+        fontSize: 16,
+    },
+    paginationContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 10,
+        backgroundColor: '#f8f8f8',
+    },
+    paginationButton: {
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+    },
+    disabledButton: {
+        opacity: 0.3,
+    },
+    pageText: {
+        fontSize: 16,
+        fontFamily: FontFamily.font_bold,
+        color: '#077547',
+        marginHorizontal: 15,
+    },
     container: {
         flex: 1,
         marginBottom: 85,
@@ -155,7 +248,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         padding: 10,
-        margin:windowWidth*0.02,
+        margin: windowWidth * 0.02,
     },
     contentContainer: {
         flexDirection: 'row',
@@ -193,7 +286,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontFamily: FontFamily.font_bold,
         marginBottom: 4,
-        fontWeight:'600'
+        fontWeight: '600'
     },
     patientInfo: {
         fontSize: 13,
@@ -209,8 +302,8 @@ const styles = StyleSheet.create({
     },
     viewButton: {
         alignSelf: 'flex-start',
-        paddingHorizontal: windowWidth*0.05,
-        paddingVertical: windowWidth*0.03,
+        paddingHorizontal: windowWidth * 0.05,
+        paddingVertical: windowWidth * 0.03,
         borderWidth: 1.5,
         borderColor: '#077547',
         borderRadius: 6,
@@ -218,7 +311,7 @@ const styles = StyleSheet.create({
     },
     viewButtonText: {
         color: '#077547',
-        fontSize: windowWidth*0.03,
+        fontSize: windowWidth * 0.03,
         fontFamily: 'bold01',
     },
     appointmentContainer: {
@@ -226,6 +319,7 @@ const styles = StyleSheet.create({
         paddingTop: 8,
         borderTopWidth: 1,
         borderTopColor: '#eee',
+        flexDirection:'row'
     },
     appointmentText: {
         fontSize: 12,
@@ -240,6 +334,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        padding: 20,
     },
     loadingText: {
         marginTop: 16,

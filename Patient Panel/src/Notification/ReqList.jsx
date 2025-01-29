@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Platform,StatusBar,StyleSheet, Text, TouchableOpacity, FlatList, Dimensions, RefreshControl } from 'react-native';
+import { View, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, FlatList, Dimensions, RefreshControl } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily, Color } from '../../GlobalStyles';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { backendURL } from "../backendapi";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const MAX_VISIBLE_REQUESTS = 1;
 
 const ReqList = ({ searchText }) => {
     const navigation = useNavigation();
@@ -23,9 +25,7 @@ const ReqList = ({ searchText }) => {
                 setOriginalData(requestData);
                 setFilteredData(requestData);
                 setLoading(false);
-            
             } else {
-                // console.error('Failed to fetch request data');
                 setLoading(false);
             }
         } catch (error) {
@@ -33,14 +33,14 @@ const ReqList = ({ searchText }) => {
             setLoading(false);
         }
     }, []);
+
     const formatDate = (dateString) => {
         if (!dateString) return { month: '', day: '', year: '' };
         const parts = dateString.split(/[\s,]+/);
-        
         return {
-            month: parts[0],     
-            day: parts[1],       
-            year: parts[2]       
+            month: parts[0],
+            day: parts[1],
+            year: parts[2]
         };
     };
 
@@ -85,25 +85,75 @@ const ReqList = ({ searchText }) => {
         if (!text) {
             setFilteredData(originalData);
         } else {
-            const filtered = originalData.filter(item => 
+            const filtered = originalData.filter(item =>
                 item.date.toLowerCase().includes(text.toLowerCase()) ||
-                item.time.toLowerCase().includes(text.toLowerCase())
+                item.time.toLowerCase().includes(text.toLowerCase()) ||
+                item.request.some(req => 
+                    req.requestFor.toLowerCase().includes(text.toLowerCase()) ||
+                    req.details.toLowerCase().includes(text.toLowerCase())
+                )
             );
             setFilteredData(filtered);
         }
     };
 
     const handleViewDetails = (requestId) => {
-        navigation.navigate('NotificationNavbar', {requestId})
+        navigation.navigate('NotificationNavbar', { requestId })
     };
+
+    const renderRequestSubItem = (request, index, isLast) => {
+        return (
+            <View 
+                style={[
+                    styles.requestSubItem,
+                    !isLast && styles.requestSubItemBorder
+                ]} 
+                key={request._id}
+            >
+                <View style={styles.requestLineContainer}>
+                    <Text 
+                        style={styles.requestType}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {request.requestFor}
+                    </Text>
+                    {request.details !== "NA" && (
+                        <Text 
+                            style={styles.requestDetails}
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
+                        >
+                            : {request.details}
+                        </Text>
+                    )}
+                </View>
+            </View>
+        );
+    };
+
+    const renderRemainingCount = (remainingCount) => (
+        <View style={styles.remainingCountContainer}>
+            <Text 
+                style={styles.remainingCountText}
+            >
+                +{remainingCount} more {remainingCount === 1 ? 'request' : 'requests'}
+            </Text>
+        </View>
+    );
+
     const renderRequestItem = ({ item }) => {
         const { month, day, year } = formatDate(item.date);
-        
+        const requests = item.request;
+        const hasMoreRequests = requests.length > MAX_VISIBLE_REQUESTS;
+        const visibleRequests = requests.slice(0, MAX_VISIBLE_REQUESTS);
+        const remainingCount = requests.length - MAX_VISIBLE_REQUESTS;
+
         return (
             <View style={styles.reqView}>
-                <StatusBar 
+                <StatusBar
                     barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
-                    backgroundColor="#FFFFFF" 
+                    backgroundColor="#FFFFFF"
                     translucent={false}
                 />
                 <View style={styles.dateBlock}>
@@ -112,9 +162,18 @@ const ReqList = ({ searchText }) => {
                     <Text style={styles.yearText}>{year}</Text>
                 </View>
                 <View style={styles.reqdet}>
-                    <Text style={styles. requeston}>Request</Text>
-                    <Text style={styles.reqdate} numberOfLines={2}>{item.request}</Text>
-                    {/* <Text style={[styles.reqdate, styles.reqSubText]}>{year}</Text> */}
+                    <Text style={styles.requeston}>Requests</Text>
+                    <View style={styles.requestsList} >
+                        {visibleRequests.map((req, index) => 
+                            renderRequestSubItem(
+                                req, 
+                                index,
+                                index === visibleRequests.length - 1 && !hasMoreRequests
+                            )
+                            
+                        )}
+                        {hasMoreRequests && renderRemainingCount(remainingCount)}
+                    </View>
                     <Text style={styles.reqtime}>Time: {item.time}</Text>
                 </View>
                 <TouchableOpacity
@@ -126,11 +185,10 @@ const ReqList = ({ searchText }) => {
             </View>
         );
     };
-
     if (loading) {
         return <Text style={styles.text45}>Loading...</Text>;
     }
-    
+
     if (filteredData.length === 0) {
         return <Text style={styles.text45}>No matching requests found.</Text>;
     }
@@ -156,120 +214,116 @@ const ReqList = ({ searchText }) => {
 const styles = StyleSheet.create({
     reqcon: {
         flex: 1,
-        marginBottom: 85,
-        paddingTop: -windowWidth * 0.14,
-    },
-    text45:{
-        marginTop: windowWidth*0.05,
-        fontSize:18,
-        fontFamily: 'bold01',
-        marginLeft: 20,
+        backgroundColor: '#F5F5F5',
+        paddingBottom:windowWidth*0.2
     },
     reqView: {
-        width: windowWidth * 0.97,
-        height: windowWidth * 0.35,
-        backgroundColor: '#fff',
-        alignSelf: 'center',
-        marginTop: 10,
         flexDirection: 'row',
+        backgroundColor: '#FFFFFF',
         borderRadius: 10,
+        margin: 7,
+        padding: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
         elevation: 5,
     },
     dateBlock: {
-        marginLeft: windowWidth * 0.03,
-        width: windowWidth * 0.26,
-        height: windowWidth * 0.28,
-        borderRadius: 10,
-        backgroundColor: '#357EEA',
-        alignSelf: 'center',
+        backgroundColor: '#007AFF',
+        padding: 10,
+        borderRadius: 8,
+        alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 5,
+        width: 80,
     },
     monthText: {
+        fontSize: 14,
+        fontWeight: '600',
         color: '#fff',
-        textAlign: 'center',
-        fontSize: windowWidth*0.04,
-        fontFamily: FontFamily.poppinsRegular,
-        paddingBottom: 2,
-        fontWeight:'600'
     },
     dayText: {
-        color: '#fff',
-        textAlign: 'center',
-        fontSize: windowWidth*0.06,
+        fontSize: 24,
         fontWeight: 'bold',
-        fontFamily: FontFamily.poppinsBold,
-        paddingBottom: 2,
+        color: '#fff',
     },
     yearText: {
-        color: '#fff',
-        textAlign: 'center',
-        fontSize: windowWidth*0.04,
-        fontFamily: FontFamily.poppinsRegular,
-        fontWeight:'600'
-    },
-    reqdate: {
-        marginLeft: windowWidth * 0.02,
-        alignItems: 'center',
-        color: '#011411',
         fontSize: 14,
-        fontFamily: FontFamily.font_bold,
-        marginTop: windowWidth * 0.02,
-        fontSize:windowWidth*0.035,
-        fontWeight:'500',
-        width:windowWidth*0.3,
-        fontStyle: 'italic'
-    },
-    reqSubText: {
-        marginTop: 0,
-        paddingTop: 0,
-    },
-    viewButton2451: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: "absolute",
-        width: windowWidth * 0.2,
-        height: 34,
-        borderColor: '#E14526',
-        borderWidth: 2,
-        borderStyle: 'solid',
-        borderRadius: 5,
-        marginTop: windowWidth * 0.13,
-        marginLeft: windowWidth * 0.68,
-    },
-    viewDetails: {
-        color: '#E14526',
-        fontSize: 12,
-        alignContent: 'center',
+        color: '#fff',
     },
     reqdet: {
-        display: 'flex',
-        flexDirection: 'column',
+        flex: 1,
+        marginLeft: 15,
+        justifyContent: 'space-between',
     },
     requeston: {
+        fontSize: 16,
         fontWeight: 'bold',
-        alignItems: 'center',
-        marginLeft: windowWidth * 0.02,
-        marginTop: windowWidth * 0.07,
-        fontSize: 20,
-        fontFamily: FontFamily.font_bold,
+        color: '#333',
+        marginBottom: 8,
+    },
+    requestSubItem: {
+        marginBottom: 8,
+        paddingLeft: 8,
+        paddingVertical: 6,
+        borderLeftWidth: 2,
+        borderLeftColor: '#007AFF',
+    },
+    requestSubItemBorder: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#E5E5E5',
+        marginBottom: 8,
+    },
+    remainingCountContainer: {
+        paddingLeft: 8,
+        paddingVertical: 4,
+        borderLeftWidth: 2,
+        borderLeftColor: '#007AFF',
+    },
+    remainingCountText: {
+        fontSize: 13,
+        color: '#007AFF',
+        fontWeight: '600',
+    },
+    requestsList: {
+        marginBottom: 8,
+        backgroundColor: '#FFFFFF',
+    },
+    requestType: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#007AFF',
+        marginBottom: 2,
+    },
+    requestDetails: {
+        fontSize: 12,
+        color: '#666',
     },
     reqtime: {
-        marginLeft: windowWidth * 0.02,
-        alignItems: 'center',
-        color: '#011411',
-        fontSize: 14,
-        fontFamily: FontFamily.font_bold,
-        marginTop: windowWidth * 0.02
+        fontSize: 12,
+        color: '#666',
     },
-    dateText: {
-        padding: windowWidth*0.02,
-        fontSize: 25,
-        fontWeight: 'bold',
-        color: '#fff',
-        alignSelf: 'center'
+    viewButton2451: {
+        backgroundColor: '#007AFF',
+        padding: 8,
+        borderRadius: 6,
+        alignSelf: 'center',
+        marginLeft: 10,
+    },
+    viewDetails: {
+        color: '#FFFFFF',
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    text45: {
+        fontSize: 16,
+        textAlign: 'center',
+        marginTop: 20,
+        color: '#666',
     },
 });
 
-export default ReqList; 
+export default ReqList;

@@ -156,6 +156,9 @@ const Home = () => {
     const handleViewDetails = () => {
         navigation.navigate('Request');
     };
+    const handleUploadReport = () => {
+        navigation.navigate('UploadReport');
+    };
 
     const handleViewAll = () => {
         navigation.navigate('Reports');
@@ -260,7 +263,7 @@ const Home = () => {
                             <FontAwesome5 name="hands-helping" size={normalize(30)} color="#357EEA" />
                             <Text style={styles.buttonText}>Contact/Help</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonShadow]} onPress={handleSend}>
+                        <TouchableOpacity style={[styles.button, styles.buttonShadow]} onPress={handleUploadReport}>
                             <MaterialCommunityIcons name="file-upload" size={normalize(30)} color="#357EEA" />
                             <Text style={styles.buttonText}>Upload</Text>
                         </TouchableOpacity>

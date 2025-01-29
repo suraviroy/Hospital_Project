@@ -27,6 +27,11 @@ import Actions from './src/Notification/Actions';
 import { AuthProvider, useAuth } from './src/AuthContext';
 import AdminPatientList from './src/ViewList/AdminPatientList';
 import AdminNotiList from './src/home page/AdminNotiList';
+import ReportNavbar from './src/Notification/ReportNavbar';
+import NotiReport from './src/Notification/NotiReport';
+import AllReport from './src/Notification/AllReport';
+import ReportNotiList from './src/home page/ReportNotiList';
+import PatientAllReport from './src/ViewList/Updated Details/PatientAllReport';
 
 const Stack = createNativeStackNavigator();
 
@@ -83,6 +88,7 @@ function AppNavigator() {
       <Stack.Screen name="ViewList" component={ViewList} />
       <Stack.Screen name="HomeAdmin" component={HomeAdmin} />
       <Stack.Screen name="AdminNotiList" component={AdminNotiList} />
+      <Stack.Screen name="ReportNotiList" component={ReportNotiList} />
       <Stack.Screen name="AddAdmin" component={AddAdmin} />
       <Stack.Screen name="BasicDetails" component={BasicDetails} />
       <Stack.Screen name="PatientBasicDetails" component={PatientBasicDetails} />
@@ -95,6 +101,10 @@ function AppNavigator() {
       <Stack.Screen name="NotificationNavbar" component={NotificationNavbar} />
       <Stack.Screen name="NotificationDetails" component={NotificationDetails} />
       <Stack.Screen name="NotiRequests" component={NotiRequests} />
+      <Stack.Screen name="PatientAllReport" component={PatientAllReport} />
+      <Stack.Screen name="ReportNavbar" component={ReportNavbar} />
+      <Stack.Screen name="NotiReport" component={NotiReport} />
+      <Stack.Screen name="AllReport" component={AllReport} />
       <Stack.Screen name="Actions" component={Actions} />
       <Stack.Screen name= "AdminPatientList" component={AdminPatientList} />
     </Stack.Navigator>
