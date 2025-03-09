@@ -42,9 +42,18 @@ const NotiRequests = () => {
     <View style={styles.backField}>
         <Text style={styles.subHead6}>Date: {requestDetails.date}</Text>
         <Text style={styles.subHead6}>Time: {requestDetails.time}</Text>
-        <Text style={styles.subHead3}>Request: {requestDetails.request}</Text>
+        <View>
+    {requestDetails.request.map((req, index) => (
+        <View key={index} >
+            <Text style={styles.subHead3}>
+                {req.requestFor ? `Request for: ${req.requestFor}` : ''}
+                {req.details !=='NA' ? ` Details - ${req.details}` : ''}
+            </Text>
+        </View>
+    ))}
+</View>
         <Text style={styles.subHead4}>Action: {requestDetails.action}</Text>
-        {requestDetails.report && requestDetails.report.isSelected !== "NA" && (
+        {/* {requestDetails.report && requestDetails.report.isSelected !== "NA" && (
             <Text style={styles.subHead4}>New Report: {requestDetails.report.isSelected} {" "}Type:{"   "}{requestDetails.report.details}
             {requestDetails.report.certificate !== "NA" && (
                     <TouchableOpacity onPress={() => handleDischargeCertificatePress(requestDetails.report.certificate)}>
@@ -52,7 +61,53 @@ const NotiRequests = () => {
                     </TouchableOpacity>
                 )}
             </Text>
-        )}
+        )} */}
+        {requestDetails.report && requestDetails.report.isSelected !== "NA" && requestDetails.report.multiplereport.length>0 && (             <Text style={styles.subHead4}>New Report: {requestDetails.report.isSelected} {" "}</Text>)}
+        {requestDetails.report && 
+ requestDetails.report.isSelected !== "NA" && 
+ requestDetails.report.multiplereport && 
+ requestDetails.report.multiplereport.length > 0 && (
+//    <Text style={styles.subHead4}>
+//      New Report: {requestDetails.report.isSelected} {" "}
+//      Type:{" "}
+     <View style={styles.subHead4}>
+       {requestDetails.report.multiplereport.map((multiplereport, index) => (
+         <View key={index} style={styles.hospitalizationItem}>
+           <Text style={styles.subHead4}>Document Name: {multiplereport.details}{'\n'}</Text>
+           {multiplereport.certificate === 'NA' ? (
+             <Text style={{ 
+               borderRadius: 4, 
+               padding: 7, 
+               fontSize: 13, 
+               fontWeight: 'bold', 
+               fontFamily: 'extrabold01',
+             }}>
+               Not Uploaded
+             </Text>
+           ) : (
+             <TouchableOpacity 
+               onPress={() => handleDischargeCertificatePress(multiplereport.certificate)}
+             >
+               <Text style={{
+                 marginLeft: windowWidth * 0.05,
+                 width: windowWidth * 0.2, 
+                 backgroundColor: '#B21515', 
+                 borderRadius: 4, 
+                 marginTop:-windowWidth*0.03,
+                 padding: windowWidth*0.02, 
+                 color: 'white', 
+                 fontSize: 12, 
+                 fontWeight: '700' 
+               }}>
+                 Open File
+               </Text>
+             </TouchableOpacity>
+           )}
+         </View>
+       ))}
+     </View>
+//    </Text>
+)}
         {requestDetails.exacrebation && requestDetails.exacrebation.isSelected !== "NA" && (
             <Text style={styles.subHead2}>Exacerbation: {requestDetails.exacrebation.isSelected}    Type: {" "}{requestDetails.exacrebation.details}</Text>
         )}

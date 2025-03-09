@@ -97,7 +97,7 @@ const UpdatedBasicDetails = ({ patientId }) => {
           return;
         }
     
-        setLoadingEmail(true); // Start loading
+        setLoadingEmail(true);
     
         try {
           const response = await fetch(`${backendURL}/adminRouter/sendMail`, {

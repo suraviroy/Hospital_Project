@@ -6,32 +6,31 @@ const windowWidth = Dimensions.get('window').width;
 
 const SearchRegister = ({ setSearchText }) => {
   const [searchTextLocal, setSearchTextLocal] = useState('');
-
   const handleSearchChange = (text) => {
-    setSearchTextLocal(text);
-    setSearchText(new RegExp(`^${text}`, 'i'));
+      setSearchTextLocal(text);
+      setSearchText(text);
   };
 
   return (
-    <View style={styles.searchBox2451}>
-      <TouchableOpacity>
-        <Octicons name="search" size={24} style={{ marginLeft: 15, paddingTop: 11, color: '#706767' }} />
-      </TouchableOpacity>
-      <View style={styles.searchWrapper012}>
-        <TextInput
-          style={{
-            fontFamily: 'regular02',
-            width: '100%',
-            height: '100%',
-            paddingHorizontal: 12,
-          }}
-          value={searchTextLocal}
-          onChangeText={handleSearchChange}
-          placeholder="Search now"
-          clearButtonMode="always"
-        />
+      <View style={styles.searchBox2451}>
+          <TouchableOpacity>
+              <Octicons name="search" size={24} style={{ marginLeft: 15, paddingTop: 11, color: "#706767" }} />
+          </TouchableOpacity>
+          <View style={styles.searchWrapper012}>
+              <TextInput  
+                  style={{
+                      fontFamily: "regular02",
+                      width: "100%",
+                      height: "100%",
+                      paddingHorizontal: 12
+                  }}
+                  value={searchTextLocal}
+                  onChangeText={handleSearchChange}
+                  placeholder="Search by Name or Patient ID"
+                  clearButtonMode='always'
+              />
+          </View>
       </View>
-    </View>
   );
 };
 

@@ -5,8 +5,10 @@ import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily } from '../../GlobalStyles';
 import { backendURL } from "../backendapi";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const ViewListURL = `${backendURL}/adminRouter/allpatientList`;
+const SearchURL = `${backendURL}/adminRouter/search`;
 const BasicDetailsURL = `${backendURL}/adminRouter/UpdateProfileNameId`;
 
 const PatientList = ({ searchText }) => {
@@ -14,34 +16,60 @@ const PatientList = ({ searchText }) => {
     const [patients, setPatients] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [loadingStates, setLoadingStates] = useState({}); // Track loading state for each patient
+    const [loadingStates, setLoadingStates] = useState({});
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [loadingMore, setLoadingMore] = useState(false);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(ViewListURL);
-                const data = await response.json();
+    const fetchData = async (page, searchQuery = '') => {
+        try {
+            setLoading(true);
+
+            let url;
+            if (searchQuery) {
+                url = `${SearchURL}?value=${searchQuery}`;
+            } else {
+                url = `${ViewListURL}?page=${page}&limit=10`;
+            }
+
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (searchQuery) {
                 setPatients(data);
                 setFilteredPatients(data);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching patient data:', error);
+                setTotalPages(1);
+            } else {
+                setTotalPages(data.totalPages);
+                setPatients(data.patients);
+                setFilteredPatients(data.patients);
             }
-        };
 
-        fetchData();
-    }, [patients]);
+            setCurrentPage(page);
+        } catch (error) {
+            console.error('Error fetching patient data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        let filtered = patients;
-        if (searchText) {
-          filtered = patients.filter(patient =>
-            searchText.test(patient.name.toLowerCase()) ||
-            searchText.test(patient.patientId.toLowerCase())
-          );
+        fetchData(1);
+    }, []);
+
+    useEffect(() => {
+        if (searchText && typeof searchText === 'string' && searchText.trim() !== '') {
+            fetchData(1, searchText);
+        } else {
+            fetchData(1);
         }
-        setFilteredPatients(filtered);
-    }, [searchText, patients]);
+    }, [searchText]);
+
+    const handlePageChange = (newPage) => {
+        if (newPage > 0 && newPage <= totalPages) {
+            fetchData(newPage);
+        }
+    };
 
     const setPatientLoading = (patientId, action, isLoading) => {
         setLoadingStates(prev => ({
@@ -131,15 +159,27 @@ const PatientList = ({ searchText }) => {
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.appointmentContainer}>
-                    <Text style={styles.appointmentText}>
-                        Last Appointment On: {' '}
-                        <Text style={styles.appointmentTime}>{item.visitDate}, {item.visitTime}</Text>
-                    </Text>
-                </View>
+                {item.visitDate && item.visitTime && (
+                    <View style={styles.appointmentContainer}>
+                        <Text style={styles.appointmentText}>
+                            Last Appointment On: {' '}
+                            <Text style={styles.appointmentTime}>{item.visitDate}, {item.visitTime}</Text>
+                        </Text>
+                    </View>
+                )}
             </View>
         </View>
     );
+
+    const renderFooter = () => {
+        if (!loadingMore || searchText) return null;
+        return (
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator size="small" color="#096759" />
+                <Text style={styles.loadingText}>Loading More ...</Text>
+            </View>
+        );
+    };
 
     if (loading) {
         return (
@@ -165,12 +205,37 @@ const PatientList = ({ searchText }) => {
                 nestedScrollEnabled
                 data={filteredPatients}
                 renderItem={renderPatientItem}
-                keyExtractor={item => item.patientId}
+                keyExtractor={(item, index) => item.patientId + index}
                 contentContainerStyle={styles.listContainer}
             />
+            
+            {!searchText && totalPages > 1 && (
+                <View style={styles.paginationContainer}>
+                    <TouchableOpacity 
+                        style={[styles.paginationButton, currentPage === 1 && styles.disabledButton]}
+                        onPress={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        <Icon name="chevron-left" size={24} color={currentPage === 1 ? '#ccc' : '#096759'} />
+                    </TouchableOpacity>
+
+                    <Text style={styles.pageText}>
+                        Page {currentPage} of {totalPages}
+                    </Text>
+
+                    <TouchableOpacity 
+                        style={[styles.paginationButton, currentPage === totalPages && styles.disabledButton]}
+                        onPress={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        <Icon name="chevron-right" size={24} color={currentPage === totalPages ? '#ccc' : '#096759'} />
+                    </TouchableOpacity>
+                </View>
+            )}
         </SafeAreaView>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -179,7 +244,26 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         paddingHorizontal: 10,
-        paddingTop: 10,
+        paddingTop: windowWidth*0.05,
+    },
+    paginationContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 10,
+        backgroundColor: '#fff',
+    },
+    paginationButton: {
+        padding: 10,
+        marginHorizontal: 10,
+    },
+    disabledButton: {
+        opacity: 0.3,
+    },
+    pageText: {
+        fontSize: 16,
+        fontFamily: 'bold01',
+        color: '#096759',
     },
     patientView: {
         flexDirection: 'row',
@@ -194,16 +278,15 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        minHeight: windowWidth * 0.43, // Set minimum height
-        // maxHeight: windowWidth * 0.5, // Set maximum height
+        minHeight: windowWidth * 0.38, 
     },
     imageContainer: {
-        width: windowWidth * 0.18, // Reduced width
-        height: windowWidth * 0.18, // Fixed height same as width
+        width: windowWidth * 0.18, 
+        height: windowWidth * 0.18, 
         marginRight: 10,
         borderRadius: 8,
         overflow: 'hidden',
-        backgroundColor: '#f5f5f5', // Light background for image container
+        backgroundColor: '#f5f5f5', 
     },
     patientImage: {
         width: '100%',
@@ -243,8 +326,8 @@ const styles = StyleSheet.create({
         minWidth: windowWidth * 0.22,
         marginLeft:-windowWidth*0.09,
         alignItems: 'center',
-        justifyContent: 'center', // Added for centering ActivityIndicator
-        minHeight: 35, // Added to maintain consistent height with/without loader
+        justifyContent: 'center', 
+        minHeight: 35,
     },
     updateButton: {
         padding: windowWidth*0.02,
@@ -253,8 +336,8 @@ const styles = StyleSheet.create({
         borderColor: '#E14526',
         minWidth: windowWidth * 0.22,
         alignItems: 'center',
-        justifyContent: 'center', // Added for centering ActivityIndicator
-        minHeight: 35, // Added to maintain consistent height with/without loader
+        justifyContent: 'center', 
+        minHeight: 35,
     },
     viewButtonText: {
         color: '#077547',
@@ -282,6 +365,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        padding: 10,
     },
     loadingText: {
         marginTop: 16,

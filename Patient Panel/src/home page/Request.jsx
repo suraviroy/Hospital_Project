@@ -42,7 +42,9 @@ const Request = () => {
     const [selectedOption7, setSelectedOption7] = useState("Select");
     const [selectedDetails7, setSelectedDetails7] = useState("");
     const [isClicked8, setIsClicked8] = useState(false);
-    const [selectedRequest, setSelectedRequest] = useState("Select");
+    // const [selectedRequest, setSelectedRequest] = useState("Select");
+    const [selectedRequests, setSelectedRequests] = useState([]);
+    const [otherTexts, setOtherTexts] = useState({}); 
     const [otherText, setOtherText] = useState('');
     const [isClicked9, setIsClicked9] = useState(false);
     const [isClicked10, setIsClicked10] = useState(false);
@@ -105,12 +107,35 @@ const Request = () => {
 
         getPatientId();
     }, []);
-    const handleRequestSelection = (val) => {
-        setSelectedRequest(val);
-        if (val === 'Others') {
-            setOtherText('');
-        }
-    };
+    const handleRequestSelection = (value) => {
+      if (value === "Select") {
+          return;
+      }
+  
+      setSelectedRequests(prev => {
+          // If item already exists, remove it (toggle behavior)
+          if (prev.includes(value)) {
+              return prev.filter(item => item !== value);
+          }
+          // Otherwise add it
+          return [...prev, value];
+      });
+  };
+  const handleOtherText = (text, index) => {
+    setOtherTexts(prev => ({
+        ...prev,
+        [index]: text
+    }));
+};
+    // const handleRequestSelection = (val) => {
+    //     setSelectedRequest(val);
+    //     if (val === 'Others') {
+    //         setOtherText('');
+    //     }
+    // };
+    //  const [multiplereportFields, setmultiplereportFields] = useState([
+    //     { id: 1,details:'', certificate: null, uploading: false }
+    //   ]);
 
     const showOptions1 = () => {
         if (Platform.OS === 'ios') {
@@ -657,71 +682,109 @@ const Request = () => {
             }
           };
 
-          const showOptions3 = () => {
-            if (Platform.OS === 'ios') {
-              Alert.alert(
-                'Select File',
-                'Choose a method',
-                [
-                    {
-                        text: 'Take Photo',
-                        onPress: () => pickImage3('camera')
-                      },
-                      {
-                        text: 'Choose from Gallery',
-                        onPress: () => pickImage3('gallery')
-                      },
-                      {
-                        text: 'Upload Document',
-                        onPress: () => pickDocument3()
-                      },
-                  {
-                    text: 'Cancel',
-                    style: 'cancel'
-                  }
-                ]
+       
+          const [multiplereportFields, setMultipleReportFields] = useState([
+            { id: 1, details: '', certificate: null, uploading: false }
+          ]);
+          
+          const addReportField = () => {
+            const newId = multiplereportFields.length > 0 
+              ? Math.max(...multiplereportFields.map(field => field.id)) + 1 
+              : 1;
+            
+            setMultipleReportFields([
+              ...multiplereportFields, 
+              { id: newId, details: '', certificate: null, uploading: false }
+            ]);
+          };
+        
+          const removeReportField = (idToRemove) => {
+            setMultipleReportFields(
+              multiplereportFields.filter(field => field.id !== idToRemove)
+            );
+          };
+          
+          const uploadToCloudinaryMultipleReports = async (file, type, fieldId) => {
+           
+            const updatedFields = [...multiplereportFields];
+            const fieldIndex = updatedFields.findIndex(field => field.id === fieldId);
+            
+            if (fieldIndex === -1) return;
+        
+            updatedFields[fieldIndex].uploading = true;
+            setMultipleReportFields(updatedFields);
+          
+            try {
+              const formData = new FormData();
+              formData.append('file', {
+                uri: file.uri,
+                name: file.name || `${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`,
+                type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+              });
+              formData.append('upload_preset', 'pulmocareapp');
+              formData.append('cloud_name', 'pulmocare01');
+          
+              const response = await fetch(
+                'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+                {
+                  method: 'POST',
+                  body: formData,
+                }
               );
-            } else {
-              Alert.alert(
-                'Select File',
-                'Choose a method',
-                [
-                    {
-                        text: 'Take Photo',
-                        onPress: () => pickImage3('camera')
-                      },
-                  {
-                    text: 'Cancel',
-                    style: 'cancel'
+          
+              if (response.ok) {
+                const data = await response.json();
+
+                const finalUpdatedFields = [...multiplereportFields];
+                const finalFieldIndex = finalUpdatedFields.findIndex(field => field.id === fieldId);
+                
+                finalUpdatedFields[finalFieldIndex] = {
+                  ...finalUpdatedFields[finalFieldIndex],
+                  certificate: {
+                    name: data.original_filename || file.name,
+                    type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+                    uri: data.secure_url,
                   },
-                  {
-                    text: 'More Options',
-                    onPress: () => {
-                      Alert.alert(
-                        'More Options',
-                        '',
-                        [
-                            {
-                                text: 'Upload Document',
-                                onPress: () => pickDocument3()
-                              },
-                          {
-                            text: 'Choose from Gallery',
-                            onPress: () => pickImage3('gallery')
-                          },
-                          {
-                            text: 'Cancel',
-                            style: 'cancel'
-                          },
-                        ]
-                      );
-                    }
-                  }
-                ]
-              );
+                  uploading: false
+                };
+          
+                setMultipleReportFields(finalUpdatedFields);
+              } else {
+                throw new Error('Failed to upload file to Cloudinary');
+              }
+            } catch (error) {
+              console.error('Error uploading file:', error);
+              const finalUpdatedFields = [...multiplereportFields];
+              const finalFieldIndex = finalUpdatedFields.findIndex(field => field.id === fieldId);
+              
+              finalUpdatedFields[finalFieldIndex] = {
+                ...finalUpdatedFields[finalFieldIndex],
+                certificate: null,
+                uploading: false
+              };
+          
+              setMultipleReportFields(finalUpdatedFields);
+              
+              Alert.alert('Error uploading file. Please check your internet connection and try again.');
             }
           };
-          const pickImage3 = async (source) => {
+          const pickDocumentMultipleReports = async (fieldId) => {
+            try {
+              const result = await DocumentPicker.getDocumentAsync({
+                type: ['application/pdf', 'application/msword', 
+                       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+                copyToCacheDirectory: true
+              });
+          
+              if (!result.canceled) {
+                await uploadToCloudinaryMultipleReports(result.assets[0], 'document', fieldId);
+              }
+            } catch (error) {
+              console.error('Error picking document:', error);
+              Alert.alert('Error selecting document. Please try again.');
+            }
+          };
+          const pickImageMultipleReports = async (source, fieldId) => {
             try {
               let result;
               
@@ -750,95 +813,103 @@ const Request = () => {
                   quality: 1,
                 });
               }
-        
+          
               if (!result.canceled) {
-                await uploadToCloudinary3(result.assets[0], 'image');
+                await uploadToCloudinaryMultipleReports(result.assets[0], 'image', fieldId);
               }
             } catch (error) {
               console.error('Error picking image:', error);
               Alert.alert('Error selecting image. Please try again.');
             }
           };
-        
-          const pickDocument3 = async () => {
-            try {
-              const result = await DocumentPicker.getDocumentAsync({
-                type: ['application/pdf', 'application/msword', 
-                       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-                copyToCacheDirectory: true
-              });
-        
-              if (!result.canceled) {
-                await uploadToCloudinary3(result.assets[0], 'document');
-              }
-            } catch (error) {
-              console.error('Error picking document:', error);
-              Alert.alert('Error selecting document. Please try again.');
-            }
-          };
-        
-          const uploadToCloudinary3= async (file, type) => {
-            setIsLoading4(true);
-            try {
-              const formData = new FormData();
-              formData.append('file', {
-                uri: file.uri,
-                name: file.name || `${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`,
-                type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
-              });
-              formData.append('upload_preset', 'pulmocareapp');
-              formData.append('cloud_name', 'pulmocare01');
-        
-              const response = await fetch(
-                'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
-                {
-                  method: 'POST',
-                  body: formData,
-                }
+          
+          const showOptionsMultipleReports = (fieldId) => {
+            if (Platform.OS === 'ios') {
+              Alert.alert(
+                'Select File',
+                'Choose a method',
+                [
+                  {
+                    text: 'Take Photo',
+                    onPress: () => pickImageMultipleReports('camera', fieldId)
+                  },
+                  {
+                    text: 'Choose from Gallery',
+                    onPress: () => pickImageMultipleReports('gallery', fieldId)
+                  },
+                  {
+                    text: 'Upload Document',
+                    onPress: () => pickDocumentMultipleReports(fieldId)
+                  },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel'
+                  }
+                ]
               );
-        
-              if (response.ok) {
-                const data = await response.json();
-                console.log('Cloudinary response:', data);
-                
-                setPickedFile3({
-                  name: data.original_filename || file.name,
-                  type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
-                  uri: data.secure_url,
-                });
-              } else {
-                throw new Error('Failed to upload file to Cloudinary');
-              }
-            } catch (error) {
-              console.error('Error uploading file:', error);
-              Alert.alert('Error uploading file. Please check your internet connection and try again.');
-            } finally {
-              setIsLoading4(false);
+            } else {
+              Alert.alert(
+                'Select File',
+                'Choose a method',
+                [
+                  {
+                    text: 'Take Photo',
+                    onPress: () => pickImageMultipleReports('camera', fieldId)
+                  },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel'
+                  },
+                  {
+                    text: 'More Options',
+                    onPress: () => {
+                      Alert.alert(
+                        'More Options',
+                        '',
+                        [
+                          {
+                            text: 'Upload Document',
+                            onPress: () => pickDocumentMultipleReports(fieldId)
+                          },
+                          {
+                            text: 'Choose from Gallery',
+                            onPress: () => pickImageMultipleReports('gallery', fieldId)
+                          },
+                          {
+                            text: 'Cancel',
+                            style: 'cancel'
+                          },
+                        ]
+                      );
+                    }
+                  }
+                ]
+              );
             }
           };
 
-    const validateForm = () => {
-        if (selectedRequest === 'Select') {
-            Alert.alert("Alert", "Please select a request type");
-            return false;
-        }
+    // const validateForm = () => {
+    //     if (selectedRequest === 'Select') {
+    //         Alert.alert("Alert", "Please select a request type");
+    //         return false;
+    //     }
 
-        if (selectedRequest === 'Others' && !otherText.trim()) {
-            Alert.alert("Alert", "Please enter your request details");
-            return false;
-        }
+    //     if (selectedRequest === 'Others' && !otherText.trim()) {
+    //         Alert.alert("Alert", "Please enter your request details");
+    //         return false;
+    //     }
 
-        return true;
-    };
+    //     return true;
+    // };
 
     const handleSave = async () => {
         if (isSubmitting) {
             return;
         }
 
-        if (!validateForm()) {
-            return;
-        }
+        // if (!validateForm()) {
+        //     return;
+        // }
 
         if (!patientId) {
             console.error('PatientId is not available');
@@ -848,9 +919,15 @@ const Request = () => {
         try {
             setIsSubmitting(true);
             setIsLoading1(true);
+            const multiplereportData = multiplereportFields.map(field => ({
+              details: field.details || "NA",
+              certificate: field.certificate ? field.certificate.uri : "NA"
+            }));
+            const requestsData = selectedRequests.map(request => ({
+              requestFor: request === "Others" ? otherTexts[request] || "NA" : request,
+              details: "NA" // You can add details handling if needed
+          }));
 
-            const requestText =
-                selectedRequest === "Select" ? "NA" : (selectedRequest === "Others" ? otherText : selectedRequest);
             const reqData = {
                 patientId: patientId,
                 exacrebation: {
@@ -880,11 +957,10 @@ const Request = () => {
                     deathCertificate: pickedFile2 ? pickedFile2.uri : "NA",
                 },
                 report: {
-                    isSelected: selectedOption7 === "Select" ? "NA" : selectedOption7,
-                    details: selectedDetails7 || "NA",
-                    certificate: pickedFile3 ? pickedFile3.uri : "NA",
+                  isSelected: selectedOption7 === "Select" ? "NA" : selectedOption7,
+                  multiplereport: multiplereportData
                 },
-                request: requestText,
+                request: requestsData.length > 0 ? requestsData : [{ requestFor: "NA", details: "NA" }],
                 action: "NA"
             };
 
@@ -1479,75 +1555,125 @@ const Request = () => {
                             </View>
                         ) : null}
                         {isClicked15 ? (
-                            <View>
-                                <View style={styles.problems}>
-                                    <View style={styles.problist}>
-                                        <Text style={{ fontWeight: "700", fontSize: 16, width: "50%" }}>
-                                            Add Details :
-                                        </Text>
-                                    </View>
-                                    <TouchableOpacity style={styles.textbox}>
-                                        <TextInput
-                                            style={{ fontSize: 15, width: windowWidth * 0.8 }}
-                                            placeholder="Enter Here"
-                                            placeholderTextColor={"#8E7D7D"}
-                                            onChangeText={(text) => setSelectedDetails7(text)}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.hosopt1}>
-                                    <Icon name="paperclip" size={22} color={Color.colorGray_100} />
-                                    <Text style={{ fontWeight: '700', fontSize: 15, width: windowWidth * 0.42, color: '#8E7D7D', marginLeft: windowWidth * 0.05 }}>
-                                        {pickedFile3 ? pickedFile3.name : 'Upload Report'}
-                                    </Text>
-                                    <TouchableOpacity style={styles.uploadbutton} onPress={showOptions3}>
-                                        {isLoading4 ? (
-                                            <ActivityIndicator size="small" color={'#357EEA'} />
-                                        ) : (
-                                            <Text style={{ fontWeight: '700', fontSize: 15, color: '#357EEA', alignSelf: 'center' }}>Upload</Text>
-                                        )}
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        ) : null}
+  <View>
+    {multiplereportFields.map((field, index) => (
+      <View key={field.id} style={styles.multiplereportContainer}>
+        {index > 0 && (
+          <TouchableOpacity 
+          style={styles.removeButton}
+            onPress={() => removeReportField(field.id)}
+          >
+             <Icon name="times" size={20} color="#FF4444" />
+          </TouchableOpacity>
+        )}
+
+        <View style={styles.problems}>
+          <View style={styles.problist}>
+            <Text style={{ fontWeight: "700", fontSize: 16, width: "50%" }}>
+              Add Details:
+            </Text>
+          </View>
+          <TouchableOpacity style={styles.textbox}>
+            <TextInput
+              style={{ fontSize: 15, width: windowWidth * 0.8 }}
+              placeholder="Enter Here"
+              placeholderTextColor={"#8E7D7D"}
+              value={field.details}
+              onChangeText={(text) => {
+                const updatedFields = [...multiplereportFields];
+                const fieldIndex = updatedFields.findIndex(f => f.id === field.id);
+                updatedFields[fieldIndex].details = text;
+                setMultipleReportFields(updatedFields);
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+        
+        <View style={styles.hosopt1}>
+          <Icon name="paperclip" size={22} color={Color.colorGray_100} />
+          <Text style={{ 
+            fontWeight: '700', 
+            fontSize: 15, 
+            width: windowWidth * 0.42, 
+            color: '#8E7D7D', 
+            marginLeft: windowWidth * 0.05 
+          }}>
+            {field.certificate ? field.certificate.name : 'Upload Report'}
+          </Text>
+          <TouchableOpacity 
+            style={styles.uploadbutton} 
+            onPress={() => showOptionsMultipleReports(field.id)}
+            disabled={field.uploading}
+          >
+            {field.uploading ? (
+              <ActivityIndicator size="small" color={'#357EEA'} />
+            ) : (
+              <Text style={{ 
+                fontWeight: '700', 
+                fontSize: 15, 
+                color: '#357EEA', 
+                alignSelf: 'center' 
+              }}>
+                Upload
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+    ))}
+    <TouchableOpacity 
+      style={styles.addMoreButton} 
+      onPress={addReportField}
+    >
+      <Icon name="plus" size={20} color="#357EEA" />
+      <Text style={styles.addMoreButtonText}>Add More Report</Text>
+    </TouchableOpacity>
+  </View>
+  ) : null}
                         <View style={styles.reqdet}>
-                            <Text style={styles.texthead}>Request*</Text>
-                        </View>
-                        <View style={{ paddingHorizontal: 10 }}>
-                        <SelectList
-                            setSelected={handleRequestSelection}
-                            data={Req_Options}
-                            save="value"
-                            placeholder='Select'
-                            searchPlaceholder='Search'
-                            boxStyles={{
-                                borderRadius: 5,
-                                borderWidth: 0.5,
-                                borderColor: '#A99F9F',
-                                marginTop: windowWidth * 0.03,
-                                backgroundColor: '#e3e3e3',
-                                paddingLeft: 15,
-                                paddingRight: 15,
-                            }}
-                            inputStyles={{ color: '#8E7D7D', fontSize: 15 }}
-                        />
-                        {selectedRequest === 'Others' && (
-                            <TextInput
-                                value={otherText}
-                                onChangeText={setOtherText}
-                                placeholder="Enter request"
-                                placeholderTextColor={"#8E7D7D"}
-                                style={{
-                                    marginTop: 10,
-                                    borderWidth: 0.5,
-                                    borderColor: '#A99F9F',
-                                    borderRadius: 5,
-                                    paddingHorizontal: 10,
-                                    paddingVertical: 8,
-                                }}
-                            />
-                        )}
-                    </View>
+    <Text style={styles.texthead}>Request*</Text>
+</View>
+<View style={{ paddingHorizontal: 10 }}>
+    {Req_Options.map((option, index) => (
+        <View key={option.key} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <TouchableOpacity
+                style={{
+                    width: 20,
+                    height: 20,
+                    borderWidth: 1,
+                    borderColor: '#A99F9F',
+                    backgroundColor: selectedRequests.includes(option.value) ? '#007AFF' : '#e3e3e3',
+                    marginRight: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+                onPress={() => handleRequestSelection(option.value)}
+            >
+                {selectedRequests.includes(option.value) && (
+                    <Text style={{ color: '#fff' }}>✓</Text>
+                )}
+            </TouchableOpacity>
+            <Text>{option.value}</Text>
+        </View>
+    ))}
+    
+    {selectedRequests.includes('Others') && (
+        <TextInput
+            value={otherTexts['Others']}
+            onChangeText={(text) => handleOtherText(text, 'Others')}
+            placeholder="Enter request"
+            placeholderTextColor={"#8E7D7D"}
+            style={{
+                marginTop: 10,
+                borderWidth: 0.5,
+                borderColor: '#A99F9F',
+                borderRadius: 5,
+                paddingHorizontal: 10,
+                paddingVertical: 8,
+            }}
+        />
+    )}
+</View>
                     <TouchableOpacity 
                         style={[
                             styles.submitButton,
@@ -1713,6 +1839,34 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         paddingRight: 15,
         borderRadius: 10
+    },
+    multiplereportContainer: {
+      marginBottom: 15,
+      position: 'relative',
+    },
+    removeFieldButton: {
+      position: 'absolute', 
+      top: 0, 
+      right: 0, 
+      zIndex: 10,
+    },
+    addMoreButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 10,
+      backgroundColor: '#F0F0F0',
+      borderRadius: 5,
+      marginTop: 10,
+    },
+    addMoreButtonText: {
+      color: '#357EEA',
+      marginLeft: 10,
+      fontWeight: '700',
+    },
+    removeButton: {
+      padding: 5,
+      marginLeft: 15,
     },
     // hosopt1: {
     //     flexDirection: 'row',

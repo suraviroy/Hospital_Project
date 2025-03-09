@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Image,StatusBar, TouchableOpacity, Platform, Dimensions, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, StatusBar, TouchableOpacity, Platform, Dimensions, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { backendURL } from "../backendapi";
 import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
@@ -7,30 +7,49 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const windowWidth = Dimensions.get('window').width;
 const ViewListURL = `${backendURL}/adminRouter/oneAdminNotification/`;
+
 const AdminNotiList = ({ route }) => {
   const navigation = useNavigation();
   const { idNumber } = route.params;
   const [notifications, setNotifications] = useState([]);
-  const [displayedNotifications, setDisplayedNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalRequests, setTotalRequests] = useState(0);
   const itemsPerPage = 5;
 
   useEffect(() => {
-    fetchNotifications();
-  }, [idNumber]);
+    fetchNotifications(currentPage);
+  }, [idNumber, currentPage]);
 
-  useEffect(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const newItems = notifications.slice(startIndex, startIndex + itemsPerPage);
-    setDisplayedNotifications((prev) => [...prev, ...newItems]);
-  }, [currentPage, notifications]);
-
-  const fetchNotifications = async () => {
+  const fetchNotifications = async (page) => {
     try {
-      const response = await fetch(`${ViewListURL}${idNumber}`);
+      setLoading(true);
+      const response = await fetch(`${ViewListURL}${idNumber}?page=${page}&limit=${itemsPerPage}`);
       const data = await response.json();
-      setNotifications(data);
+      const processedNotifications = data.notifications.map(notification => {
+        if (Array.isArray(notification.request)) {
+          const requestCount = notification.request.length;
+          return {
+            ...notification,
+            displayRequest: notification.request[0].requestFor || 'Request',
+            details: notification.request[0].details, 
+            additionalRequestCount: requestCount > 1 ? `+${requestCount - 1}` : ''
+          };
+        }
+        return {
+          ...notification,
+          displayRequest: notification.request,
+          additionalRequestCount: ''
+        };
+      });
+
+      setNotifications(prevNotifications => 
+        page === 1 ? processedNotifications : [...prevNotifications, ...processedNotifications]
+      );
+      
+      setTotalPages(data.totalPages);
+      setTotalRequests(data.totalRequests);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching notification data:', error);
@@ -47,12 +66,12 @@ const AdminNotiList = ({ route }) => {
   };
 
   const loadMoreNotifications = () => {
-    if (displayedNotifications.length < notifications.length) {
+    if (currentPage < totalPages) {
       setCurrentPage((prev) => prev + 1);
     }
   };
 
-  if (loading) {
+  if (loading && notifications.length === 0) {
     return (
       <View style={styles.loaderContainer}>
         <ActivityIndicator size="large" color="#096759" />
@@ -83,7 +102,7 @@ const AdminNotiList = ({ route }) => {
         <Text style={styles.text2451}>Notifications</Text>
       </View>
       <FlatList
-        data={displayedNotifications}
+        data={notifications}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => handleViewDetails(item.patientId, item.requestId)}
@@ -106,7 +125,20 @@ const AdminNotiList = ({ route }) => {
                     {item.name} sent you a request
                   </Text>
                   <Text style={styles.patientMessage} numberOfLines={2}>
-                    {item.request}
+                    Request for: {' '} 
+                    {item.displayRequest}  {' '} 
+                     
+                    {item.details !=='NA' && (
+                            <Text style={styles.patientMessage} numberOfLines={2}>
+                                Details: 
+                                {item.details}
+                            </Text>
+                        )}
+                    {item.additionalRequestCount && (
+                      <Text style={styles.additionalRequestText}>
+                        {` ${item.additionalRequestCount}`}
+                      </Text>
+                    )}
                   </Text>
                   <Text style={styles.patientName}>Coordinator: {item.coordinator}</Text>
                 </View>
@@ -133,18 +165,18 @@ const AdminNotiList = ({ route }) => {
             </View>
           </TouchableOpacity>
         )}
-        keyExtractor={(item) => item.requestId}
+        keyExtractor={(item) => `${item.requestId}`}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
         onEndReached={loadMoreNotifications}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
-          displayedNotifications.length < notifications.length && (
+          loading && notifications.length > 0 ? (
             <View style={styles.footerLoader}>
               <ActivityIndicator size="small" color="#096759" />
               <Text>Loading more...</Text>
             </View>
-          )
+          ) : null
         }
       />
     </View>
@@ -157,7 +189,7 @@ const styles = StyleSheet.create({
     },
     patientContainer2451: {
         flex: 1, 
-        paddingTop: windowWidth * 0.1,
+        paddingTop: windowWidth * 0.15,
         backgroundColor: '#fff',
         // paddingBottom: windowWidth * 0.2,
     },

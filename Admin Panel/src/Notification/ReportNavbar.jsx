@@ -7,12 +7,14 @@ import NotificationDetails from './NotificationDetails';
 import NotiRequests from './NotiRequests';
 import Actions from './Actions'; 
 import { backendURL } from "../backendapi";
+import NotiReport from './NotiReport';
+import AllReport from './AllReport';
 const windowWidth = Dimensions.get('window').width;
 
-const NotificationNavbar = () => {
+const ReportNavbar = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const { patientId, requestId } = route.params;
+    const { patientId, reportId } = route.params;
     const [selectedTab, setSelectedTab] = useState(0);
     const [basicDetails, setBasicDetails] = useState({});
     
@@ -58,7 +60,7 @@ const NotificationNavbar = () => {
                 </View>
                 
                 <View style={styles.tabContainer}>
-                    {['Patient Details', 'Requests', 'Actions'].map((tab, index) => (
+                    {['Patient Details', 'New Reports', 'All Reports'].map((tab, index) => (
                         <TouchableOpacity 
                             key={index}
                             style={[
@@ -78,8 +80,8 @@ const NotificationNavbar = () => {
                 </View>
 
                 {selectedTab === 0 && <NotificationDetails patientId={patientId} />}
-                {selectedTab === 1 && <NotiRequests requestId={requestId} />}
-                {selectedTab === 2 && <Actions requestId={requestId} />}
+                {selectedTab === 1 && <NotiReport reportId={reportId} />}
+                {selectedTab === 2 && <AllReport patientId={patientId} />}
             </ScrollView>
         </SafeAreaView>
     );
@@ -172,4 +174,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default NotificationNavbar;
+export default ReportNavbar;

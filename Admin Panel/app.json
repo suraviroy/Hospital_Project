@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo.png",
+        "foregroundImage": "./assets/fore.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
@@ -29,6 +29,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b2f3b620-89e3-4515-ae8d-d736404c5d97"
+      }
     }
   }
 }
