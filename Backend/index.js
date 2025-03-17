@@ -9,6 +9,9 @@ import morgan from "morgan";
 import fs from "fs";
 import path from "path";
 //import { fileURLToPath } from "url";
+import multer from "multer";
+import { v4 as uuidv4 } from "uuid";
+
 
 const app = express()
 dotenv.config()
@@ -28,7 +31,7 @@ const formatDateTime = () => {
   return { date, time };
 };
 
-const logFilePath = path.join("C:/hackathon/Hospital/Hospital_Project/Backend", "logs.txt");
+const logFilePath = path.join("./", "logs.txt");
 const logStream = fs.createWriteStream(logFilePath, { flags: "a" });
 
 // Define Morgan tokens
@@ -48,7 +51,7 @@ morgan.token("ip", (req) => {
 });
 
 // Define Log Format
-const logFormat = 'Backend -> Time - :time , Date - :date , IP: :ip  , Method: :method  , URL: :url  , Status: :status , Response Time: :response-time ms\n';
+const logFormat = 'B -> :time, :date, :ip, :method, :url, :status, :response-time ms\n';
 
 
 // Use Morgan middleware
@@ -75,6 +78,48 @@ app.post("/log", (req, res) => {
 });
 
 //======================logs==================================================================
+
+//-----------------------------------File upload to backend--------------------------------------------------
+
+// Ensure 'uploads' directory exists
+const uploadDir = path.join("./", "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+// Configure Multer for file storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Save files in 'uploads' folder
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const uniqueName = uuidv4() + ext; // Generate unique filename
+    cb(null, uniqueName);
+  },
+});
+
+const upload = multer({ storage });
+
+// File upload route
+app.post("/upload", upload.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  res.json({
+    message: "File uploaded successfully",
+    fileName: req.file.filename,
+    filePath: `/uploads/${req.file.filename}`,
+  });
+});
+
+// Serve uploaded files statically
+app.use("/uploads", express.static(path.join("./", "uploads")));
+
+
+
+//--------------------------------------------Files upload----------------------------------------------------------
 
 
 

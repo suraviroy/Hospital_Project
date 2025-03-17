@@ -1,3 +1,5 @@
+Backend -> Time, Date, IP, Method, URL, Status, Response Time
+
 Backend -> Time - 11:16:20 , Date - 09/03/2025 , IP: 27.0.0.1  , Method: GET  , URL: /adminRouter/Reportsnotification  , Status: 200 , Response Time: 311.930 ms
 
 Backend -> Time - 11:22:00 , Date - 09/03/2025 , IP: 27.0.0.1  , Method: POST  , URL: /log  , Status: 400 , Response Time: 5.047 ms
@@ -13,4 +15,20 @@ Backend -> Time - 11:24:09 , Date - 09/03/2025 , IP: 27.0.0.1  , Method: POST  ,
 Backend -> Time - 11:26:05 , Date - 09/03/2025 , IP: 27.0.0.1  , Method: GET  , URL: /adminRouter/Reportsnotification  , Status: 304 , Response Time: 354.855 ms
 
 Backend -> Time - 11:26:47 , Date - 09/03/2025 , IP: 27.0.0.1  , Method: GET  , URL: /adminRouter/excelFileFeedback  , Status: 200 , Response Time: 331.996 ms
+
+Backend -> Time - 19:50:34 , Date - 17/03/2025 , IP: 27.0.0.1  , Method: GET  , URL: /upload  , Status: 404 , Response Time: 6.370 ms
+
+Backend -> Time - 19:53:34 , Date - 17/03/2025 , IP: 27.0.0.1  , Method: POST  , URL: /upload  , Status: 200 , Response Time: 21.020 ms
+
+Backend -> Time - 19:56:41 , Date - 17/03/2025 , IP: 27.0.0.1  , Method: POST  , URL: /upload  , Status: 200 , Response Time: 9.689 ms
+
+Backend -> Time - 19:58:45 , Date - 17/03/2025 , IP: 27.0.0.1  , Method: POST  , URL: /upload  , Status: 200 , Response Time: 48.941 ms
+
+Backend -> Time - 19:59:59 , Date - 17/03/2025 , IP: 27.0.0.1  , Method: POST  , URL: /upload  , Status: 200 , Response Time: 13.681 ms
+
+Backend -> Time - 20:01:27 , Date - 17/03/2025 , IP: 27.0.0.1  , Method: POST  , URL: /upload  , Status: 200 , Response Time: 22.108 ms
+
+Backend -> Time - 20:04:18 , Date - 17/03/2025 , IP: 27.0.0.1  , Method: POST  , URL: /upload  , Status: 200 , Response Time: 39.200 ms
+
+B -> 20:05:54, 17/03/2025, 27.0.0.1, POST, /upload, 200, 34.956 ms
 
