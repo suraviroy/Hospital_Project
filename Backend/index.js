@@ -119,7 +119,23 @@ app.use("/uploads", express.static(path.join("./", "uploads")));
 
 
 
-//--------------------------------------------Files upload----------------------------------------------------------
+//--------------------------------------------Files Get----------------------------------------------------------
+
+// Serve uploaded files statically (for direct access)
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+// API to fetch file by name
+app.get("/getfile/:fileName", (req, res) => {
+  const fileName = req.params.fileName;
+  const filePath = path.join(process.cwd(), "uploads", fileName);
+
+  // Check if file exists
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).json({ error: "File not found" });
+  }
+});
 
 
 
