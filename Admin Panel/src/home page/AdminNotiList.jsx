@@ -115,7 +115,7 @@ const AdminNotiList = ({ route }) => {
               ]}
             >
               {item.image ? (
-                <Image source={{ uri: item.image }} style={styles.patientImage} />
+                <Image source={{uri: `${backendURL}/getfile/${item.image}`}} style={styles.patientImage} />
               ) : (
                 <Image source={require('../../assets/images/user2.png')} style={styles.patientImage} />
               )}

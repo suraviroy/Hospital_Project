@@ -25,7 +25,7 @@ const NotiRequests = () => {
     };
 
     const handleDischargeCertificatePress = (url) => {
-        Linking.openURL(url);
+        Linking.openURL(`${backendURL}/getfile/${url}`);
     };
 
     return (

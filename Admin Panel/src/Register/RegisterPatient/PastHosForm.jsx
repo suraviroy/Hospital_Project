@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Picker } from '@react-native-picker/picker';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
+import { backendURL } from "../../backendapi";
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -42,41 +43,41 @@ const PastHosForm = ({ onDataChange }) => {
   const uploadToCloudinary = async (fileInfo) => {
     const formData = new FormData();
     formData.append('file', {
-      uri: fileInfo.uri,
-      name: fileInfo.name || 'file',
-      type: fileInfo.type || 'application/octet-stream',
+        uri: fileInfo.uri,
+        name: fileInfo.name || 'file',
+        type: fileInfo.type || 'application/octet-stream',
     });
-    formData.append('upload_preset', 'pulmocareapp');
-    formData.append('cloud_name', 'pulmocare01');
 
     try {
-      setUploading(true);
-      const response = await fetch(
-        'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
+        setUploading(true);
+        const response = await fetch(
+            `${backendURL}/upload`,
+            {
+                method: 'POST',
+                body: formData,
+            }
+        );
 
-      if (response.ok) {
-        const data = await response.json();
-        return {
-          name: data.original_filename || fileInfo.name,
-          type: fileInfo.type,
-          uri: data.secure_url,
-        };
-      } else {
-        throw new Error('Upload failed');
-      }
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Upload response:', data);
+            
+            return {
+                name: data.fileName || fileInfo.name,
+                type: fileInfo.type,
+                uri: `${data.fileName}`,
+            };
+        } else {
+            throw new Error('Upload failed');
+        }
     } catch (error) {
-      console.error('Error uploading file:', error);
-      Alert.alert('Upload Error', 'Failed to upload file. Please try again.');
-      return null;
+        console.error('Error uploading file:', error);
+        Alert.alert('Upload Error', 'Failed to upload file. Please try again.');
+        return null;
     } finally {
-      setUploading(false);
+        setUploading(false);
     }
-  };
+};
 
   const pickDocument = async () => {
     try {
@@ -281,10 +282,10 @@ const PastHosForm = ({ onDataChange }) => {
         <Text
           style={{
             fontWeight: '700',
-            fontSize: 15,
+            fontSize: windowWidth*0.03,
             width: windowWidth * 0.42,
             color: '#8E7D7D',
-            marginLeft: windowWidth * 0.05,
+            marginLeft: windowWidth * 0.03,
           }}>
           {pickedFile ? pickedFile.name : 'Upload Discharge Certificate'}
         </Text>
@@ -362,6 +363,7 @@ const styles = StyleSheet.create({
     borderColor: '#096759',
     borderRadius: 5,
     justifyContent: 'center',
+    marginLeft: windowWidth * 0.03,
   },
   dropdown21: {
     width: windowWidth * 0.4,

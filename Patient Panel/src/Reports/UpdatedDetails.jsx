@@ -42,7 +42,7 @@ function UpdatedDetails({ patientId }) {
     navigation.goBack();
 };
 const handleDischargeCertificatePress = (url) => {
-  Linking.openURL(url);
+  Linking.openURL(`${backendURL}/getfile/${url}`);
 };
 
   useEffect(() => {

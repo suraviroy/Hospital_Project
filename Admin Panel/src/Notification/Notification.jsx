@@ -47,7 +47,7 @@ const NotificationItem = React.memo(({ item, onViewDetails }) => {
                 <Image 
                     source={
                         item.image 
-                        ? { uri: item.image } 
+                        ? {uri: `${backendURL}/getfile/${item.image}`}
                         : require('../../assets/images/user2.png')
                     } 
                     style={styles.patientImage}

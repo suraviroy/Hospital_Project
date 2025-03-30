@@ -29,7 +29,7 @@ const NotiReq = () => {
     };
 
     const handleDischargeCertificatePress = (url) => {
-        Linking.openURL(url);
+        Linking.openURL(`${backendURL}/getfile/${url}`);
     };
 
     const RequestItem = ({ request }) => (
@@ -93,7 +93,22 @@ const NotiReq = () => {
             </View>
         );
     };
-
+    const OnlyDataSection = ({ title, data }) => {
+        if (!data || data.details === "NA") return null;
+        
+        return (
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>{title}</Text>
+                <View style={styles.sectionContent}>
+                    <Text style={styles.sectionDetails}>
+                        {data.details && data.details !== "NA" && `Details: ${data.details}`}
+                        {data.records && data.records !== "NA" && `Reason: ${data.records}`}
+                    </Text>
+                   
+                </View>
+            </View>
+        );
+    };
     if (loading) {
         return (
             <SafeAreaView style={styles.container}>
@@ -142,11 +157,11 @@ const NotiReq = () => {
 
                     <ReportSection report={requestDetails.report} />
                     
-                    <ConditionalSection title="Exacerbation" data={requestDetails.exacrebation} />
-                    <ConditionalSection title="New Problem" data={requestDetails.newProblem} />
+                    <OnlyDataSection title="Exacerbation" data={requestDetails.exacrebation} />
+                    <OnlyDataSection title="New Problem" data={requestDetails.newProblem} />
                     <ConditionalSection title="New Consultation" data={requestDetails.newConsultation} />
                     <ConditionalSection title="Hospitalization" data={requestDetails.hospitalization} />
-                    <ConditionalSection title="Disabilities" data={requestDetails.disabilities} />
+                    <OnlyDataSection title="Disabilities" data={requestDetails.disabilities} />
                     <ConditionalSection title="Demise" data={requestDetails.demise} />
                 </View>
             </ScrollView>

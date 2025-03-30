@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StatusBar, Text, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, Platform, ActivityIndicator } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily } from '../../GlobalStyles';
 import { backendURL } from "../backendapi";
@@ -20,10 +20,15 @@ const PatientList = ({ searchText }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [loadingMore, setLoadingMore] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
     const fetchData = async (page, searchQuery = '') => {
         try {
-            setLoading(true);
+            if (page === 1) {
+                setLoading(true);
+            } else {
+                setLoadingMore(true);
+            }
 
             let url;
             if (searchQuery) {
@@ -50,13 +55,17 @@ const PatientList = ({ searchText }) => {
             console.error('Error fetching patient data:', error);
         } finally {
             setLoading(false);
+            setLoadingMore(false);
+            setRefreshing(false);
         }
     };
 
+    // Initial data fetch
     useEffect(() => {
         fetchData(1);
     }, []);
 
+    // Search functionality
     useEffect(() => {
         if (searchText && typeof searchText === 'string' && searchText.trim() !== '') {
             fetchData(1, searchText);
@@ -64,6 +73,23 @@ const PatientList = ({ searchText }) => {
             fetchData(1);
         }
     }, [searchText]);
+
+    // Add useFocusEffect to refresh data when screen comes into focus
+    useFocusEffect(
+        React.useCallback(() => {
+            // This will run when the screen comes into focus
+            fetchData(1, searchText || '');
+            return () => {
+                // This will run when the screen goes out of focus
+                // Cleanup if needed
+            };
+        }, [searchText])
+    );
+
+    const handleRefresh = () => {
+        setRefreshing(true);
+        fetchData(1, searchText || '');
+    };
 
     const handlePageChange = (newPage) => {
         if (newPage > 0 && newPage <= totalPages) {
@@ -112,7 +138,7 @@ const PatientList = ({ searchText }) => {
             <View style={styles.imageContainer}>
                 {item.image ? (
                     <Image 
-                        source={{ uri: item.image }} 
+                        source={{uri: `${backendURL}/getfile/${item.image}`}}
                         style={styles.patientImage}
                         resizeMode="cover"
                     />
@@ -207,6 +233,8 @@ const PatientList = ({ searchText }) => {
                 renderItem={renderPatientItem}
                 keyExtractor={(item, index) => item.patientId + index}
                 contentContainerStyle={styles.listContainer}
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
             />
             
             {!searchText && totalPages > 1 && (

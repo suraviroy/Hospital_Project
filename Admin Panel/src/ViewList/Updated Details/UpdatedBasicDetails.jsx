@@ -167,43 +167,82 @@ const UpdatedBasicDetails = ({ patientId }) => {
             console.error('Error in openDial function:', error);
         }
     }, []);
-    const uploadToCloudinary = async (fileInfo) => {
+    // const uploadToCloudinary = async (fileInfo) => {
+    //     const formData = new FormData();
+    //     formData.append('file', fileInfo);
+    //     formData.append('upload_preset', 'pulmocareapp');
+    //     formData.append('cloud_name', 'pulmocare01');
+    
+    //     try {
+    //         setUploading(true);
+    //         const response = await fetch(
+    //             'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+    //             {
+    //                 method: 'POST',
+    //                 body: formData,
+    //                 headers: {
+    //                     'Accept': 'application/json',
+    //                     'Content-Type': 'multipart/form-data',
+    //                 },
+    //             }
+    //         );
+    
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! status: ${response.status}`);
+    //         }
+    
+    //         const data = await response.json();
+    //         return {
+    //             name: data.original_filename,
+    //             type: fileInfo.type,
+    //             uri: data.secure_url,
+    //         };
+    //     } catch (error) {
+    //         console.error('Error uploading file:', error);
+    //         throw error;
+    //     } finally {
+    //         setUploading(false);
+    //     }
+    // };
+     const uploadToCloudinary = async (fileInfo) => {
         const formData = new FormData();
-        formData.append('file', fileInfo);
-        formData.append('upload_preset', 'pulmocareapp');
-        formData.append('cloud_name', 'pulmocare01');
+        formData.append('file', {
+            uri: fileInfo.uri,
+            name: fileInfo.name || 'file',
+            type: fileInfo.type || 'application/octet-stream',
+        });
     
         try {
             setUploading(true);
             const response = await fetch(
-                'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+                `${backendURL}/upload`,
                 {
                     method: 'POST',
                     body: formData,
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'multipart/form-data',
-                    },
                 }
             );
     
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Upload response:', data);
+                
+                return {
+                    name: data.fileName || fileInfo.name,
+                    type: fileInfo.type,
+                    uri: `${data.fileName}`,
+                };
+            } else {
+                throw new Error('Upload failed');
             }
-    
-            const data = await response.json();
-            return {
-                name: data.original_filename,
-                type: fileInfo.type,
-                uri: data.secure_url,
-            };
         } catch (error) {
             console.error('Error uploading file:', error);
-            throw error;
+            Alert.alert('Upload Error', 'Failed to upload file. Please try again.');
+            return null;
         } finally {
             setUploading(false);
         }
     };
+    
     const pickImage = async () => {
         const options = [
             { text: 'Choose from Library', onPress: pickFromLibrary },
@@ -947,7 +986,7 @@ const UpdatedBasicDetails = ({ patientId }) => {
               </TouchableOpacity> */}
                         <View style={styles.profileContainer}>
                     {PatientbasicDetails.image ? (
-                        <Image source={{ uri: PatientbasicDetails.image }} style={styles.profileImage} />
+                        <Image source={{uri: `${backendURL}/getfile/${selectedImage}`}} style={styles.profileImage} />
                     ) : (
                         <Image source={require('../../../assets/images/user.png')} style={styles.profileImage} />
                     )}

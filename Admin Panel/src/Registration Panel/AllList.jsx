@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StatusBar, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList,Platform, Dimensions, ActivityIndicator } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily } from '../../GlobalStyles';
 import { backendURL } from "../backendapi";
@@ -9,7 +9,6 @@ import { backendURL } from "../backendapi";
 const AllListURL = `${backendURL}/adminRouter/sectionAallPatient`;
 const SearchURL = `${backendURL}/adminRouter/search`;
 const BasicDetailsURL = `${backendURL}/adminRouter/PatientBasicDetailsNewWP`;
-
 const AllList = ({ searchText, refreshTrigger }) => {
     const navigation = useNavigation();
     const [patients, setPatients] = useState([]);
@@ -30,17 +29,14 @@ const AllList = ({ searchText, refreshTrigger }) => {
 
             const response = await fetch(url);
             const data = await response.json();
-
            
             const newPatients = Array.isArray(data) ? data : (data.patients || []);
             
-          
             const updatedPatients = currentPage === 1 
                 ? newPatients 
                 : [...patients, ...newPatients];
 
             setPatients(updatedPatients);
-
             setTotalPages(Math.ceil(newPatients.length / 10));
             
             setLoading(false);
@@ -52,15 +48,22 @@ const AllList = ({ searchText, refreshTrigger }) => {
         }
     };
 
+    // Function to refresh the list
+    const refreshList = useCallback(() => {
+        setPatients([]);
+        setPage(1);
+        fetchData(1, currentSearchText);
+    }, [currentSearchText]);
+
+    // Initial load when component mounts
     useEffect(() => {
-        
         setPatients([]);
         setPage(1);
         fetchData(1);
     }, [refreshTrigger]);
 
+    // Refresh when searchText changes
     useEffect(() => {
-        
         if (searchText) {
             const searchValue = searchText.replace(/^\^/, '').replace(/\/i$/, '');
             setCurrentSearchText(searchValue);
@@ -68,13 +71,22 @@ const AllList = ({ searchText, refreshTrigger }) => {
             setPage(1);
             fetchData(1, searchValue);
         } else {
-
             setCurrentSearchText('');
             setPatients([]);
             setPage(1);
             fetchData(1);
         }
     }, [searchText]);
+
+    // Refresh when screen comes into focus
+    useFocusEffect(
+        useCallback(() => {
+            refreshList();
+            return () => {
+                // Cleanup if needed
+            };
+        }, [refreshList])
+    );
 
     const loadMorePatients = () => {
         if (page < totalPages && !isLoadingMore) {
@@ -100,7 +112,7 @@ const AllList = ({ searchText, refreshTrigger }) => {
                 <View style={styles.imageContainer}>
                     {item.image ? (
                         <Image 
-                            source={{ uri: item.image }} 
+                            source={{uri: `${backendURL}/getfile/${item.image}`}}
                             style={styles.patientImage} 
                         />
                     ) : (
@@ -193,7 +205,6 @@ const AllList = ({ searchText, refreshTrigger }) => {
         </SafeAreaView>
     );
 };
-
 const styles = StyleSheet.create({
     nextButton: {
         backgroundColor: '#077547',

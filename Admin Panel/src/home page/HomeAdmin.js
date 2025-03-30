@@ -226,7 +226,7 @@ const HomeAdmin = ({ searchText }) => {
         <View style={styles.item}>
             <View style={styles.leftContent}>
                 {picture ? (
-                    <Image source={{ uri: picture }} style={styles.picture} />
+                    <Image source={{uri: `${backendURL}/getfile/${picture}`}} style={styles.picture} />
                 ) : (
                     <Image source={require('../../assets/images/user.png')} style={styles.picture} />
                 )}

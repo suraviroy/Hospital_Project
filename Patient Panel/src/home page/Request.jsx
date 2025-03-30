@@ -261,7 +261,7 @@ const Request = () => {
         }
       };
     
-      const uploadToCloudinary1= async (file, type) => {
+      const uploadToCloudinary1 = async (file, type) => {
         setIsLoading2(true);
         try {
           const formData = new FormData();
@@ -270,28 +270,29 @@ const Request = () => {
             name: file.name || `${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`,
             type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
           });
-          formData.append('upload_preset', 'pulmocareapp');
-          formData.append('cloud_name', 'pulmocare01');
-    
-          const response = await fetch(
-            'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
-            {
-              method: 'POST',
-              body: formData,
-            }
-          );
-    
+      
+          const response = await fetch( `${backendURL}/upload`, {
+            method: 'POST',
+            body: formData,
+          });
+      
           if (response.ok) {
             const data = await response.json();
-            console.log('Cloudinary response:', data);
-            
-            setPickedFile1({
-              name: data.original_filename || file.name,
-              type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
-              uri: data.secure_url,
-            });
+            console.log('Upload response:', data);
+      
+            // Check if the response contains fileName as shown in your example
+            if (data && data.fileName) {
+              setPickedFile1({
+                name: file.name || data.fileName,
+                type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+                uri: data.fileName, // Construct the file URL
+              });
+              console.log("Uploaded file name:", data.fileName);
+            } else {
+              throw new Error('Invalid response format from server');
+            }
           } else {
-            throw new Error('Failed to upload file to Cloudinary');
+            throw new Error('Failed to upload file to server');
           }
         } catch (error) {
           console.error('Error uploading file:', error);
@@ -488,33 +489,34 @@ const Request = () => {
                 name: file.name || `${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`,
                 type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
               });
-              formData.append('upload_preset', 'pulmocareapp');
-              formData.append('cloud_name', 'pulmocare01');
-        
-              const response = await fetch(
-                'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
-                {
-                  method: 'POST',
-                  body: formData,
-                }
-              );
-        
+          
+              const response = await fetch( `${backendURL}/upload`, {
+                method: 'POST',
+                body: formData,
+              });
+          
               if (response.ok) {
                 const data = await response.json();
-                console.log('Cloudinary response:', data);
-                
-                setPickedFile5({
-                  name: data.original_filename || file.name,
-                  type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
-                  uri: data.secure_url,
-                });
+                console.log('Upload response:', data);
+          
+                // Check if the response contains fileName as shown in your example
+                if (data && data.fileName) {
+                  setPickedFile5({
+                    name: file.name || data.fileName,
+                    type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+                    uri: data.fileName, // Construct the file URL
+                  });
+                  console.log("Uploaded file name:", data.fileName);
+                } else {
+                  throw new Error('Invalid response format from server');
+                }
               } else {
-                throw new Error('Failed to upload file to Cloudinary');
+                throw new Error('Failed to upload file to server');
               }
             } catch (error) {
               console.error('Error uploading file:', error);
               Alert.alert('Error uploading file. Please check your internet connection and try again.');
-            } finally {
+            }finally {
               setIsLoading5(false);
             }
           };
@@ -651,33 +653,34 @@ const Request = () => {
                 name: file.name || `${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`,
                 type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
               });
-              formData.append('upload_preset', 'pulmocareapp');
-              formData.append('cloud_name', 'pulmocare01');
-        
-              const response = await fetch(
-                'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
-                {
-                  method: 'POST',
-                  body: formData,
-                }
-              );
-        
+          
+              const response = await fetch( `${backendURL}/upload`, {
+                method: 'POST',
+                body: formData,
+              });
+          
               if (response.ok) {
                 const data = await response.json();
-                console.log('Cloudinary response:', data);
-                
-                setPickedFile2({
-                  name: data.original_filename || file.name,
-                  type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
-                  uri: data.secure_url,
-                });
+                console.log('Upload response:', data);
+          
+                // Check if the response contains fileName as shown in your example
+                if (data && data.fileName) {
+                  setPickedFile2({
+                    name: file.name || data.fileName,
+                    type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+                    uri: data.fileName, // Construct the file URL
+                  });
+                  console.log("Uploaded file name:", data.fileName);
+                } else {
+                  throw new Error('Invalid response format from server');
+                }
               } else {
-                throw new Error('Failed to upload file to Cloudinary');
+                throw new Error('Failed to upload file to server');
               }
             } catch (error) {
               console.error('Error uploading file:', error);
               Alert.alert('Error uploading file. Please check your internet connection and try again.');
-            } finally {
+            }finally {
               setIsLoading3(false);
             }
           };
@@ -704,70 +707,64 @@ const Request = () => {
             );
           };
           
-          const uploadToCloudinaryMultipleReports = async (file, type, fieldId) => {
-           
-            const updatedFields = [...multiplereportFields];
-            const fieldIndex = updatedFields.findIndex(field => field.id === fieldId);
-            
-            if (fieldIndex === -1) return;
-        
-            updatedFields[fieldIndex].uploading = true;
-            setMultipleReportFields(updatedFields);
-          
-            try {
-              const formData = new FormData();
-              formData.append('file', {
-                uri: file.uri,
-                name: file.name || `${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`,
-                type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
-              });
-              formData.append('upload_preset', 'pulmocareapp');
-              formData.append('cloud_name', 'pulmocare01');
-          
-              const response = await fetch(
-                'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
-                {
-                  method: 'POST',
-                  body: formData,
-                }
-              );
-          
-              if (response.ok) {
-                const data = await response.json();
-
-                const finalUpdatedFields = [...multiplereportFields];
-                const finalFieldIndex = finalUpdatedFields.findIndex(field => field.id === fieldId);
-                
-                finalUpdatedFields[finalFieldIndex] = {
-                  ...finalUpdatedFields[finalFieldIndex],
-                  certificate: {
-                    name: data.original_filename || file.name,
-                    type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
-                    uri: data.secure_url,
-                  },
-                  uploading: false
-                };
-          
-                setMultipleReportFields(finalUpdatedFields);
-              } else {
-                throw new Error('Failed to upload file to Cloudinary');
-              }
-            } catch (error) {
-              console.error('Error uploading file:', error);
-              const finalUpdatedFields = [...multiplereportFields];
-              const finalFieldIndex = finalUpdatedFields.findIndex(field => field.id === fieldId);
-              
-              finalUpdatedFields[finalFieldIndex] = {
-                ...finalUpdatedFields[finalFieldIndex],
-                certificate: null,
-                uploading: false
-              };
-          
-              setMultipleReportFields(finalUpdatedFields);
-              
-              Alert.alert('Error uploading file. Please check your internet connection and try again.');
-            }
-          };
+    const uploadToCloudinaryMultipleReports = async (file, type, fieldId) => {
+  const updatedFields = [...multiplereportFields];
+  const fieldIndex = updatedFields.findIndex(field => field.id === fieldId);
+  
+  if (fieldIndex === -1) return;
+  
+  updatedFields[fieldIndex].uploading = true;
+  setMultipleReportFields(updatedFields);
+  
+  try {
+    const formData = new FormData();
+    formData.append('file', {
+      uri: file.uri,
+      name: file.name || `${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`,
+      type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+    });
+    
+    const response = await fetch(`${backendURL}/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      
+      const finalUpdatedFields = [...multiplereportFields];
+      const finalFieldIndex = finalUpdatedFields.findIndex(field => field.id === fieldId);
+      
+      finalUpdatedFields[finalFieldIndex] = {
+        ...finalUpdatedFields[finalFieldIndex],
+        certificate: {
+          name: file.name || data.fileName,
+          type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
+          uri: data.fileName,
+        },
+        uploading: false
+      };
+      
+      setMultipleReportFields(finalUpdatedFields);
+    } else {
+      throw new Error('Failed to upload file to server');
+    }
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    const finalUpdatedFields = [...multiplereportFields];
+    const finalFieldIndex = finalUpdatedFields.findIndex(field => field.id === fieldId);
+    
+    finalUpdatedFields[finalFieldIndex] = {
+      ...finalUpdatedFields[finalFieldIndex],
+      certificate: null,
+      uploading: false
+    };
+    
+    setMultipleReportFields(finalUpdatedFields);
+    
+    Alert.alert('Error uploading file. Please check your internet connection and try again.');
+  }
+};
           const pickDocumentMultipleReports = async (fieldId) => {
             try {
               const result = await DocumentPicker.getDocumentAsync({

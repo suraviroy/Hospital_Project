@@ -3,6 +3,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { backendURL } from "../backendapi";
 const windowWidth = Dimensions.get('window').width;
 
 
@@ -21,7 +22,7 @@ const PatientBasicDetails = ({ route }) => {
                 </View>
                 <View style={styles.profileContainer}>
                 {details.image ? (
-                <Image source={{ uri: details.image }} style={styles.profileImage} />
+                <Image source={{uri: `${backendURL}/getfile/${details.image}`}} style={styles.profileImage} />
                 ) : (
                 <Image source={require('../../assets/images/user2.png')} style={styles.profileImage} />
                  )}

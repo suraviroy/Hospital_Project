@@ -195,7 +195,7 @@ const Home = () => {
                     <View style={styles.topContainer}>
                         <View style={styles.header}>
                             {patientData.image ? (
-                                <Image source={{ uri: patientData.image }} style={styles.profileImage} />
+                                <Image source={{uri: `${backendURL}/getfile/${patientData.image}`}} style={styles.profileImage}/>
                             ) : (
                                 <Image source={require('../../assets/images/user2.png')} style={styles.profileImage} />
                             )}

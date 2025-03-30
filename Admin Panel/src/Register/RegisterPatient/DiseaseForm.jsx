@@ -160,57 +160,112 @@ const DiseaseForm = ({ patientId }) => {
     return true;
   };
 
+  // const uploadToCloudinary = async (fileInfo, fieldId) => {
+  //   setPrescriptionFields(fields => 
+  //     fields.map(field => 
+  //       field.id === fieldId 
+  //         ? { ...field, uploading: true }
+  //         : field
+  //     )
+  //   );
+
+  //   const formData = new FormData();
+  //   formData.append('file', {
+  //     uri: fileInfo.uri,
+  //     name: fileInfo.name || 'file',
+  //     type: fileInfo.type || 'application/octet-stream',
+  //   });
+  //   formData.append('upload_preset', 'pulmocareapp');
+  //   formData.append('cloud_name', 'pulmocare01');
+
+  //   try {
+  //     const response = await fetch(
+  //       'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+  //       {
+  //         method: 'POST',
+  //         body: formData,
+  //       }
+  //     );
+
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       return {
+  //         name: data.original_filename || fileInfo.name,
+  //         type: fileInfo.type,
+  //         uri: data.secure_url,
+  //       };
+  //     } else {
+  //       throw new Error('Upload failed');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error uploading file:', error);
+  //     Alert.alert('Upload Error', 'Failed to upload file. Please try again.');
+  //     return null;
+  //   } finally {
+  //     setPrescriptionFields(fields => 
+  //       fields.map(field => 
+  //         field.id === fieldId 
+  //           ? { ...field, uploading: false }
+  //           : field
+  //       )
+  //     );
+  //   }
+  // };
   const uploadToCloudinary = async (fileInfo, fieldId) => {
-    setPrescriptionFields(fields => 
-      fields.map(field => 
-        field.id === fieldId 
-          ? { ...field, uploading: true }
-          : field
-      )
+    // Update the prescription field to show uploading status
+    setPrescriptionFields(fields =>
+        fields.map(field =>
+            field.id === fieldId
+                ? { ...field, uploading: true }
+                : field
+        )
     );
 
     const formData = new FormData();
     formData.append('file', {
-      uri: fileInfo.uri,
-      name: fileInfo.name || 'file',
-      type: fileInfo.type || 'application/octet-stream',
+        uri: fileInfo.uri,
+        name: fileInfo.name || 'file',
+        type: fileInfo.type || 'application/octet-stream',
     });
-    formData.append('upload_preset', 'pulmocareapp');
-    formData.append('cloud_name', 'pulmocare01');
 
     try {
-      const response = await fetch(
-        'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
+        // Using your server endpoint instead of Cloudinary
+        const response = await fetch(
+            `${backendURL}/upload`,
+            {
+                method: 'POST',
+                body: formData,
+            }
+        );
 
-      if (response.ok) {
-        const data = await response.json();
-        return {
-          name: data.original_filename || fileInfo.name,
-          type: fileInfo.type,
-          uri: data.secure_url,
-        };
-      } else {
-        throw new Error('Upload failed');
-      }
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Upload response:', data);
+            
+            // Return an object with the same structure as before
+            return {
+                name: data.fileName || fileInfo.name,
+                type: fileInfo.type,
+                 uri: `${data.fileName}`,
+            };
+        } else {
+            throw new Error('Upload failed');
+        }
     } catch (error) {
-      console.error('Error uploading file:', error);
-      Alert.alert('Upload Error', 'Failed to upload file. Please try again.');
-      return null;
+        console.error('Error uploading file:', error);
+        Alert.alert('Upload Error', 'Failed to upload file. Please try again.');
+        return null;
     } finally {
-      setPrescriptionFields(fields => 
-        fields.map(field => 
-          field.id === fieldId 
-            ? { ...field, uploading: false }
-            : field
-        )
-      );
+        // Update the prescription field to remove uploading status
+        setPrescriptionFields(fields =>
+            fields.map(field =>
+                field.id === fieldId
+                    ? { ...field, uploading: false }
+                    : field
+            )
+        );
     }
-  };
+};
   const uploadToCloudinary2 = async (fileInfo, fieldId) => {
     setOtherFields(fields => 
       fields.map(field => 
@@ -222,36 +277,38 @@ const DiseaseForm = ({ patientId }) => {
 
     const formData = new FormData();
     formData.append('file', {
-      uri: fileInfo.uri,
-      name: fileInfo.name || 'file',
-      type: fileInfo.type || 'application/octet-stream',
+        uri: fileInfo.uri,
+        name: fileInfo.name || 'file',
+        type: fileInfo.type || 'application/octet-stream',
     });
-    formData.append('upload_preset', 'pulmocareapp');
-    formData.append('cloud_name', 'pulmocare01');
 
     try {
-      const response = await fetch(
-        'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
+        // Using your server endpoint instead of Cloudinary
+        const response = await fetch(
+            `${backendURL}/upload`,
+            {
+                method: 'POST',
+                body: formData,
+            }
+        );
 
-      if (response.ok) {
-        const data = await response.json();
-        return {
-          name: data.original_filename || fileInfo.name,
-          type: fileInfo.type,
-          uri: data.secure_url,
-        };
-      } else {
-        throw new Error('Upload failed');
-      }
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Upload response:', data);
+            
+            // Return an object with the same structure as before
+            return {
+                name: data.fileName || fileInfo.name,
+                type: fileInfo.type,
+                uri: `${data.fileName}`,
+            };
+        } else {
+            throw new Error('Upload failed');
+        }
     } catch (error) {
-      console.error('Error uploading file:', error);
-      Alert.alert('Upload Error', 'Failed to upload file. Please try again.');
-      return null;
+        console.error('Error uploading file:', error);
+        Alert.alert('Upload Error', 'Failed to upload file. Please try again.');
+        return null;
     } finally {
       setOtherFields(fields => 
         fields.map(field => 
@@ -575,7 +632,6 @@ const DiseaseForm = ({ patientId }) => {
         prescriptiondocument: field.file.uri
       }));
 
-    // If no prescriptions uploaded, add default "NA" entry
     if (prescriptionData.length === 0) {
       prescriptionData.push({
         prescriptiondocument: "NA"
@@ -1571,7 +1627,7 @@ const handleVisitTimeChange = (event, selectedTime) => {
               fontSize: 15,
               width: windowWidth * 0.42,
               color: '#8E7D7D',
-              marginLeft: windowWidth * 0.05,
+              marginLeft: windowWidth * 0.04,
             }}
           >
             {field.file ? field.file.name : 'Upload Prescription'}
@@ -1631,7 +1687,7 @@ const handleVisitTimeChange = (event, selectedTime) => {
               fontSize: 15,
               width: windowWidth * 0.42,
               color: '#8E7D7D',
-              marginLeft: windowWidth * 0.05,
+              marginLeft: windowWidth * 0.04,
             }}
           >
             {field.file ? field.file.name : 'Upload Document'}
@@ -1769,6 +1825,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     minWidth: 80,
     justifyContent: 'center',
+    marginLeft: windowWidth * 0.09,
   },
   uploadText: {
     fontWeight: '700',

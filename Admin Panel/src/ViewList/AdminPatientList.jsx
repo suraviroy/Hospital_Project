@@ -118,7 +118,7 @@ const AdminPatientList = () => {
             <View style={styles.imageContainer}>
                 {item.image ? (
                     <Image 
-                        source={{ uri: item.image }} 
+                        source={{uri: `${backendURL}/getfile/${item.image}`}}
                         style={styles.patientImage}
                         resizeMode="cover"
                     />

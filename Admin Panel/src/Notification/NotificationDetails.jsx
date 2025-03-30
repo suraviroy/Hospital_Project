@@ -18,7 +18,7 @@ const NotificationDetails = ({ patientId }) => {
   }, []);
 
   const handleDischargeCertificatePress = (url) => {
-    Linking.openURL(url);
+    Linking.openURL(`${backendURL}/getfile/${url}`);
   };
   const openDial = useCallback((phNumber) => {
     try {
@@ -85,7 +85,6 @@ const NotificationDetails = ({ patientId }) => {
     fetch(`${backendURL}/adminRouter/PatientBasicDetailsNewWP/${patientId}`)
         .then(response => response.json())
         .then(data => {
-            // console.log("Fetched data:", data);
             setBasicDetails(data[0]);
             setIsLoading(false);
         })
@@ -103,8 +102,6 @@ if (isLoading) {
       </View>
   );
 }
-    // console.log("Basic Details")
-    // console.log(basicDetails.name)
 
     const handleClose = () => {
         navigation.goBack();
@@ -791,7 +788,7 @@ if (isLoading) {
               </TouchableOpacity>
                 <View style={styles.profileContainer1}>
                     {basicDetails.image ? (
-                        <Image source={{ uri: basicDetails.image }} style={styles.profileImage} />
+                        <Image source={{uri: `${backendURL}/getfile/${basicDetails.image}`}} style={styles.profileImage} />
                     ) : (
                         <Image source={require('../../assets/images/user.png')} style={styles.profileImage} />
                     )}
