@@ -204,45 +204,47 @@ const UpdatedBasicDetails = ({ patientId }) => {
     //         setUploading(false);
     //     }
     // };
-     const uploadToCloudinary = async (fileInfo) => {
+
+    const uploadToCloudinary = async (fileInfo) => {
         const formData = new FormData();
-        formData.append('file', {
-            uri: fileInfo.uri,
-            name: fileInfo.name || 'file',
-            type: fileInfo.type || 'application/octet-stream',
-        });
-    
+        formData.append('file', fileInfo);
+        
         try {
             setUploading(true);
+            
+            // Using your server endpoint instead of Cloudinary
             const response = await fetch(
                 `${backendURL}/upload`,
                 {
                     method: 'POST',
                     body: formData,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'multipart/form-data',
+                    },
                 }
             );
     
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Upload response:', data);
-                
-                return {
-                    name: data.fileName || fileInfo.name,
-                    type: fileInfo.type,
-                    uri: `${data.fileName}`,
-                };
-            } else {
-                throw new Error('Upload failed');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+    
+            const data = await response.json();
+            console.log('Upload response:', data);
+            
+            // Return an object with the same structure as before
+            return {
+                name: data.fileName,
+                type: fileInfo.type,
+                uri: `${data.fileName}`,
+            };
         } catch (error) {
             console.error('Error uploading file:', error);
-            Alert.alert('Upload Error', 'Failed to upload file. Please try again.');
-            return null;
+            throw error;
         } finally {
             setUploading(false);
         }
     };
-    
     const pickImage = async () => {
         const options = [
             { text: 'Choose from Library', onPress: pickFromLibrary },
@@ -472,7 +474,7 @@ const UpdatedBasicDetails = ({ patientId }) => {
                             <Image 
                                 source={
                                     selectedImage 
-                                        ? { uri: selectedImage } 
+                                        ? { uri: `${backendURL}/getfile/${selectedImage}` } 
                                         : require("../../../assets/images/user.png")
                                 }
                                 style={styles.profileImage} 
@@ -986,7 +988,7 @@ const UpdatedBasicDetails = ({ patientId }) => {
               </TouchableOpacity> */}
                         <View style={styles.profileContainer}>
                     {PatientbasicDetails.image ? (
-                        <Image source={{uri: `${backendURL}/getfile/${selectedImage}`}} style={styles.profileImage} />
+                        <Image source={{ uri:   `${backendURL}/getfile/${PatientbasicDetails.image}`}} style={styles.profileImage} />
                     ) : (
                         <Image source={require('../../../assets/images/user.png')} style={styles.profileImage} />
                     )}

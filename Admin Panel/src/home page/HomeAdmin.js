@@ -31,6 +31,7 @@ const HomeAdmin = ({ searchText }) => {
     const [totalPages, setTotalPages] = useState(0);
     const [totalAdmins, setTotalAdmins] = useState(0);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
     const ITEMS_PER_PAGE = 10;
 
@@ -38,6 +39,7 @@ const HomeAdmin = ({ searchText }) => {
         try {
             setLoading(page === 1);
             setIsLoadingMore(page > 1);
+            setRefreshing(page === 1);
 
             const response = await fetch(`${adminListURL}?page=${page}&limit=${limit}`);
             if (!response.ok) {
@@ -71,28 +73,44 @@ const HomeAdmin = ({ searchText }) => {
             const notificationCountsObj = notificationCountResults.reduce((acc, cur) => ({
                 ...acc,
                 ...cur,
-            }), notificationCounts);
+            }), {});
 
             const reportCountsObj = reportCountResults.reduce((acc, cur) => ({
                 ...acc,
                 ...cur,
-            }), reportCounts);
+            }), {});
 
             setNotificationCounts(notificationCountsObj);
             setReportCounts(reportCountsObj);
 
             setLoading(false);
             setIsLoadingMore(false);
+            setRefreshing(false);
         } catch (error) {
             console.error('Error fetching admin list:', error);
             setLoading(false);
             setIsLoadingMore(false);
+            setRefreshing(false);
         }
-    }, [adminList, notificationCounts, reportCounts]);
+    }, [adminList]);
+
+    const refreshAdminList = useCallback(() => {
+        setCurrentPage(1);
+        fetchAdminList(1);
+    }, [fetchAdminList]);
 
     useEffect(() => {
         fetchAdminList();
     }, []);
+
+   
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            refreshAdminList();
+        });
+
+        return unsubscribe;
+    }, [navigation, refreshAdminList]);
 
     useEffect(() => {
         let filtered = adminList;
@@ -116,7 +134,6 @@ const HomeAdmin = ({ searchText }) => {
             fetchAdminList(currentPage - 1);
         }
     };
-
 
     const handleViewPatient = useCallback(
         debounce(async (adminName) => {
@@ -361,6 +378,8 @@ const HomeAdmin = ({ searchText }) => {
                 data={filteredAdminList}
                 renderItem={({ item }) => <Item {...item} />}
                 keyExtractor={item => item._id}
+                refreshing={refreshing}
+                onRefresh={refreshAdminList}
                 ListFooterComponent={
                     <View style={styles.paginationContainer}>
                         <TouchableOpacity 

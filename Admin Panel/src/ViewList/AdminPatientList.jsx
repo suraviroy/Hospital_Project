@@ -100,17 +100,27 @@ const AdminPatientList = () => {
         });
     };
 
-    const handleUpdate = async (patientId) => {
-        setPatientLoading(patientId, 'update', true);
-        try {
-            const response = await fetch(`${BasicDetailsURL}/${patientId}`);
-            const data = await response.json();
-            navigation.navigate('RegisterFirst', { details: data[0] });
-        } catch (error) {
-            console.error('Error fetching patient details:', error);
-        } finally {
-            setPatientLoading(patientId, 'update', false);
-        }
+    // const handleUpdate = async (patientId) => {
+    //     setPatientLoading(patientId, 'update', true);
+    //     try {
+    //         const response = await fetch(`${BasicDetailsURL}/${patientId}`);
+    //         const data = await response.json();
+    //         navigation.navigate('RegisterFirst', { details: data[0] });
+    //     } catch (error) {
+    //         console.error('Error fetching patient details:', error);
+    //     } finally {
+    //         setPatientLoading(patientId, 'update', false);
+    //     }
+    // };
+    const handleUpdate = (patientId) => {
+        fetch(`${BasicDetailsURL}/${patientId}`)
+            .then(response => response.json())
+            .then(data => {
+                navigation.navigate('RegisterFirst', { details: data[0] });
+            })
+            .catch(error => {
+                console.error('Error fetching patient details:', error);
+            });
     };
 
     const renderPatientItem = ({ item }) => (

@@ -106,7 +106,7 @@ const logNavigation = async (routeName, previousRouteName = null) => {
     const method = previousRouteName ? `${previousRouteName} -> ${routeName}` : `Navigated to ${routeName}`;
     
     const logMessage = {
-      message: `F -> ${formattedTime}, ${formattedDate}, ${userIP}, ${method}, Bottom Clicked, 200, ${responseTime.toFixed(3)} ms`
+      message: `F -> ${formattedTime}, ${formattedDate}, ${userIP}, ${method}, Button Clicked, 200, ${responseTime.toFixed(3)} ms`
     };
     
     // First, try to save locally regardless of server status

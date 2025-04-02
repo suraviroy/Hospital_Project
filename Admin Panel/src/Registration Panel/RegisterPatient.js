@@ -282,6 +282,9 @@ const AddPatient = () => {
             alert('Failed to upload image. Please try again.');
             setLoading(false);
         }
+        }else {
+            // No image provided, just save the patient data with a null or default image URL
+            savePatientData(null, password, stateToSend);
         }
 };
 
