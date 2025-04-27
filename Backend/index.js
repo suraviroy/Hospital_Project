@@ -138,6 +138,84 @@ app.get("/getfile/:fileName", (req, res) => {
 });
 
 
+//==================================================Artifical device===================================================================
+import ArtificialDevice from "./model/artificialDeviceSchema.js";
+
+app.post('/adddevice', async (req, res) => {
+  try {
+    const { date, time, patientId, details, device, expdate } = req.body;
+
+    // Create a new document
+    const newDevice = new ArtificialDevice({
+      date,
+      time,
+      patientId,
+      details,
+      device,
+      expdate
+    });
+
+    // Save it to the database
+    const savedDevice = await newDevice.save();
+    res.status(201).json({ message: 'Device details added successfully', data: savedDevice });
+  } catch (error) {
+    console.error('Error adding device:', error);
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+});
+
+import moment from 'moment'; 
+
+app.get('/getdevice/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find devices by patientId
+    const devices = await ArtificialDevice.find({ patientId: id });
+
+    if (!devices || devices.length === 0) {
+      return res.status(404).json({ message: 'Device not found' });
+    }
+
+    // Calculate difference for each device
+    const deviceWithExpiryInfo = devices.map(device => {
+      const startDate = moment(device.date, 'YYYY-MM-DD');
+      const expiryDate = moment(device.expdate, 'YYYY-MM-DD');
+
+      if (!startDate.isValid() || !expiryDate.isValid()) {
+        return {
+          ...device._doc,
+          expiryInfo: 'Invalid date format'
+        };
+      }
+
+      let yearsLeft = expiryDate.diff(startDate, 'years');
+      startDate.add(yearsLeft, 'years');
+
+      let monthsLeft = expiryDate.diff(startDate, 'months');
+      startDate.add(monthsLeft, 'months');
+
+      let daysLeft = expiryDate.diff(startDate, 'days');
+
+      return {
+        ...device._doc,
+        expiryInfo: {
+          yearsLeft,
+          monthsLeft,
+          daysLeft
+        }
+      };
+    });
+
+    res.status(200).json({ deviceWithExpiryInfo });
+  } catch (error) {
+    console.error('Error fetching device:', error);
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+});
+
+//=======================================================================================================================================
+
 
 //creating the connect function
 const connect = async () => {
