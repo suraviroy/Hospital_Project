@@ -67,15 +67,14 @@ const UploadReport = () => {
       };
       
       const uploadToCloudinaryMultipleReports = async (file, type, fieldId) => {
-       
         const updatedFields = [...multiplereportFields];
         const fieldIndex = updatedFields.findIndex(field => field.id === fieldId);
         
         if (fieldIndex === -1) return;
-    
+        
         updatedFields[fieldIndex].uploading = true;
         setMultipleReportFields(updatedFields);
-      
+        
         try {
           const formData = new FormData();
           formData.append('file', {
@@ -83,36 +82,31 @@ const UploadReport = () => {
             name: file.name || `${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`,
             type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
           });
-          formData.append('upload_preset', 'pulmocareapp');
-          formData.append('cloud_name', 'pulmocare01');
-      
-          const response = await fetch(
-            'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
-            {
-              method: 'POST',
-              body: formData,
-            }
-          );
-      
+          
+          const response = await fetch(`${backendURL}/upload`, {
+            method: 'POST',
+            body: formData,
+          });
+          
           if (response.ok) {
             const data = await response.json();
-
+            
             const finalUpdatedFields = [...multiplereportFields];
             const finalFieldIndex = finalUpdatedFields.findIndex(field => field.id === fieldId);
             
             finalUpdatedFields[finalFieldIndex] = {
               ...finalUpdatedFields[finalFieldIndex],
               certificate: {
-                name: data.original_filename || file.name,
+                name: file.name || data.fileName,
                 type: file.mimeType || (type === 'image' ? 'image/jpeg' : 'application/pdf'),
-                uri: data.secure_url,
+                uri: data.fileName,
               },
               uploading: false
             };
-      
+            
             setMultipleReportFields(finalUpdatedFields);
           } else {
-            throw new Error('Failed to upload file to Cloudinary');
+            throw new Error('Failed to upload file to server');
           }
         } catch (error) {
           console.error('Error uploading file:', error);
@@ -124,7 +118,7 @@ const UploadReport = () => {
             certificate: null,
             uploading: false
           };
-      
+          
           setMultipleReportFields(finalUpdatedFields);
           
           Alert.alert('Error uploading file. Please check your internet connection and try again.');

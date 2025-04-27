@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 const windowWidth = Dimensions.get('window').width;
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -22,7 +22,7 @@ import { FontFamily, Color, Border, FontSize } from "../../GlobalStyles";
 
 const ViewListURL = `${backendURL}/adminRouter/notification`;
 const ReportsNotificationURL = `${backendURL}/adminRouter/Reportsnotification`;
-const INITIAL_LOAD_LIMIT = 20;
+const INITIAL_LOAD_LIMIT = 2;
 const AUTO_REFRESH_INTERVAL = 15000; 
 
 const Tab = createMaterialTopTabNavigator();
@@ -47,7 +47,7 @@ const NotificationItem = React.memo(({ item, onViewDetails }) => {
                 <Image 
                     source={
                         item.image 
-                        ? { uri: item.image } 
+                        ? {uri: `${backendURL}/getfile/${item.image}`}
                         : require('../../assets/images/user2.png')
                     } 
                     style={styles.patientImage}
@@ -112,6 +112,14 @@ const NotificationList = ({
     hasMoreItems,
     isLoadingMore
 }) => {
+    // Debug log to check if onLoadMore is being triggered
+    const handleEndReached = () => {
+        // console.log("End reached, hasMoreItems:", hasMoreItems);
+        if (hasMoreItems) {
+            onLoadMore();
+        }
+    };
+    
     const renderFooter = () => {
         if (!isLoadingMore) return null;
         return (
@@ -157,8 +165,8 @@ const NotificationList = ({
             keyExtractor={item => `${item.type}_${item.requestId || item.reportId}_${item.date}_${item.time}`}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContainer}
-            onEndReached={hasMoreItems ? onLoadMore : null}
-            onEndReachedThreshold={0.1}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.5} // Increased threshold to trigger earlier
             ListFooterComponent={renderFooter}
         />
     );
@@ -176,159 +184,277 @@ const Notification = () => {
     const [requestTotalPages, setRequestTotalPages] = useState(1);
     const [reportTotalPages, setReportTotalPages] = useState(1);
     const autoRefreshTimerRef = useRef(null);
+    const isLoadingRef = useRef(false); // Use this to prevent multiple simultaneous requests
+    const actionTakenRef = useRef(false);
 
-    const processNotifications = useCallback((notificationsData, reportsNotificationsData, existingRequestNotifications, existingReportNotifications) => {
-        const transformedRequestNotifications = notificationsData.map(notification => ({
-            ...notification,
-            type: 'default',
-            background: notification.status === 'Critical' ? '#FFD5D5' : '#EAF9FE'
-        })).filter(notification => 
-            !existingRequestNotifications.some(existing => 
-                existing.requestId === notification.requestId
-            )
-        ).sort((a, b) => {
+    // Function to transform notifications
+    const transformNotifications = useCallback((notifications, isReport = false) => {
+        return notifications.map(item => ({
+            ...item,
+            type: isReport ? 'report' : 'default',
+            background: isReport ? '#E6E6FA' : (item.status === 'Critical' ? '#FFD5D5' : '#EAF9FE'),
+            ...(isReport && {
+                request: `Patient name: ${item.name}`,
+                coordinator: item.coordinatorName,
+                requestId: item.reportId
+            })
+        })).sort((a, b) => {
             const dateA = new Date(`${a.date} ${a.time}`);
             const dateB = new Date(`${b.date} ${b.time}`);
             return dateB - dateA;
         });
-    
-        const transformedReportNotifications = reportsNotificationsData.map(report => ({
-            ...report,
-            type: 'report',
-            request: `Patient name: ${report.name}`,
-            coordinator: report.coordinatorName,
-            requestId: report.reportId,
-            background: '#E6E6FA' 
-        })).filter(report => 
-            !existingReportNotifications.some(existing => 
-                existing.reportId === report.reportId
-            )
-        ).sort((a, b) => {
-            const dateA = new Date(`${a.date} ${a.time}`);
-            const dateB = new Date(`${b.date} ${b.time}`);
-            return dateB - dateA;
-        });
-    
-        return { 
-            transformedRequestNotifications, 
-            transformedReportNotifications 
-        };
     }, []);
-    
-    const fetchNotifications = useCallback(async (type = 'both', isInitialLoad = false) => {
+
+    // Handle initial data fetch
+    const fetchInitialNotifications = useCallback(async () => {
         try {
-           
-            if (isInitialLoad) {
-                setLoading(true);
-                setError(null);
-            } else {
-                setIsLoadingMore(true);
+            // console.log("Fetching initial notifications...");
+            setLoading(true);
+            
+            // Fetch requests
+            const requestResponse = await fetch(`${ViewListURL}?page=1&limit=${INITIAL_LOAD_LIMIT}`);
+            if (!requestResponse.ok) {
+                throw new Error('Failed to fetch request notifications');
             }
-            const fetchRequests = type === 'both' || type === 'requests';
-            const fetchReports = type === 'both' || type === 'reports';
-
-            const fetchPromises = [];
-            if (fetchRequests) {
-                fetchPromises.push(
-                    fetch(`${ViewListURL}?page=${requestPage}&limit=${INITIAL_LOAD_LIMIT}`)
-                );
+            const requestData = await requestResponse.json();
+            
+            // Fetch reports
+            const reportResponse = await fetch(`${ReportsNotificationURL}?page=1&limit=${INITIAL_LOAD_LIMIT}`);
+            if (!reportResponse.ok) {
+                throw new Error('Failed to fetch report notifications');
             }
-            if (fetchReports) {
-                fetchPromises.push(
-                    fetch(`${ReportsNotificationURL}?page=${reportPage}&limit=${INITIAL_LOAD_LIMIT}`)
-                );
-            }
-
-            const responses = await Promise.all(fetchPromises);
-            const parsedResponses = await Promise.all(
-                responses.map(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch notifications');
-                    }
-                    return response.json();
-                })
-            );
-            let newRequestNotifications = requestNotifications;
-            let newReportNotifications = reportNotifications;
-
-            if (fetchRequests) {
-                const requestData = parsedResponses[fetchReports ? 0 : 0];
-                setRequestTotalPages(requestData.totalPages);
-                
-                const { transformedRequestNotifications } = processNotifications(
-                    requestData.notifications, 
-                    [], 
-                    isInitialLoad ? [] : requestNotifications,
-                    []
-                );
-
-                newRequestNotifications = isInitialLoad 
-                    ? transformedRequestNotifications 
-                    : [...requestNotifications, ...transformedRequestNotifications];
-                
-                setRequestNotifications(newRequestNotifications);
-            }
-
-            if (fetchReports) {
-                const reportData = parsedResponses[fetchRequests ? 1 : 0];
-                setReportTotalPages(reportData.totalPages);
-
-                const { transformedReportNotifications } = processNotifications(
-                    [], 
-                    reportData.reports, 
-                    [],
-                    isInitialLoad ? [] : reportNotifications
-                );
-
-                newReportNotifications = isInitialLoad 
-                    ? transformedReportNotifications 
-                    : [...reportNotifications, ...transformedReportNotifications];
-                
-                setReportNotifications(newReportNotifications);
-            }
-
+            const reportData = await reportResponse.json();
+            
+            // Set total pages
+            setRequestTotalPages(requestData.totalPages || 1);
+            setReportTotalPages(reportData.totalPages || 1);
+            
+            // Transform and set notifications
+            const transformedRequests = transformNotifications(requestData.notifications || []);
+            const transformedReports = transformNotifications(reportData.reports || [], true);
+            
+            setRequestNotifications(transformedRequests);
+            setReportNotifications(transformedReports);
+            
+            // Reset page counters - we've loaded page 1
+            setRequestPage(1);
+            setReportPage(1);
+            
         } catch (error) {
-            console.error('Error fetching notification data:', error);
-            setError(error.message || 'Failed to load notifications. Please try again.');
+            console.error('Error fetching initial notifications:', error);
+            setError(error.message);
         } finally {
-            if (isInitialLoad) {
-                setLoading(false);
-            } else {
-                setIsLoadingMore(false);
-            }
+            setLoading(false);
         }
-    }, [processNotifications, requestPage, reportPage, requestNotifications, reportNotifications]);
+    }, [transformNotifications]);
 
+    // Load more function for requests
+    const loadMoreRequests = useCallback(async () => {
+        if (isLoadingRef.current || requestPage >= requestTotalPages) {
+            // console.log("Skipping load more requests - already loading or at end");
+            return;
+        }
+        
+        try {
+            // console.log("Loading more requests...", requestPage + 1);
+            isLoadingRef.current = true;
+            setIsLoadingMore(true);
+            
+            const nextPage = requestPage + 1;
+            const response = await fetch(`${ViewListURL}?page=${nextPage}&limit=${INITIAL_LOAD_LIMIT}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to load more request notifications');
+            }
+            
+            const data = await response.json();
+            
+            if (data.notifications && data.notifications.length > 0) {
+                const transformedRequests = transformNotifications(data.notifications);
+                
+                setRequestNotifications(prev => {
+                    // Filter out duplicates
+                    const newItems = transformedRequests.filter(
+                        newItem => !prev.some(existing => existing.requestId === newItem.requestId)
+                    );
+                    // console.log("Adding", newItems.length, "new request notifications");
+                    return [...prev, ...newItems];
+                });
+            }
+            
+            // Update page counter
+            setRequestPage(nextPage);
+            
+        } catch (error) {
+            console.error('Error loading more requests:', error);
+            setError('Failed to load more notifications. Please try again.');
+        } finally {
+            setIsLoadingMore(false);
+            isLoadingRef.current = false;
+        }
+    }, [requestPage, requestTotalPages, transformNotifications]);
+
+    // Load more function for reports
+    const loadMoreReports = useCallback(async () => {
+        if (isLoadingRef.current || reportPage >= reportTotalPages) {
+            // console.log("Skipping load more reports - already loading or at end");
+            return;
+        }
+        
+        try {
+            console.log("Loading more reports...", reportPage + 1);
+            isLoadingRef.current = true;
+            setIsLoadingMore(true);
+            
+            const nextPage = reportPage + 1;
+            const response = await fetch(`${ReportsNotificationURL}?page=${nextPage}&limit=${INITIAL_LOAD_LIMIT}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to load more report notifications');
+            }
+            
+            const data = await response.json();
+            
+            if (data.reports && data.reports.length > 0) {
+                const transformedReports = transformNotifications(data.reports, true);
+                
+                setReportNotifications(prev => {
+                    // Filter out duplicates
+                    const newItems = transformedReports.filter(
+                        newItem => !prev.some(existing => existing.reportId === newItem.reportId)
+                    );
+                    // console.log("Adding", newItems.length, "new report notifications");
+                    return [...prev, ...newItems];
+                });
+            }
+            
+            // Update page counter
+            setReportPage(nextPage);
+            
+        } catch (error) {
+            console.error('Error loading more reports:', error);
+            setError('Failed to load more notifications. Please try again.');
+        } finally {
+            setIsLoadingMore(false);
+            isLoadingRef.current = false;
+        }
+    }, [reportPage, reportTotalPages, transformNotifications]);
+
+    // Check for new notifications (auto-refresh)
+    const checkForNewNotifications = useCallback(async () => {
+        if (isLoadingRef.current) {
+            return; // Skip if already loading
+        }
+        
+        try {
+            isLoadingRef.current = true;
+            
+            // Fetch latest requests
+            const requestResponse = await fetch(`${ViewListURL}?page=1&limit=${INITIAL_LOAD_LIMIT}`);
+            if (!requestResponse.ok) {
+                throw new Error('Failed to check for new requests');
+            }
+            const requestData = await requestResponse.json();
+            
+            // Fetch latest reports
+            const reportResponse = await fetch(`${ReportsNotificationURL}?page=1&limit=${INITIAL_LOAD_LIMIT}`);
+            if (!reportResponse.ok) {
+                throw new Error('Failed to check for new reports');
+            }
+            const reportData = await reportResponse.json();
+            
+            // Transform the new data
+            const newRequests = transformNotifications(requestData.notifications || []);
+            const newReports = transformNotifications(reportData.reports || [], true);
+            
+            // Add new requests to the top (if any)
+            setRequestNotifications(prev => {
+                // Create a merged array, prioritizing server data for items that exist in both
+                const mergedRequests = [...prev];
+                
+                // First, update any existing items
+                newRequests.forEach(newItem => {
+                    const existingIndex = mergedRequests.findIndex(
+                        existing => existing.requestId === newItem.requestId
+                    );
+                    
+                    if (existingIndex !== -1) {
+                        // Replace the existing item
+                        mergedRequests[existingIndex] = newItem;
+                    } else {
+                        // If it's a new item, add it to the beginning
+                        mergedRequests.unshift(newItem);
+                    }
+                });
+                
+                return mergedRequests;
+            });
+            
+            // Add new reports to the top (if any)
+            setReportNotifications(prev => {
+                // Create a merged array, prioritizing server data for items that exist in both
+                const mergedReports = [...prev];
+                
+                // First, update any existing items
+                newReports.forEach(newItem => {
+                    const existingIndex = mergedReports.findIndex(
+                        existing => existing.reportId === newItem.reportId
+                    );
+                    
+                    if (existingIndex !== -1) {
+                        // Replace the existing item
+                        mergedReports[existingIndex] = newItem;
+                    } else {
+                        // If it's a new item, add it to the beginning
+                        mergedReports.unshift(newItem);
+                    }
+                });
+                
+                return mergedReports;
+            });
+            
+        } catch (error) {
+            console.error('Error checking for new notifications:', error);
+            // Don't show errors for background refresh
+        } finally {
+            isLoadingRef.current = false;
+        }
+    }, [transformNotifications]);
+
+    // Initial data fetch
     useEffect(() => {
-        fetchNotifications('both', true);
-
+        fetchInitialNotifications();
+        
+        // Set up auto-refresh
         autoRefreshTimerRef.current = setInterval(() => {
-            fetchNotifications('both');
+            checkForNewNotifications();
         }, AUTO_REFRESH_INTERVAL);
-
+        
         return () => {
             if (autoRefreshTimerRef.current) {
                 clearInterval(autoRefreshTimerRef.current);
             }
         };
-    }, [fetchNotifications]);
+    }, [fetchInitialNotifications, checkForNewNotifications]);
 
-    const handleLoadMoreRequests = useCallback(() => {
-        if (requestPage < requestTotalPages && !isLoadingMore) {
-            setRequestPage(prev => prev + 1);
-            fetchNotifications('requests');
-        }
-    }, [requestPage, requestTotalPages, isLoadingMore, fetchNotifications]);
-
-    const handleLoadMoreReports = useCallback(() => {
-        if (reportPage < reportTotalPages && !isLoadingMore) {
-            setReportPage(prev => prev + 1);
-            fetchNotifications('reports');
-        }
-    }, [reportPage, reportTotalPages, isLoadingMore, fetchNotifications]);
+    // Handle screen focus - refresh data when returning to this screen
+    useFocusEffect(
+        useCallback(() => {
+            // Only refresh when returning from a notification detail screen
+            if (actionTakenRef.current) {
+                // console.log('Screen is focused after action, refreshing data...');
+                fetchInitialNotifications();
+                actionTakenRef.current = false;
+            }
+            return () => {};
+        }, [fetchInitialNotifications])
+    );
 
     const handleViewDetails = useCallback(async (item) => {
         try {
+            // Set the action taken flag so we know to refresh when returning
+            actionTakenRef.current = true;
+            
             if (item.type === 'report') {
                 navigation.navigate('ReportNavbar', { 
                     reportId: item.reportId,
@@ -349,25 +475,27 @@ const Notification = () => {
         navigation.goBack();
     }, [navigation]);
 
+    // Component for Request tab
     const RequestTab = () => (
         <NotificationList 
             notifications={requestNotifications}
             loading={loading}
             error={error}
             handleViewDetails={handleViewDetails}
-            onLoadMore={handleLoadMoreRequests}
+            onLoadMore={loadMoreRequests}
             hasMoreItems={requestPage < requestTotalPages}
             isLoadingMore={isLoadingMore}
         />
     );
 
+    // Component for Report tab
     const ReportTab = () => (
         <NotificationList 
             notifications={reportNotifications}
             loading={loading}
             error={error}
             handleViewDetails={handleViewDetails}
-            onLoadMore={handleLoadMoreReports}
+            onLoadMore={loadMoreReports}
             hasMoreItems={reportPage < reportTotalPages}
             isLoadingMore={isLoadingMore}
         />

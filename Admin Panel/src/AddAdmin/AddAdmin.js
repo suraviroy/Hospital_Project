@@ -137,35 +137,65 @@ const AddAdmin = () => {
         setIsLoading(true);
     
         if (image) {
+           try{ 
             const formData = new FormData();
             formData.append('file', {
                 uri: image,
                 name: `file.jpg`,
                 type: `image/jpg`,
             });
-            formData.append('upload_preset', 'pulmocareapp');
-            formData.append('cloud_name', 'pulmocare01');
+            // formData.append('upload_preset', 'pulmocareapp');
+            // formData.append('cloud_name', 'pulmocare01');
     
-            try {
-                const response = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
-                    method: 'POST',
-                    body: formData,
-                });
+            // try {
+            //     const response = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
+            //         method: 'POST',
+            //         body: formData,
+            //     });
     
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Cloudinary response:', data);
-                    data && data.secure_url && setImage(data.secure_url);
-                    saveDataToBackend(data.secure_url);
-                } else {
-                    console.error('Failed to upload image to Cloudinary');
-                }
-            } catch (error) {
-                console.error('Error uploading image:', error);
-            }
-        } else {
-            saveDataToBackend('');
-        }
+            //     if (response.ok) {
+            //         const data = await response.json();
+            //         console.log('Cloudinary response:', data);
+            //         data && data.secure_url && setImage(data.secure_url);
+            //         saveDataToBackend(data.secure_url);
+            //     } else {
+            //         console.error('Failed to upload image to Cloudinary');
+            //     }
+            // } catch (error) {
+            //     console.error('Error uploading image:', error);
+            // }
+              const uploadResponse = await fetch(`${backendURL}/upload`, {
+                            method: 'POST',
+                            body: formData,
+                        });
+                        
+                        if (uploadResponse.ok) {
+                            const responseData = await uploadResponse.json();
+                            console.log('Upload response:', responseData);
+                            
+                            if (responseData && responseData.fileName) {
+                                // Using the filePath or fileName from the response
+                                const fileUrl = responseData.fileName;
+                                console.log("Uploaded file:", fileUrl);
+                                
+                                // Use the file path/name from the response to save patient data
+                                saveDataToBackend(fileUrl);
+                            } else {
+                                console.error('Missing fileName in upload response');
+                                alert('Failed to process uploaded image. Please try again.');
+                                
+                            }
+                        } else {
+                            console.error('Failed to upload image to server');
+                            alert('Failed to upload image. Please try again.');
+                            saveDataToBackend('')
+                        }
+                    } catch (error) {
+                        console.error('Error uploading image:', error);
+                        alert('Failed to upload image. Please try again.');
+                    }
+                    }
+    
     };
     
     const saveDataToBackend = async (imageUrl) => {

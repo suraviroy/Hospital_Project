@@ -16,7 +16,11 @@ const PatientDetails = () => {
   }, []);
 
   const handleDischargeCertificatePress = (url) => {
-    Linking.openURL(url);
+      if (url) {
+                Linking.openURL(`${backendURL}/getfile/${url}`).catch(err => {
+                    Alert.alert('Error', 'Could not open document');
+                });
+            }
   };
 
   const fetchData = async () => {

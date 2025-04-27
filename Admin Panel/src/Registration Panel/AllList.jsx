@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StatusBar, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList,Platform, Dimensions, ActivityIndicator } from 'react-native';
 const windowWidth = Dimensions.get('window').width;
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontFamily } from '../../GlobalStyles';
 import { backendURL } from "../backendapi";
@@ -9,78 +9,85 @@ import { backendURL } from "../backendapi";
 const AllListURL = `${backendURL}/adminRouter/sectionAallPatient`;
 const SearchURL = `${backendURL}/adminRouter/search`;
 const BasicDetailsURL = `${backendURL}/adminRouter/PatientBasicDetailsNewWP`;
-
 const AllList = ({ searchText, refreshTrigger }) => {
     const navigation = useNavigation();
     const [patients, setPatients] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
-    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hasNextPage, setHasNextPage] = useState(false);
     const [currentSearchText, setCurrentSearchText] = useState('');
 
-    const fetchData = async (currentPage, searchValue = '') => {
+    const fetchData = async (page, searchValue = '') => {
         try {
             setLoading(true);
-            setIsLoadingMore(true);
             
             let url = searchValue 
-                ? `${SearchURL}?value=${searchValue}&page=${currentPage}&limit=10`
-                : `${AllListURL}?page=${currentPage}&limit=10`;
+                ? `${SearchURL}?value=${searchValue}&page=${page}&limit=10`
+                : `${AllListURL}?page=${page}&limit=10`;
 
             const response = await fetch(url);
             const data = await response.json();
-
            
             const newPatients = Array.isArray(data) ? data : (data.patients || []);
             
-          
-            const updatedPatients = currentPage === 1 
-                ? newPatients 
-                : [...patients, ...newPatients];
-
-            setPatients(updatedPatients);
-
-            setTotalPages(Math.ceil(newPatients.length / 10));
+            setPatients(newPatients);
+            
+            // If we received 10 items, assume there's a next page
+            setHasNextPage(newPatients.length === 10);
             
             setLoading(false);
-            setIsLoadingMore(false);
         } catch (error) {
             console.error('Error fetching patient data:', error);
             setLoading(false);
-            setIsLoadingMore(false);
         }
     };
 
+    const refreshList = useCallback(() => {
+        setCurrentPage(1);
+        fetchData(1, currentSearchText);
+    }, [currentSearchText]);
+
+    // Initial load when component mounts
     useEffect(() => {
-        
-        setPatients([]);
-        setPage(1);
+        setCurrentPage(1);
         fetchData(1);
     }, [refreshTrigger]);
 
+    // Refresh when searchText changes
     useEffect(() => {
-        
         if (searchText) {
             const searchValue = searchText.replace(/^\^/, '').replace(/\/i$/, '');
             setCurrentSearchText(searchValue);
-            setPatients([]);
-            setPage(1);
+            setCurrentPage(1);
             fetchData(1, searchValue);
         } else {
-
             setCurrentSearchText('');
-            setPatients([]);
-            setPage(1);
+            setCurrentPage(1);
             fetchData(1);
         }
     }, [searchText]);
 
-    const loadMorePatients = () => {
-        if (page < totalPages && !isLoadingMore) {
-            const nextPage = page + 1;
-            setPage(nextPage);
-            fetchData(nextPage, currentSearchText);
+    // Refresh when screen comes into focus
+    useFocusEffect(
+        useCallback(() => {
+            refreshList();
+            return () => {
+                // Cleanup if needed
+            };
+        }, [refreshList])
+    );
+
+    const goToNextPage = () => {
+        const nextPage = currentPage + 1;
+        setCurrentPage(nextPage);
+        fetchData(nextPage, currentSearchText);
+    };
+
+    const goToPreviousPage = () => {
+        if (currentPage > 1) {
+            const prevPage = currentPage - 1;
+            setCurrentPage(prevPage);
+            fetchData(prevPage, currentSearchText);
         }
     };
 
@@ -100,7 +107,7 @@ const AllList = ({ searchText, refreshTrigger }) => {
                 <View style={styles.imageContainer}>
                     {item.image ? (
                         <Image 
-                            source={{ uri: item.image }} 
+                            source={{uri: `${backendURL}/getfile/${item.image}`}}
                             style={styles.patientImage} 
                         />
                     ) : (
@@ -132,42 +139,45 @@ const AllList = ({ searchText, refreshTrigger }) => {
             </View>
             
             <View style={styles.appointmentContainer}>
-            <Text style={styles.appointmentText}>
-                Last Appointment On: {' '}
-                <Text style={styles.appointmentTime}>
-                    {item.visitDate || item.date || 'N/A'}, {' '}
-                </Text>
-            </Text>
-            <Text style={styles.appointmentText}>
-            Time: {' '}
+                <Text style={styles.appointmentText}>
+                    Last Appointment On: {' '}
                     <Text style={styles.appointmentTime}>
-                   
-                    {item.visitTime || item.time || 'N/A'}
-               </Text>
-                
-            </Text>
-           
-        </View>
+                        {item.visitDate || item.date || 'N/A'}, {' '}
+                    </Text>
+                </Text>
+                <Text style={styles.appointmentText}>
+                    Time: {' '}
+                    <Text style={styles.appointmentTime}>
+                        {item.visitTime || item.time || 'N/A'}
+                    </Text>
+                </Text>
+            </View>
         </View>
     );
 
-    const renderFooter = () => {
-        if (page >= totalPages) return null;
-        
-        return (
+    const renderPaginationControls = () => (
+        <View style={styles.paginationContainer}>
             <TouchableOpacity 
-                style={styles.nextButton} 
-                onPress={loadMorePatients}
-                disabled={isLoadingMore}
+                style={[styles.paginationButton, currentPage === 1 && styles.disabledButton]}
+                onPress={goToPreviousPage}
+                disabled={currentPage === 1}
             >
-                <Text style={styles.nextButtonText}>
-                    {isLoadingMore ? 'Loading...' : 'Load More'}
-                </Text>
+                <Text style={styles.paginationButtonText}>Previous</Text>
             </TouchableOpacity>
-        );
-    };
+            
+            <Text style={styles.pageIndicator}>Page {currentPage}</Text>
+            
+            <TouchableOpacity 
+                style={[styles.paginationButton, !hasNextPage && styles.disabledButton]}
+                onPress={goToNextPage}
+                disabled={!hasNextPage}
+            >
+                <Text style={styles.paginationButtonText}>Next</Text>
+            </TouchableOpacity>
+        </View>
+    );
 
-    if (loading) {
+    if (loading && currentPage === 1) {
         return (
             <View style={styles.loaderContainer}>
                 <ActivityIndicator size="large" color="#096759" />
@@ -177,56 +187,70 @@ const AllList = ({ searchText, refreshTrigger }) => {
     }
 
     if (patients.length === 0) {
-        return <Text style={styles.emptyText}>No patients found!</Text>;
+        return (
+            <View style={styles.container}>
+                <Text style={styles.emptyText}>No patients found!</Text>
+                {renderPaginationControls()}
+            </View>
+        );
     }
 
     return (
         <SafeAreaView style={styles.container}>
+            {loading && (
+                <View style={styles.overlayLoader}>
+                    <ActivityIndicator size="large" color="#096759" />
+                </View>
+            )}
             <FlatList
                 nestedScrollEnabled
                 data={patients}
                 renderItem={renderPatientItem}
                 keyExtractor={(item, index) => item.patientId + index}
                 contentContainerStyle={styles.listContainer}
-                ListFooterComponent={renderFooter}
+                ListFooterComponent={renderPaginationControls}
             />
         </SafeAreaView>
     );
 };
-
 const styles = StyleSheet.create({
-    nextButton: {
-        backgroundColor: '#077547',
-        padding: 15,
-        alignItems: 'center',
-        marginVertical: 10,
-        marginHorizontal: 20,
-        borderRadius: 8,
-    },
-    nextButtonText: {
-        color: 'white',
-        fontFamily: FontFamily.font_bold,
-        fontSize: 16,
-    },
     paginationContainer: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 10,
-        backgroundColor: '#f8f8f8',
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#E5E5E5',
+        marginTop: 10,
     },
     paginationButton: {
+        backgroundColor: '#096759',
+        paddingVertical: 8,
         paddingHorizontal: 15,
-        paddingVertical: 10,
+        borderRadius: 5,
     },
     disabledButton: {
-        opacity: 0.3,
+        backgroundColor: '#CCCCCC',
     },
-    pageText: {
+    paginationButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    pageIndicator: {
         fontSize: 16,
-        fontFamily: FontFamily.font_bold,
-        color: '#077547',
-        marginHorizontal: 15,
+        fontWeight: 'bold',
+    },
+    overlayLoader: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
     },
     container: {
         flex: 1,

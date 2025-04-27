@@ -19,75 +19,141 @@ const ViewList = () => {
     const handleBack = () => {
         navigation.goBack();
     };
-    const uploadToCloudinary = async (fileUri, fileName) => {
-        try {
-            const formData = new FormData();
-            formData.append('file', {
-                uri: fileUri,
-                name: fileName,
-                type: 'application/vnd.ms-excel', 
-            });
-            formData.append('upload_preset', 'pulmocareapp');
-            formData.append('cloud_name', 'pulmocare01');
+    // const uploadToCloudinary = async (fileUri, fileName) => {
+    //     try {
+    //         const formData = new FormData();
+    //         formData.append('file', {
+    //             uri: fileUri,
+    //             name: fileName,
+    //             type: 'application/vnd.ms-excel', 
+    //         });
+    //         formData.append('upload_preset', 'pulmocareapp');
+    //         formData.append('cloud_name', 'pulmocare01');
     
-            const response = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/raw/upload', {
-                method: 'POST',
-                body: formData,
-            });
+    //         const response = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/raw/upload', {
+    //             method: 'POST',
+    //             body: formData,
+    //         });
     
-            const data = await response.json();
-            if (!response.ok) {
-                console.error('Failed to upload file to Cloudinary:', data);
-                return null;
-            }
+    //         const data = await response.json();
+    //         if (!response.ok) {
+    //             console.error('Failed to upload file to Cloudinary:', data);
+    //             return null;
+    //         }
     
-            console.log('Cloudinary response:', data);
-            return data.secure_url;
-        } catch (error) {
-            console.error('Error uploading file:', error);
-            return null;
-        }
-    };
+    //         console.log('Cloudinary response:', data);
+    //         return data.secure_url;
+    //     } catch (error) {
+    //         console.error('Error uploading file:', error);
+    //         return null;
+    //     }
+    // };
     
-    const downloadExcel = async () => {
-        try {
-            setIsLoading(true);
-            const response = await fetch(`${backendURL}/adminRouter/excelFile`);
+    // const downloadExcel = async () => {
+    //     try {
+    //         setIsLoading(true);
+    //         const response = await fetch(`${backendURL}/adminRouter/excelFile`);
     
-            if (!response.ok) {
-                throw new Error('Failed to download Excel file');
-            }
+    //         if (!response.ok) {
+    //             throw new Error('Failed to download Excel file');
+    //         }
     
-            const fileData = await response.arrayBuffer();
-            const fileName = 'users.xlsx'; 
+    //         const fileData = await response.arrayBuffer();
+    //         const fileName = 'users.xlsx'; 
            
-            const downloadDirectory = FileSystem.documentDirectory + 'Downloads/';
+    //         const downloadDirectory = FileSystem.documentDirectory + 'Downloads/';
     
-            await FileSystem.makeDirectoryAsync(downloadDirectory, { intermediates: true });
+    //         await FileSystem.makeDirectoryAsync(downloadDirectory, { intermediates: true });
     
-            const fileUri = downloadDirectory + fileName;
+    //         const fileUri = downloadDirectory + fileName;
     
-            const bytes = new Uint8Array(fileData);
-            const base64Data = fromByteArray(bytes);
+    //         const bytes = new Uint8Array(fileData);
+    //         const base64Data = fromByteArray(bytes);
     
-            await FileSystem.writeAsStringAsync(fileUri, base64Data, {
-                encoding: FileSystem.EncodingType.Base64,
-            });
+    //         await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+    //             encoding: FileSystem.EncodingType.Base64,
+    //         });
     
-            const cloudinaryUrl = await uploadToCloudinary(fileUri, fileName);
-            if (cloudinaryUrl) {
-                Linking.openURL(cloudinaryUrl);
-                Alert.alert('Download Successful', 'Excel file has been uploaded');
-            } else {
-                Alert.alert('Upload Failed', 'Failed to upload Excel file');
+    //         const cloudinaryUrl = await uploadToCloudinary(fileUri, fileName);
+    //         if (cloudinaryUrl) {
+    //             Linking.openURL(cloudinaryUrl);
+    //             Alert.alert('Download Successful', 'Excel file has been uploaded');
+    //         } else {
+    //             Alert.alert('Upload Failed', 'Failed to upload Excel file');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error downloading Excel file:', error);
+    //         Alert.alert('Download Failed', 'Failed to download Excel file.');
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
+    const downloadExcel = async () => {
+            try {
+                setIsLoading(true);
+                const response = await fetch(`${backendURL}/adminRouter/excelFile`);
+                 
+                if (!response.ok) {
+                    throw new Error('Failed to download Excel file');
+                }
+                 
+                const fileData = await response.arrayBuffer();
+                const fileName = 'users.xlsx';
+                         
+                const downloadDirectory = FileSystem.documentDirectory + 'Downloads/';
+                 
+                await FileSystem.makeDirectoryAsync(downloadDirectory, { intermediates: true });
+                 
+                const fileUri = downloadDirectory + fileName;
+                 
+                const bytes = new Uint8Array(fileData);
+                const base64Data = fromByteArray(bytes);
+                 
+                await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+                    encoding: FileSystem.EncodingType.Base64,
+                });
+        
+                // Create a FormData object to upload the file to your server
+                const formData = new FormData();
+                formData.append('file', {
+                    uri: fileUri,
+                    name: fileName,
+                    type: 'application/vnd.ms-excel',
+                });
+                
+                // Upload to your server instead of Cloudinary
+                const uploadResponse = await fetch(`${backendURL}/upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                if (uploadResponse.ok) {
+                    const responseData = await uploadResponse.json();
+                    console.log('Upload response:', responseData);
+                    
+                    if (responseData && responseData.filePath) {
+                        // Create a full URL to the file using the filePath from the response
+                        const fileUrl = `${backendURL}${responseData.filePath}`;
+                        console.log("File URL:", fileUrl);
+                        
+                        // Open the file URL
+                        Linking.openURL(fileUrl);
+                        Alert.alert('Download Successful', 'Excel file has been uploaded');
+                    } else {
+                        console.error('Missing filePath in upload response');
+                        Alert.alert('Upload Failed', 'Failed to get file path from server.');
+                    }
+                } else {
+                    console.error('Failed to upload Excel file to server');
+                    Alert.alert('Upload Failed', 'Failed to upload Excel file to server.');
+                }
+            } catch (error) {
+                console.error('Error downloading/uploading Excel file:', error);
+                Alert.alert('Download Failed', 'Failed to download or upload Excel file.');
+            } finally {
+                setIsLoading(false);
             }
-        } catch (error) {
-            console.error('Error downloading Excel file:', error);
-            Alert.alert('Download Failed', 'Failed to download Excel file.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        };
     const headerPatients = () => (
         <View style={styles.viewList2451}>
               <View style={styles.header2451}>

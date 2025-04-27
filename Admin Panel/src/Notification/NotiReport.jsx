@@ -60,7 +60,7 @@ const NotiReport = () => {
   
     const openDocument = (documentUrl) => {
         if (documentUrl) {
-            Linking.openURL(documentUrl).catch(err => {
+            Linking.openURL(`${backendURL}/getfile/${documentUrl}`).catch(err => {
                 Alert.alert('Error', 'Could not open document');
             });
         }

@@ -16,7 +16,7 @@ const UpdatedDetails = ({ patientId }) => {
   }, []);
 
   const handleDischargeCertificatePress = (url) => {
-    Linking.openURL(url);
+    Linking.openURL(`${backendURL}/getfile/${url}`);
   };
 
   const fetchData = async () => {

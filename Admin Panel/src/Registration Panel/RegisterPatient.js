@@ -157,7 +157,8 @@ const AddPatient = () => {
         setPatientIdError(false);
         setContactNumberError(false);
         setConsultingDoctorError(false);
-
+        setLoading(false);
+        setIsLoading(false);
         setSelectedGender(null);
         setSelectedDoctor(null);
         setSelectedBloodGroup(null);
@@ -249,21 +250,30 @@ const AddPatient = () => {
                 name: `file.jpg`,
                 type: `image/jpg`,
             });
-            formData.append('upload_preset', 'pulmocareapp');
-            formData.append('cloud_name', 'pulmocare01');
-
-            const cloudinaryResponse = await fetch('https://api.cloudinary.com/v1_1/pulmocare01/image/upload', {
+            
+            const uploadResponse = await fetch(`${backendURL}/upload`, {
                 method: 'POST',
                 body: formData,
             });
-
-            if (cloudinaryResponse.ok) {
-                const cloudinaryData = await cloudinaryResponse.json();
-                console.log('Cloudinary response:', cloudinaryData);
-
-                savePatientData(cloudinaryData.secure_url, password, stateToSend);
+            
+            if (uploadResponse.ok) {
+                const responseData = await uploadResponse.json();
+                console.log('Upload response:', responseData);
+                
+                if (responseData && responseData.fileName) {
+                    // Using the filePath or fileName from the response
+                    const fileUrl = responseData.fileName;
+                    console.log("Uploaded file:", fileUrl);
+                    
+                    // Use the file path/name from the response to save patient data
+                    savePatientData(fileUrl, password, stateToSend);
+                } else {
+                    console.error('Missing fileName in upload response');
+                    alert('Failed to process uploaded image. Please try again.');
+                    setLoading(false);
+                }
             } else {
-                console.error('Failed to upload image to Cloudinary');
+                console.error('Failed to upload image to server');
                 alert('Failed to upload image. Please try again.');
                 setLoading(false);
             }
@@ -272,9 +282,10 @@ const AddPatient = () => {
             alert('Failed to upload image. Please try again.');
             setLoading(false);
         }
-    } else {
-        savePatientData('', password, stateToSend);
-    }
+        }else {
+            // No image provided, just save the patient data with a null or default image URL
+            savePatientData(null, password, stateToSend);
+        }
 };
 
 const savePatientData = async (imageUrl, password, stateToSend) => {

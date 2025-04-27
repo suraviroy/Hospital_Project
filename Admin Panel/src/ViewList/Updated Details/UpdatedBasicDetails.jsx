@@ -167,16 +167,54 @@ const UpdatedBasicDetails = ({ patientId }) => {
             console.error('Error in openDial function:', error);
         }
     }, []);
+    // const uploadToCloudinary = async (fileInfo) => {
+    //     const formData = new FormData();
+    //     formData.append('file', fileInfo);
+    //     formData.append('upload_preset', 'pulmocareapp');
+    //     formData.append('cloud_name', 'pulmocare01');
+    
+    //     try {
+    //         setUploading(true);
+    //         const response = await fetch(
+    //             'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+    //             {
+    //                 method: 'POST',
+    //                 body: formData,
+    //                 headers: {
+    //                     'Accept': 'application/json',
+    //                     'Content-Type': 'multipart/form-data',
+    //                 },
+    //             }
+    //         );
+    
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! status: ${response.status}`);
+    //         }
+    
+    //         const data = await response.json();
+    //         return {
+    //             name: data.original_filename,
+    //             type: fileInfo.type,
+    //             uri: data.secure_url,
+    //         };
+    //     } catch (error) {
+    //         console.error('Error uploading file:', error);
+    //         throw error;
+    //     } finally {
+    //         setUploading(false);
+    //     }
+    // };
+
     const uploadToCloudinary = async (fileInfo) => {
         const formData = new FormData();
         formData.append('file', fileInfo);
-        formData.append('upload_preset', 'pulmocareapp');
-        formData.append('cloud_name', 'pulmocare01');
-    
+        
         try {
             setUploading(true);
+            
+            // Using your server endpoint instead of Cloudinary
             const response = await fetch(
-                'https://api.cloudinary.com/v1_1/pulmocare01/auto/upload',
+                `${backendURL}/upload`,
                 {
                     method: 'POST',
                     body: formData,
@@ -192,10 +230,13 @@ const UpdatedBasicDetails = ({ patientId }) => {
             }
     
             const data = await response.json();
+            console.log('Upload response:', data);
+            
+            // Return an object with the same structure as before
             return {
-                name: data.original_filename,
+                name: data.fileName,
                 type: fileInfo.type,
-                uri: data.secure_url,
+                uri: `${data.fileName}`,
             };
         } catch (error) {
             console.error('Error uploading file:', error);
@@ -433,7 +474,7 @@ const UpdatedBasicDetails = ({ patientId }) => {
                             <Image 
                                 source={
                                     selectedImage 
-                                        ? { uri: selectedImage } 
+                                        ? { uri: `${backendURL}/getfile/${selectedImage}` } 
                                         : require("../../../assets/images/user.png")
                                 }
                                 style={styles.profileImage} 
@@ -947,7 +988,7 @@ const UpdatedBasicDetails = ({ patientId }) => {
               </TouchableOpacity> */}
                         <View style={styles.profileContainer}>
                     {PatientbasicDetails.image ? (
-                        <Image source={{ uri: PatientbasicDetails.image }} style={styles.profileImage} />
+                        <Image source={{ uri:   `${backendURL}/getfile/${PatientbasicDetails.image}`}} style={styles.profileImage} />
                     ) : (
                         <Image source={require('../../../assets/images/user.png')} style={styles.profileImage} />
                     )}
